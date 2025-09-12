@@ -13,653 +13,10 @@
     <!-- Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        window.firebase = { initializeApp, getAuth, signInAnonymously, onAuthStateChanged, getFirestore, doc, getDoc, setDoc, onSnapshot };
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide-react@0.395.0/dist/lucide-react.js"></script>
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkNoZWNrbGlzdCBNZWRjdXJzbyAyMDI0IiwKICAic2hvcnRfbmFtZSI6ICJNZWRDaGVjayIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtsYXRpbjE8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJ1dGYtOCI/PjwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIEdlbmVyYXRvcjogU1ZHIFJlcG8gTWl4ZXIgVG9vbHMgLS0+PHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxMkwxMS41MTQ3IDE0LjUxNDdDMTIuMjAyMiAxNS4yMDIyIDEzLjI1MjMgMTUuMjAyMiAxMy45Mjk5IDE0LjUxNDdMMjAgNyIgc3Ryb2tlPSIjMzMzMzMzIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik00IDIwVjRDNCAyLjc5MDkgNC43OTA4NiAyIDYgMkgxOEMxOS4yMDkxIDIgMjAgMi43OTA4NiAyMCA0VjIwQzIwIDIxLjIwOTEgMTkuMjA5MSAyMiAxOCAyMkg2QzQuNzkwODYgMjIgNCAyMS4yMDkxIDQgMjBaIiBzdHJva2U9IiMzMzMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+IiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7bGF0aW4xPD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPjxzdmcgd2lkdGg9IjgwMHB4IiBoZWlnaHQ9IjgwMHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkgMTJMMTEuNTE0NyAxNC41MTQ3QzEyLjIwMjIgMTUuMjAyMiAxMy4yNTIzIDE1LjIwMjIgMTMuOTI5OSAxNC41MTQ3TDIwIDciIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNCAyMFY0QzQgMi43OTA5IDQuNzkwODYgMiA2IDJIMThDMTkuMjA5MSAyIDIwIDIuNzkwODYgMjAgNFYyMEMyMCAyMS4yMDkxIDE5LjIwOTEgMjIgMTggMjJINkM0Ljc5MDg2IDIyIDQgMjEuMjA5MSA0IDIwWiIgc3Ryb2tlPSIjMzMzMzMzIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIKICAgIH0KICBdLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgInRoZW1lX2NvbG9yIjogIiMwMjA2MTciLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMjA2MTciCn0=">
-    <meta name="theme-color" content="#020617">
-    <style>
-        :root { color-scheme: light; }
-        html.dark { color-scheme: dark; }
-        body { background-color: #f8fafc; color: #0f172a; } /* slate-50, slate-900 */
-        html.dark body { background-color: #020617; color: #f1f5f9; } /* slate-950, slate-100 */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #e2e8f0; } /* slate-200 */
-        html.dark ::-webkit-scrollbar-track { background: #0f172a; } /* slate-900 */
-        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; } /* slate-400 */
-        html.dark ::-webkit-scrollbar-thumb { background: #334155; } /* slate-700 */
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; } /* slate-500 */
-        html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; } /* slate-600 */
-    </style>
-</head>
-<body class="antialiased font-sans transition-colors duration-300">
-    <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState, useEffect, useMemo, useCallback, useRef } = React;
-        const { initializeApp } = window.firebase;
-        const { getAuth, signInAnonymously, onAuthStateChanged } = window.firebase;
-        const { getFirestore, doc, getDoc, setDoc, onSnapshot } = window.firebase;
-        
-        // --- DATA ---
-        const scheduleData = {
-            disciplineMapping: {
-                'NEF': 'Nefrologia', 'CIR': 'Cirurgia', 'GIN': 'Ginecologia', 'PRE': 'Preventiva', 'OBS': 'Obstetrícia',
-                'PED': 'Pediatria', 'REU': 'Reumatologia', 'HEM': 'Hematologia', 'GAS': 'Gastroenterologia',
-                'HEP': 'Hepatologia', 'CAR': 'Cardiologia', 'END': 'Endocrinologia', 'PNE': 'Pneumologia',
-                'INF': 'Infectologia', 'NEU': 'Neurologia', 'PSQ': 'Psiquiatria', 'ORT': 'Ortopedia',
-                'DER': 'Dermatologia', 'OFT': 'Oftalmologia', 'EX': 'Exemplo'
-            },
-            
-            get disciplines() {
-                return [...new Set(Object.values(this.disciplineMapping))].sort();
-            },
-
-            apostilasData: {
-                "NEF 01": { bonusLessons: ["Lesão Renal na Hipertensão e Doenças Hematológicas", "Rim e o Diabetes", "Rim e as Colagenoses", "Rim e as Vasculites", "Rim e Doenças Infecciosas Sistêmicas", "Rim e Situações Diversas"] },
-                "CIR 01": { bonusLessons: ["Trauma - Preparação e Triagem", "Trauma Cervical e Fraturas de Face", "Trauma Diafragmático", "Embolia Gordurosa", "Trauma Vascular Abdominal", "Trauma Abdominal - Lesões Específicas", "Trauma de Uretra e Bexiga", "Trauma Cranioencefálico", "Lesão Renal", "Morte Encefálica", "Trauma da Coluna Vertebral e Raquimedular"] },
-                "NEF 02": { bonusLessons: ["Nefrotoxicidade por Antimicrobianos", "Nefrotoxicidade por Analgésicos", "Nefrotoxicidade por Metais pesados", "Nefrotoxicidade por Contraste", "Acidose Tubular Renal", "Rabdomiólise"] },
-                "GIN 01": { bonusLessons: ["Síndrome pré-menstrual e Transtorno disfórico pré-menstrual"] },
-                "PRE 01": { bonusLessons: ["Outros indicadores e Atualizações Censo 2022", "Sistemas de Informação"] },
-                "NEF 03": { bonusLessons: ["Relação Delta-Delta", "Aspectos práticos no tratamento da Hiponatremia", "Terapia de Substituição renal – HD e DP", "Terapia de Substituição renal - Transplante"] },
-                "OBS 01": { bonusLessons: ["Aconselhamento genético pré-natal"] },
-                "PRE 02": { bonusLessons: ["Estudos descritivos e Metanálise", "Fases do ensaio clínico", "Testes estatísticos", "Variáveis", "Curva ROC e Variações do ponto de corte", "Medidas de tendência central e dispersão", "Verossimilhança e Testes múltiplos"] },
-                "PED 01": { bonusLessons: ["Exame físico Neonatal", "Doenças do Trato Gastrointestinal", "Triagem Neonatal", "Miscelânea"] },
-                "CIR 02": { bonusLessons: ["Câncer de Bexiga", "Câncer de Rim", "Suporte nutricional", "Cirurgia Plástica", "Úlceras de Pressão", "Cicatrização de feridas", "Choque - Monitorização", "Choque - Tratamento"] },
-                "REU 01": { bonusLessons: ["Anti-inflamatórios e Glicocorticoides", "Febre familiar do mediterrâneo", "Fibromialgia"] },
-                "PRE 03": { bonusLessons: ["Ética médica - Artigos principais, erros e atualizações", "Glossário de Doenças infecciosas", "Saúde do trabalhador - Agrotóxicos", "Saúde do trabalhador - CAT e Tipos de acidentes", "Saúde do trabalhador - Pneumoconioses, Pair e Burnout", "Saúde do trabalhador - Saturnismo, hidrargirismo, benzenismo e cromo", "Raiva"] },
-                "REU 02": { bonusLessons: ["Artrite séptica", "Amiloidose", "Policondrite recidivante"] },
-                "HEM 01": { bonusLessons: ["Anemia aplasica", "Anemia sideroblastica", "Mielodisplasias", "Alfa-talassemia", "Hemoglobinúria paroxística noturna"] },
-                "CIR 03": { bonusLessons: ["Hérnias - Abordagem videolaparoscópica", "Hérnias na infância", "Outras hérnias", "Anestesiologia", "Profilaxia do TEP e TVP", "Tipos de tela", "Fios de sutura", "Fístula digestiva e deiscência", "Projeto ERAS e ACERTO"] },
-                "HEM 02": { bonusLessons: ["Doenças mioproliferativas", "Hemofilias", "Esplenomegalia", "Tromboelastrograma", "Hemotransfusão"] },
-                "GAS 01": { bonusLessons: ["Anatomia do esôfago", "Esofagites", "Ingestão de corpo estranho", "Hérnia de hiato", "Perfuração de esôfago", "Divertículos esofágicos", "Anatomia do estômago", "Síndrome de Zollinger-Ellison", "GIST", "Linfoma gástrico"] },
-                "GIN 02": { bonusLessons: ["Pólipos endometriais e Dismenorreia"] },
-                "GAS 02": { bonusLessons: ["Anatomia do cólon", "Colite pseudomembranosa", "Síndrome do intestino irritável", "Tumores carcinoides"] },
-                "GAS 03": { bonusLessons: ["Anatomia do pâncreas", "Cirurgias pancreáticas", "Neoplasias císticas do pâncreas", "Tumores neuroendocrinos do pâncreas", "Anatomia das vias biliares", "Abscesso hepático", "Cistos de via biliar", "Lesão iatrogênica das vias biliares", "Neoplasias das vias biliares", "Tumores hepáticos benignos", "Tumores hepáticos malignos"] },
-                "HEP 01": { bonusLessons: ["Insuficiência hepática aguda"] },
-                "HEP 02": { bonusLessons: ["Anatomia do fígado", "Hepatite medicamentosa", "Cirurgia de hipertensão portal", "Transplante hepático"] },
-                "GIN 03": { bonusLessons: ["Osteoporose", "Fístulas genitais e Síndrome da bexiga dolorosa"] },
-                "CAR 01": { bonusLessons: ["Anatomia cardíaca", "Bloqueio de Ramo", "Marca-passo - Conceitos básicos", "Marca-passo - Funcionamento"] },
-                "CAR 02": { bonusLessons: ["Cardiomiopatia hipertrófica", "Cardiomiopatia de estresse", "Cardiomiopatia dilatada", "Cardiomiopatia restritiva", "Pericardiopatias", "Hipertensão pulmonar"] },
-                "CAR 03": { bonusLessons: ["Complicações Pós-IAM"] },
-                "GIN 05": { bonusLessons: ["Neoplasia intraepitelial vulvar", "Câncer de vulva", "Distúrbios do humor e Tromboembolismo"] },
-                "PRE 04": { bonusLessons: ["Genograma e Ecomapa", "Decreto 7508", "Método Clínico Centrado na Pessoa", "Método SOAP", "Politica Nacional de Humanização", "Redes e Programas Principais do SUS", "Instrumentos de AB (Ciclo de Vida Familiar)", "Instrumentos de AB (Tipos de Família)", "Instrumentos de AB (Escala de Coelho Savassi)", "Instrumentos de AB (Apgar Familiar, Practice e Firo)", "Saúde Suplementar", "Princípios da MFC", "Saúde e o Mundo", "Pacto pela Saúde 2006", "Portaria N635, 22 de maio de 2023", "Receitas Medicas"] },
-                "END 01": { bonusLessons: ["Anatomia da Tireoide", "Eutireoideo doente", "Hipotireoidismo congênito"] },
-                "END 02": { bonusLessons: ["Hipófise e Hipotálamo", "Hiperparatireoidismo primário", "Hiperparatireoidismo secundário e terciário", "Incidentaloma adrenal", "Hiperplasia adrenal congênito", "Neoplasia endócrina múltipla", "Hipoparatireoidismo", "Anatomia da Hipófise e Hipotálamo", "Anatomia da Adrenal", "Raquitismo e Osteomalácia"] },
-                "END 03": { bonusLessons: ["Dislipidemia", "Obesidade - Introdução", "Obesidade - Fisiopatologia e Tratamento clínico", "Obesidade - Cirurgia bariátrica", "Obesidade - Alterações funcionais pós-bariátrica", "Hipoglicemia", "Pé diabético"] },
-                "PED 04": { bonusLessons: ["Constipação na Infância", "Diarreia crônica", "Rinite Alérgica", "Estridor crônico e Aspiração de corpo estranho", "Fibrose cística"] },
-                "PNE 01": { bonusLessons: ["Ventilação mecânica", "Sarcoidose", "Pneumopatias intersticiais difusas", "Nódulo pulmonar difuso", "Síndrome do desconforto respiratório agudo"] },
-                "PNE 02": { bonusLessons: ["Derrame pleural"] },
-                "INF 01": { bonusLessons: ["HIV na Infância", "HTLV", "Profilaxia da transmissão vertical do HIV", "Abscesso pulmonar", "Derrame pleural parapneumônico", "Sepse e choque séptico"] },
-                "INF 02": { bonusLessons: ["Abscesso hepático", "Piodermites", "Acidente por animais peçonhentos", "Infecção relacionada ao cateter", "Osteomielite"] },
-                "INF 03": { bonusLessons: ["Febre Maculosa Brasileira", "Infecção do trato urinário", "COVID-19", "Monkeypox", "Leishmaniose visceral", "Malária"] },
-                "GIN 06": { bonusLessons: ["HIV e Gestação"] },
-                "PED 05": { bonusLessons: ["PALS", "Cardiopatias congênitas", "Anafilaxia", "Hipertensão arterial", "Prevenção de Acidentes e Maus-tratos na Infância", "Erros inatos da Imunidade", "Tumores Abdominais na Infância", "Febre sem sinais localizatórios"] },
-                "NEU 01": { bonusLessons: ["Hipertensão intracraniana", "Doenças da placa motora", "Intoxicações exógenas"] },
-                "CIR 04": { bonusLessons: ["Anatomia do Reto e Canal anal", "CIPE - Afecções cervical", "CIPE - Gastrointestinal 1", "CIPE - Gastrointestinal 2", "CIPE - Gastrointestinal 3", "CIPE - Geniturinário e Tumores", "Cirurgia de cabeça e pescoço", "Colangite esclerosante primária"] },
-                "PSQ 01": { bonusLessons: ["Suicídio", "Transtornos do neurodesenvolvimento"] },
-                "ORT 01": { bonusLessons: ["Doenças periarticulares"] },
-                "DER 01": { bonusLessons: ["Monkeypox", "Acne"] }
-            },
-
-            weeklyLayout: [
-              { week: 1, modules: [ { code: "NEF 01", title: "Glomerulopatias I", lessons: ["Conceitos básicos", "Alteração Urinária Assintomática", "Síndrome Nefrítica", "Glomerulonefrite Rapidamente Progressiva (GNRP)"] }, { code: "CIR 01", title: "Trauma I", lessons: ["Avaliação Inicial", "Trauma de tórax"] } ] },
-              { week: 2, modules: [ { code: "NEF 01", title: "Glomerulopatias II", lessons: ["Síndrome Nefrótica - Parte 1", "Síndrome Nefrótica - Parte 2", "Síndrome Hemolítico-Urêmica"] }, { code: "CIR 01", title: "Trauma II", lessons: ["Trauma de Abdome e Pelve", "Traumatismo Cranioencefálico"] } ] },
-              { week: 3, modules: [ { code: "NEF 02", title: "Doenças Tubulosintersticiais e Vasculares Renais", lessons: ["Ateroembolismo", "Distúrbios Tubulares Específicos", "Estenose de Artéria Renal", "Necrose de Papila", "Necrose Tubular Aguda", "Nefrite Intersticial Aguda"] }, { code: "GIN 01", title: "Ciclo Menstrual e Anticoncepção", lessons: ["Introdução", "Ciclo Menstrual", "Anticoncepção"] } ] },
-              { week: 4, modules: [ { code: "NEF 03", title: "Distúrbios Hidroeletrolíticos", lessons: ["Introdução", "Distúrbios do Sódio", "Hiponatremia", "Distúrbios do Potássio - Parte 1", "Distúrbios do Potássio - Parte 2", "Distúrbios do Potássio - Parte 3"] }, { code: "GIN 01", title: "Amenorreia e Ovário Policístico", lessons: ["Introdução", "Amenorreia", "Síndrome do Ovário Policístico (SOP)"] }, { code: "PRE 01", title: "Medidas de Saúde Coletiva", lessons: ["Medidas de Saúde Coletiva - Parte 1", "Medidas de Saúde Coletiva - Parte 2", "Medidas de Saúde Coletiva - Parte 3", "Medidas de Saúde Coletiva - Parte 4"] } ] },
-              { week: 5, modules: [ { code: "NEF 03", title: "Distúrbios Ácido-Básico e Insuficiência Renal", lessons: ["Introdução e Definições", "Acidose e Alcalose Metabólica", "As funções renais", "Lesão Renal Aguda", "Doença Renal Crônica"] } ] },
-              { week: 6, modules: [ { code: "OBS 01", title: "Diagnóstico de Gravidez, Modificações e Pré-natal", lessons: ["Introdução", "Diagnóstico de gravidez", "Assistência pré-natal", "Hiperêmese gravídica", "Modificações do organismo materno"] }, { code: "PRE 02", title: "Estudos Epidemiológicos", lessons: ["Estudos Epidemiológicos - Análise", "Estudos Epidemiológicos - Classificação"] } ] },
-              { week: 7, modules: [ { code: "PED 01", title: "Neonatologia I", lessons: ["Introdução neonatal", "Icterícia neonatal", "Reanimação neonatal"] } ] },
-              { week: 8, modules: [ { code: "PRE 02", title: "Epidemiologia Clínica", lessons: ["Epidemiologia Clínica"] }, { code: "PED 01", title: "Neonatologia II", lessons: ["Distúrbios respiratórios - Parte 1", "Distúrbios respiratórios - Parte 2", "Infecções congênitas - Sífilis congênita", "Infecções congênitas - Exposição perinatal ao HIV", "Infecções congênitas - Outras infecções"] } ] },
-              { week: 9, modules: [ { code: "REU 01", title: "Introdução à Reumatologia e Artrites", lessons: ["Artrite reumatoide", "Espondiloartropatias soronegativas", "Osteoartrite"] } ] },
-              { week: 10, modules: [ { code: "CIR 02", title: "Urologia", lessons: ["Nefrolitíase", "Hiperplasia prostática benigna", "Câncer de próstata"] }, { code: "REU 01", title: "Gota e Febre Reumática", lessons: ["Febre Reumática", "Gota"] } ] },
-              { week: 11, modules: [ { code: "CIR 02", title: "REMIT e Queimaduras", lessons: ["Queimaduras", "REMIT - Resposta Endócrina Metabólica Imunológica ao Trauma"] }, { code: "REU 02", title: "Colagenoses - Parte I", lessons: ["Introdução as colagenoses", "Esclerose Sistêmica", "Miosites e Doença mista"] }, { code: "OBS 02", title: "Assistência ao Parto e Parto Prematuro", lessons: ["Introdução", "Parto - Assistência", "Parto - Trajeto e Estática", "Prematuridade", "Amniorrexe Prematura"] } ] },
-              { week: 12, modules: [ { code: "REU 02", title: "Colagenoses - Parte II", lessons: ["Lúpus eritematoso sistêmico", "Síndrome de Sjogren", "Síndrome do Anticorpo Antifosfolipídio"] }, { code: "PRE 03", title: "Vigilância da Saúde e Processo Epidêmico", lessons: ["Níveis de prevenção", "Processo epidêmico", "Vigilância da saúde"] } ] },
-              { week: 13, modules: [ { code: "REU 02", title: "Vasculites", lessons: ["Vasculites - Parte 1", "Vasculites - Parte 2"] }, { code: "PED 02", title: "Aleitamento Materno", lessons: ["Aleitamento materno - Aspectos práticos", "Aleitamento materno - Definições e composição do leite", "Aleitamento materno - Queixas comuns e contraindicações", "Suplementação de micronutrientes"] } ] },
-              { week: 14, modules: [ { code: "HEM 01", title: "Anemias I", lessons: ["Abordagem inicial da anemia", "Anemia ferropriva", "Anemia megaloblástica", "Anemia de doenças crônicas"] }, { code: "CIR 03", title: "Hérnias da Parede Abdominal", lessons: ["Hérna de parede abdominal", "Hérnia Inguinal e femoral", "Hérnia Inguinal e femoral - Tratamento", "Outros tipos de hérnia"] } ] },
-              { week: 15, modules: [ { code: "HEM 01", title: "Anemias II", lessons: ["Anemias hemolíticas - Parte 1", "Anemias hemolíticas - Parte 2"] }, { code: "CIR 03", title: "Pré e Pós-operatório", lessons: ["Protocolo de cirurgia segura", "Pré-operatório", "Pós-operatório"] } ] },
-              { week: 16, modules: [ { code: "HEM 02", title: "Leucemias Agudas e Crônicas (Parte 1)", lessons: ["Introdução às Leucemias", "Leucemia Linfoide Aguda", "Leucemia Linfoide Crônica"] } ] },
-              { week: 17, modules: [ { code: "HEM 02", title: "Linfomas e Mieloma Múltiplo", lessons: ["Linfomas", "Mieloma"] } ] },
-              { week: 18, modules: [ { code: "HEM 02", title: "Leucemias e Hemostasia", lessons: ["Leucemia Mieloide Aguda", "Leucemia Mieloide Crônica", "Hemostasia - Parte 1", "Hemostasia - Parte 2"] }, { code: "PED 02", title: "Crescimento, Desenvolvimento e Puberdade", lessons: ["Crescimento", "Desenvolvimento", "Puberdade"] } ] },
-              { week: 19, modules: [ { code: "GAS 01", title: "Doenças do Esôfago", lessons: ["DRGE", "Acalasia", "Câncer de esôfago", "Divertículo de Zenker"] }, { code: "GIN 02", title: "Sangramento Uterino Anormal, Endometriose e Infertilidade", lessons: ["Introdução", "Sangramento Uterino Anormal", "Adenomiose", "Endometriose", "Mioma", "Pólipos", "Infertilidade"] } ] },
-              { week: 20, modules: [ { code: "GAS 01", title: "Doenças do Estômago e HDA", lessons: ["Doença Ulcerosa Péptica - Noções gerais", "Doença Ulcerosa Péptica - Clínica, Diagnóstico e Tratamento", "Doença Ulcerosa Péptica - Cirurgia", "Câncer gástrico", "Síndrome Pós-gastrectomia", "Hemorragia Digestiva Alta"] } ] },
-              { week: 21, modules: [ { code: "GAS 02", title: "Má-absorção, DII e Doença Vascular", lessons: ["Síndromes disabsortivas e DII - Parte 1", "Síndromes disabsortivas e DII - Parte 2", "Isquemia Intestinal", "Obstrução Intestinal - Abordagem sindrômica", "Obstrução Intestinal - Causas"] }, { code: "OBS 03", title: "Sangramentos na Gravidez - Parte 1", lessons: ["Introdução", "Gravidez ectópica", "Abortamento", "Doença Trofoblástica Gestacional"] } ] },
-              { week: 22, modules: [ { code: "GAS 02", title: "Apendicite, Diverticulose, Câncer Colorretal e HDB", lessons: ["Apendicite Aguda", "Doença diverticular dos cólons", "Diverticulite Aguda", "Pólipos intestinais e Síndromes de polipose", "Câncer colorretal", "Hemorragia Digestiva Baixa"] }, { code: "OBS 03", title: "Sangramentos na Gravidez - Parte 2", lessons: ["Introdução", "Descolamento prematuro de placenta", "Doença hemolítica perinatal", "Placenta prévia", "Roturas - Diagnósticos diferenciais"] } ] },
-              { week: 23, modules: [ { code: "GAS 03", title: "Pancreatite, Câncer e Vias Biliares", lessons: ["Pancreatite aguda", "Pancreatite Crônica e Câncer de pâncreas", "Noções gerais", "Coledocolitíase", "Colelitíase", "Colangite aguda", "Colecistite aguda", "Outras colecistites"] } ] },
-              { week: 24, modules: [ { code: "HEP 01", title: "Introdução à Hepatologia e Hepatites", lessons: ["Introdução a hepatologia", "Hepatite A", "Hepatite B Aguda", "Hepatite B Crônica", "Hepatite C"] }, { code: "HEP 02", title: "Cirrose e suas Causas", lessons: ["Cirrose hepática", "Doença hepática alcoólica", "Esteatose hepática metabólica", "Hepatites hereditárias", "Hepatites autoimunes"] } ] },
-              { week: 25, modules: [ { code: "HEP 02", title: "Cirrose e suas Complicações", lessons: ["Cirrose e complicações - Parte 1", "Cirrose e complicações - Parte 2"] }, { code: "GIN 03", title: "Climatério, Distopias e Incontinência Urinária", lessons: ["Introdução", "Climatério", "Distopia genital", "Incontinência urinária"] } ] },
-              { week: 26, modules: [ { code: "CAR 01", title: "Taquiarritmias", lessons: ["Eletrocardiograma normal", "Eletrocardiograma das taquiarritmias", "Fibrilação e Flutter atrial", "Taquicardia supraventricular paroxística", "Taquicardia ventricular"] }, { code: "PED 03", title: "Distúrbios do Crescimento", lessons: ["Avaliação nutricional", "Desnutrição grave", "Obesidade e Baixa estatura"] } ] },
-              { week: 27, modules: [ { code: "CAR 01", title: "Bradiarritmias e PCR", lessons: ["Bradiarritmias e PCR - Parte 1", "Bradiarritmias e PCR - Parte 2"] }, { code: "PED 03", title: "Imunização", lessons: ["Imunização - Aspectos iniciais", "Vacinas - Parte 1", "Vacinas - Parte 2", "Calendários vacinais"] } ] },
-              { week: 28, modules: [ { code: "CAR 02", title: "Insuficiência Cardíaca", lessons: ["Insuficiência Cardíaca - Parte 1", "Insuficiência Cardíaca - Parte 2", "Insuficiência Cardíaca Aguda"] }, { code: "GIN 04", title: "Doenças das Mamas e Ovários", lessons: ["Introdução", "Doenças das mamas", "Doenças dos ovários"] } ] },
-              { week: 29, modules: [ { code: "CAR 02", title: "Valvopatias, HAS e Crise Hipertensiva", lessons: ["Conceitos Iniciais", "Estenose Aórtica", "Estenose Mitral", "Insuficiência Aórtica", "Insuficiência Mitral", "Hipertensão - Abordagem principal", "Hipertensão secundária", "Crise Hipertensiva"] } ] },
-              { week: 30, modules: [ { code: "CAR 03", title: "Síndrome Coronariana Aguda e Angina", lessons: ["Síndrome Coronariana - Parte 1", "Síndrome Coronariana - Parte 2"] }, { code: "PED 04", title: "Diarreia Aguda e Desidratação", lessons: ["Diarreia aguda - Parte 1", "Diarreia aguda - Parte 2"] } ] },
-              { week: 31, modules: [ { code: "END 01", title: "Tireoide I", lessons: ["Hipertireoidismo e Doença de Graves"] }, { code: "GIN 05", title: "Lesões Precursoras e Câncer", lessons: ["Introdução", "Câncer de colo e Lesões precursoras", "Câncer de endométrio", "Vacina e Condiloma"] } ] },
-              { week: 32, modules: [ { code: "PRE 04", title: "SUS, Financiamento e Atenção Básica", lessons: ["História e Leis", "Financiamento do SUS e da Atenção básica", "Atenção básica"] }, { code: "END 01", title: "Tireoide II", lessons: ["Introdução", "Hipotireoidismo e Hashimoto", "Hipotireoidismo e Tireoidites", "Nódulos de tireoide", "Câncer de tireoide"] }, { code: "END 02", title: "Doenças da Adrenal", lessons: ["Doenças da Adrenal"] } ] },
-              { week: 33, modules: [ { code: "PED 04", title: "Infecções Respiratórias Agudas I", lessons: ["Resfriado e Otite média aguda", "Sinusite bacteriana e Faringite aguda", "Epiglotite Aguda e Laringotraqueíte viral aguda"] } ] },
-              { week: 34, modules: [ { code: "END 03", title: "Diabetes Mellitus, Dislipidemia e Obesidade", lessons: ["DM - Introdução e Diagnóstico", "DM - Tratamento", "DM - Complicações Agudas"] }, { code: "PED 04", title: "Infecções Respiratórias Agudas II", lessons: ["Bronquiolite Viral Aguda", "Pneumonia bacteriana", "Pneumonia Afebril do Lactente e Coqueluche"] }, { code: "PNE 01", title: "Asma e DPOC", lessons: ["Noções de Espirometria e Asma", "DPOC"] } ] },
-              { week: 35, modules: [ { code: "OBS 04", title: "Distúrbios Hipertensivos, Diabetes e Gemelaridade", lessons: ["Introdução", "Hipertensão arterial", "Diabetes gestacional", "Gestação gemelar"] }, { code: "PNE 01", title: "Câncer de Pulmão e TEP", lessons: ["Câncer de pulmão", "Tromboembolismo pulmonar"] } ] },
-              { week: 36, modules: [ { code: "PED 05", title: "Nefrologia Pediátrica", lessons: ["Infecção do trato urinário", "Outros distúrbios urológicos"] } ] },
-              { week: 37, modules: [ { code: "PNE 02", title: "Tuberculose e Pneumonias", lessons: ["História natural da tuberculose", "Tuberculose pulmonar - Clínica e diagnóstico", "Tuberculose pulmonar - Tratamento", "Controle da tuberculose", "Tuberculose extrapulmonar, pleural e meníngea", "Pneumonia - Parte 1", "Pneumonia - Parte 2"] } ] },
-              { week: 38, modules: [ { code: "INF 01", title: "HIV e SIDA", lessons: ["Patogênese, História natural e diagnóstico", "Tratamento e profilaxia", "Complicações respiratórias e neurológicas"] }, { code: "OBS 05", title: "Sofrimento Fetal, Vitalidade, Fórcipes e Puerpério", lessons: ["Introdução", "Fórcipes", "Puerpério", "Sofrimento fetal"] } ] },
-              { week: 39, modules: [ { code: "INF 02", title: "Endocardite, Meningite e Parasitoses", lessons: ["Endocardite infecciosa", "Meningite", "Helmintos", "Protozoários"] } ] },
-              { week: 40, modules: [ { code: "INF 03", title: "Síndromes Febris", lessons: ["Dengue, Zika e Chikungunya", "Febre de Oropouche, Febre Amarela e Leptospirose"] }, { code: "GIN 06", title: "IST, Vulvovaginites, DIP e Violência Sexual", lessons: ["Introdução", "Vulvovaginites", "Úlceras", "Cervicites e Doença inflamatória pélvica", "Violência sexual"] } ] },
-              { week: 41, modules: [ { code: "NEU 01", title: "Síndromes Neurológicas e AVE", lessons: ["Neuroanatomia", "Síndromes neurológicas", "AVE Isquêmico", "AVE Hemorrágico"] }, { code: "PED 05", title: "Doenças Exantemáticas", lessons: ["Sarampo e Rubéola", "Exantema súbito e Eritema infeccioso", "Varicela e Doença mão-pé-boca", "Escarlatina e Mononucleose"] } ] },
-              { week: 42, modules: [ { code: "NEU 01", title: "Cefaleias, Epilepsia, Demências e Parkinson", lessons: ["Cefaleia", "Epilepsia e Crises febris", "Demências", "Doença de Parkinson", "Fraqueza muscular"] } ] },
-              { week: 43, modules: [ { code: "CIR 04", title: "Cirurgia Vascular, Proctologia e Bariátrica", lessons: ["Doença venosa crônica", "Doença arterial periférica", "Oclusão arterial aguda dos MMII", "Dissecção de aorta torácica", "Aneurisma de Aorta abdominal", "Ruptura de Aneurisma de aorta abdominal", "Cirurgia bariátrica", "Proctologia"] } ] },
-              { week: 44, modules: [ { code: "PSQ 01", title: "Psiquiatria", lessons: ["Delirium", "Transtorno do Humor", "Transtornos Psicóticos", "Transtornos relacionados ao uso de substâncias", "Transtorno de Ansiedade, TOC, TEPT e Transtornos alimentares"] } ] },
-              { week: 45, modules: [ { code: "ORT 01", title: "Ortopedia", lessons: ["Traumato-ortopedia", "Ortopedia clínica", "Membros superiores", "Quadril", "Membros inferiores"] }, { code: "DER 01", title: "Dermatologia", lessons: ["Hanseníase", "Outras infecções", "Dermatologia - Parte 1", "Dermatologia - Parte 2"] } ] },
-              { week: 46, modules: [ { code: "OFT 01", title: "Oftalmologia", lessons: ["Anatomia", "Catarata", "Glaucoma", "Retinoblastoma", "Retinopatias", "Conjuntivite e Diagnósticos diferenciais"] } ] }
-            ],
-            
-            defaultSchedule: [
-                { week: 1, modules: [ { code: "EX 01", title: "Carregamento Falhou", lessons: ["Verifique sua conexão", "Tente recarregar a página"], bonusLessons: [] } ] }
-            ]
-        };
-
-        const { weeklyLayout, disciplineMapping, disciplines, defaultSchedule, apostilasData } = scheduleData;
-        const SCHEDULE_VERSION = "1.2_bonus_lessons_sync";
-        
-        // --- COMPONENTES ---
-
-        const Icon = ({ name, ...props }) => {
-            if (!window.lucide || !window.lucide[name]) return <span className="w-6 h-6 inline-block" />;
-            return React.createElement(window.lucide[name], props);
-        };
-        
-        const WelcomeModal = ({ onClose }) => (
-            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full p-6 md:p-8 transform transition-all scale-95 animate-scale-in">
-                    <div className="flex justify-between items-center mb-4">
-                         <h2 className="text-2xl md:text-3xl font-bold text-sky-600 dark:text-sky-400">Bem-vindo ao Checklist Medcurso!</h2>
-                         <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"><Icon name="X" className="w-6 h-6 text-slate-500 dark:text-slate-400" /></button>
-                    </div>
-                    <p className="mb-4 text-slate-600 dark:text-slate-300">Uma plataforma personalizável para organizar seus estudos.</p>
-                    <ul className="space-y-3 mb-6 text-slate-700 dark:text-slate-200">
-                        <li className="flex items-start gap-3"><Icon name="Edit" className="w-5 h-5 mt-1 text-sky-500 flex-shrink-0" /><span>Adicione e remova aulas para adaptar o cronograma à sua realidade.</span></li>
-                        <li className="flex items-start gap-3"><Icon name="Cloud" className="w-5 h-5 mt-1 text-sky-500 flex-shrink-0" /><span>Seu cronograma personalizado e seu progresso são salvos na nuvem.</span></li>
-                        <li className="flex items-start gap-3"><Icon name="Smartphone" className="w-5 h-5 mt-1 text-sky-500 flex-shrink-0" /><span>Instale como um aplicativo no seu celular para acesso rápido.</span></li>
-                    </ul>
-                    <button onClick={onClose} className="w-full bg-sky-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-sky-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">Começar a Organização</button>
-                </div>
-                 <style>{`
-                    @keyframes scale-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-                    .animate-scale-in { animation: scale-in 0.3s ease-out forwards; }
-                `}</style>
-            </div>
-        );
-
-        const ChecklistItem = ({ lessonId, progress, onToggle }) => {
-            const checklistOptions = [
-                { id: 'aula', label: 'Aula', icon: 'Youtube' }, { id: 'anki', label: 'Anki', icon: 'Copy' },
-                { id: 'exercicios', label: 'Exercícios', icon: 'ClipboardCheck' }, { id: 'revisao', label: 'Revisão', icon: 'Repeat' }
-            ];
-            return (
-                <div className="flex flex-shrink-0 flex-wrap items-center justify-start sm:justify-end gap-1 sm:gap-4 mt-2 sm:mt-0">
-                    {checklistOptions.map(opt => {
-                        const isChecked = progress && progress[opt.id];
-                        return (
-                             <label key={opt.id} title={opt.label} className="flex items-center gap-2 cursor-pointer p-1.5 rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700/60">
-                                <input type="checkbox" checked={isChecked || false} onChange={() => onToggle(lessonId, opt.id)} className="sr-only peer" />
-                                <div className={`w-5 h-5 rounded-md flex items-center justify-center border-2 transition-all duration-200 ${isChecked ? 'bg-sky-500 border-sky-500' : 'bg-transparent border-slate-400 dark:border-slate-600 peer-hover:border-sky-400'}`}>
-                                    {isChecked && <Icon name="Check" className="w-4 h-4 text-white" />}
-                                </div>
-                                <Icon name={opt.icon} className={`w-5 h-5 transition-colors ${isChecked ? 'text-sky-500 dark:text-sky-400' : 'text-slate-500 dark:text-slate-400'}`} />
-                                <span className={`text-sm font-medium hidden lg:inline transition-colors ${isChecked ? 'text-slate-800 dark:text-slate-200' : 'text-slate-500 dark:text-slate-400'}`}>{opt.label}</span>
-                            </label>
-                        );
-                    })}
-                </div>
-            );
-        };
-        
-        const AddLessonForm = ({ onAddLesson, onCancel }) => {
-            const [lessonName, setLessonName] = useState('');
-            const inputRef = useRef(null);
-
-            useEffect(() => {
-                inputRef.current?.focus();
-            }, []);
-
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                if (lessonName.trim()) {
-                    onAddLesson(lessonName.trim());
-                    setLessonName('');
-                }
-            };
-
-            return (
-                <form onSubmit={handleSubmit} className="flex items-center gap-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50">
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        value={lessonName}
-                        onChange={(e) => setLessonName(e.target.value)}
-                        placeholder="Nome da nova aula"
-                        className="flex-grow bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none"
-                    />
-                    <button type="submit" className="p-2 rounded-md bg-sky-500 text-white hover:bg-sky-600 transition-colors"><Icon name="Check" className="w-4 h-4"/></button>
-                    <button type="button" onClick={onCancel} className="p-2 rounded-md bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"><Icon name="X" className="w-4 h-4"/></button>
-                </form>
-            );
-        };
-
-        const ModuleCard = ({ module, weekIndex, moduleIndex, progress, onToggle, onAddLesson, onRemoveLesson }) => {
-            const [isAdding, setIsAdding] = useState(false);
-            const [isBonusAdding, setIsBonusAdding] = useState(false);
-            const [isBonusVisible, setIsBonusVisible] = useState(true);
-
-            const calculateProgress = (lessons) => {
-                if (!lessons || lessons.length === 0) return { completed: 0, total: 0 };
-                const totalItems = lessons.length * 4;
-                const completedItems = lessons.reduce((acc, lesson) => {
-                    const lessonProgress = progress[lesson.id] || {};
-                    return acc + Object.values(lessonProgress).filter(Boolean).length;
-                }, 0);
-                return { completed: completedItems, total: totalItems };
-            }
-
-            const mainProgress = calculateProgress(module.lessons);
-            const bonusProgress = calculateProgress(module.bonusLessons);
-            const totalCompleted = mainProgress.completed + bonusProgress.completed;
-            const totalItems = mainProgress.total + bonusProgress.total;
-            const progressPercentage = totalItems > 0 ? (totalCompleted / totalItems) * 100 : 0;
-
-            const handleAddLesson = (lessonName, isBonus = false) => {
-                onAddLesson(weekIndex, moduleIndex, lessonName, isBonus);
-                if (isBonus) setIsBonusAdding(false);
-                else setIsAdding(false);
-            }
-
-            const LessonList = ({ lessons, isBonus = false }) => (
-                <ul className="space-y-2">
-                    {lessons.map((lesson, lessonIndex) => (
-                       <li key={lesson.id} className="group flex flex-col sm:flex-row justify-between sm:items-center p-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900/80 transition-colors">
-                           <p className="text-sm font-medium text-slate-700 dark:text-slate-300 flex-grow mr-2">{lesson.name}</p>
-                           <div className="flex items-center gap-2">
-                               <ChecklistItem lessonId={lesson.id} progress={progress[lesson.id]} onToggle={onToggle} />
-                               <button onClick={() => onRemoveLesson(weekIndex, moduleIndex, lessonIndex, isBonus)} className="p-1 rounded-full text-slate-400 hover:bg-red-100 hover:text-red-500 dark:hover:bg-red-900/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                                   <Icon name="Trash2" className="w-4 h-4"/>
-                               </button>
-                           </div>
-                       </li>
-                    ))}
-                </ul>
-            );
-
-            return (
-                <div className="bg-white dark:bg-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <div className="flex justify-between items-center mb-3">
-                        <div>
-                            <span className="text-xs font-bold uppercase text-sky-500 dark:text-sky-400 tracking-wider">{module.discipline} - {module.code}</span>
-                            <h4 className="font-bold text-slate-800 dark:text-slate-100">{module.title}</h4>
-                        </div>
-                        <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{Math.round(progressPercentage)}%</span>
-                    </div>
-                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 mb-4">
-                        <div className="bg-sky-500 h-2 rounded-full transition-all duration-300" style={{ width: `${progressPercentage}%` }}></div>
-                    </div>
-                    
-                    <LessonList lessons={module.lessons} />
-                    <div className="mt-3">
-                        {isAdding ? (
-                            <AddLessonForm onAddLesson={(name) => handleAddLesson(name, false)} onCancel={() => setIsAdding(false)} />
-                        ) : (
-                            <button onClick={() => setIsAdding(true)} className="w-full text-sm font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
-                                <Icon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula
-                            </button>
-                        )}
-                    </div>
-
-                    {module.bonusLessons && module.bonusLessons.length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                            <button onClick={() => setIsBonusVisible(!isBonusVisible)} className="w-full flex justify-between items-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/60">
-                                <h5 className="font-bold text-slate-600 dark:text-slate-300">Aulas Bônus</h5>
-                                <Icon name={isBonusVisible ? "ChevronUp" : "ChevronDown"} className="w-5 h-5 text-slate-500"/>
-                            </button>
-                            {isBonusVisible && (
-                                <div className="mt-2 pl-2 border-l-2 border-sky-200 dark:border-sky-800">
-                                    <LessonList lessons={module.bonusLessons} isBonus={true} />
-                                     <div className="mt-3">
-                                        {isBonusAdding ? (
-                                            <AddLessonForm onAddLesson={(name) => handleAddLesson(name, true)} onCancel={() => setIsBonusAdding(false)} />
-                                        ) : (
-                                            <button onClick={() => setIsBonusAdding(true)} className="w-full text-sm font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
-                                                <Icon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula Bônus
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
-            )
-        }
-        
-        const Header = ({ onSearch, onFilter, onThemeToggle, currentTheme }) => (
-            <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className="bg-sky-500 p-2 rounded-lg"><Icon name="ClipboardCheck" className="w-6 h-6 text-white" /></div>
-                        <h1 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 hidden sm:block">Checklist Medcurso</h1>
-                    </div>
-                    <div className="flex-1 flex justify-center min-w-0 px-4">
-                        <div className="relative w-full max-w-lg">
-                            <Icon name="Search" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                            <input type="text" placeholder="Buscar aula ou disciplina..." onChange={(e) => onSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors" />
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                        <select onChange={(e) => onFilter(e.target.value)} className="py-2 px-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors appearance-none hidden md:block">
-                            <option value="">Todas</option>
-                            {disciplines.map(d => <option key={d} value={d} className="dark:bg-slate-800">{d}</option>)}
-                        </select>
-                        <button onClick={onThemeToggle} title="Mudar tema" className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                            <Icon name={currentTheme === 'dark' ? 'Sun' : 'Moon'} className="w-6 h-6 text-slate-600 dark:text-slate-300" />
-                        </button>
-                    </div>
-                </div>
-            </header>
-        );
-
-        const Sidebar = ({ weeks, activeWeek, onSelectWeek }) => (
-             <aside className="w-60 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col hidden md:flex">
-                 <div className="p-4 border-b border-slate-200 dark:border-slate-800">
-                     <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">Semanas</h2>
-                 </div>
-                 <nav className="flex-1 overflow-y-auto p-2 space-y-1">
-                     {weeks.map(week => (
-                         <button 
-                            key={week.week} 
-                            onClick={() => onSelectWeek(week.week)}
-                            className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeWeek === week.week ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
-                         >
-                             Semana {String(week.week).padStart(2, '0')}
-                         </button>
-                     ))}
-                 </nav>
-             </aside>
-        );
-
-        const App = () => {
-            const [schedule, setSchedule] = useState(null);
-            const [progress, setProgress] = useState({});
-            const [searchTerm, setSearchTerm] = useState('');
-            const [filter, setFilter] = useState('');
-            const [theme, setTheme] = useState('light');
-            const [user, setUser] = useState(null);
-            const [db, setDb] = useState(null);
-            const [loading, setLoading] = useState(true);
-            const [showWelcome, setShowWelcome] = useState(false);
-            const [activeWeek, setActiveWeek] = useState(1);
-            
-            const firebaseConfig = {
-                apiKey: "AIzaSyCvqp5HYUMnogWmwT0O1LFLOMsfqj9P83s",
-                authDomain: "med-heklp.firebaseapp.com",
-                projectId: "med-heklp",
-                storageBucket: "med-heklp.appspot.com",
-                messagingSenderId: "675054342845",
-                appId: "1:675054342845:web:91e53e21060a087123ddd4",
-                measurementId: "G-BLWYTWFFTZ"
-            };
-
-            const processInitialSchedule = useCallback(() => {
-                return (weeklyLayout || defaultSchedule).map(weekInfo => ({
-                    ...weekInfo,
-                    modules: weekInfo.modules.map(module => ({
-                        ...module,
-                        discipline: disciplineMapping[module.code.split(' ')[0]] || 'Desconhecida',
-                        lessons: module.lessons.map(lessonName => ({
-                            name: lessonName,
-                            id: `W${weekInfo.week}-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}`
-                        })),
-                        bonusLessons: (apostilasData[module.code]?.bonusLessons || []).map(lessonName => ({
-                            name: lessonName,
-                            id: `B-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}`
-                        }))
-                    }))
-                }));
-            }, []);
-
-            useEffect(() => {
-                try {
-                    const app = initializeApp(firebaseConfig);
-                    const auth = getAuth(app);
-                    const firestore = getFirestore(app);
-                    setDb(firestore);
-                    onAuthStateChanged(auth, currentUser => {
-                        if (currentUser) setUser(currentUser);
-                        else signInAnonymously(auth).catch(e => console.error("Anonymous sign-in error", e));
-                    });
-                } catch (e) { console.error("Firebase init error:", e); setLoading(false); }
-                
-                if (!localStorage.getItem('hasVisitedMedChecklistV6')) {
-                    setShowWelcome(true);
-                    localStorage.setItem('hasVisitedMedChecklistV6', 'true');
-                }
-            }, []);
-
-            useEffect(() => {
-                if (!user || !db) return;
-
-                const progressDocRef = doc(db, 'progress', user.uid);
-                const scheduleDocRef = doc(db, 'schedules', user.uid);
-
-                const unsubProgress = onSnapshot(progressDocRef, (docSnap) => {
-                    if (docSnap.exists()) setProgress(docSnap.data());
-                }, (error) => console.error("Progress snapshot error: ", error));
-
-                const unsubSchedule = onSnapshot(scheduleDocRef, (docSnap) => {
-                    if (docSnap.exists() && docSnap.data().schedule && docSnap.data().version === SCHEDULE_VERSION) {
-                        setSchedule(docSnap.data().schedule);
-                    } else {
-                        console.log("Outdated or no custom schedule found. Initializing/updating with default.");
-                        const processedSchedule = processInitialSchedule();
-                        setDoc(scheduleDocRef, { schedule: processedSchedule, version: SCHEDULE_VERSION });
-                        setSchedule(processedSchedule);
-                    }
-                    setLoading(false);
-                }, (error) => { 
-                    console.error("Schedule snapshot error: ", error); 
-                    setSchedule(processInitialSchedule()); // Fallback on error
-                    setLoading(false); 
-                });
-
-                return () => {
-                    unsubProgress();
-                    unsubSchedule();
-                };
-            }, [user, db, processInitialSchedule]);
-
-            useEffect(() => {
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                setTheme(savedTheme);
-                document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-            }, []);
-
-            const handleThemeToggle = () => {
-                const newTheme = theme === 'light' ? 'dark' : 'light';
-                setTheme(newTheme);
-                localStorage.setItem('theme', newTheme);
-                document.documentElement.classList.toggle('dark', newTheme === 'dark');
-            };
-            
-            const handleUpdateSchedule = useCallback(async (newSchedule) => {
-                 if (!user || !db) return;
-                 try {
-                     await setDoc(doc(db, 'schedules', user.uid), { schedule: newSchedule, version: SCHEDULE_VERSION });
-                 } catch (error) {
-                     console.error("Error saving schedule:", error);
-                 }
-            }, [user, db]);
-
-            const handleAddLesson = (weekIndex, moduleIndex, lessonName, isBonus) => {
-                const newSchedule = JSON.parse(JSON.stringify(schedule));
-                const week = newSchedule[weekIndex];
-                if (week) {
-                    const module = week.modules[moduleIndex];
-                    const lessonList = isBonus ? module.bonusLessons : module.lessons;
-                    
-                    const newLesson = {
-                        name: lessonName,
-                        id: `${isBonus ? 'B' : ''}${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}-${Date.now()}`
-                    };
-                    lessonList.push(newLesson);
-                    setSchedule(newSchedule);
-                    handleUpdateSchedule(newSchedule);
-                }
-            };
-            
-            const handleRemoveLesson = (weekIndex, moduleIndex, lessonIndex, isBonus) => {
-                if (!confirm('Tem certeza que deseja remover esta aula?')) return;
-                const newSchedule = JSON.parse(JSON.stringify(schedule));
-                const week = newSchedule[weekIndex];
-                if (week) {
-                    const module = week.modules[moduleIndex];
-                    const lessonList = isBonus ? module.bonusLessons : module.lessons;
-                    lessonList.splice(lessonIndex, 1);
-                    setSchedule(newSchedule);
-                    handleUpdateSchedule(newSchedule);
-                }
-            };
-
-            const handleToggle = useCallback(async (lessonId, checkType) => {
-                if (!user || !db) { alert("Conexão com banco de dados falhou."); return; }
-                const newProgress = JSON.parse(JSON.stringify(progress));
-                if (!newProgress[lessonId]) newProgress[lessonId] = {};
-                newProgress[lessonId][checkType] = !newProgress[lessonId][checkType];
-                setProgress(newProgress);
-                try { await setDoc(doc(db, 'progress', user.uid), newProgress, { merge: true }); } 
-                catch (error) { console.error("Error saving progress: ", error); }
-            }, [progress, user, db]);
-
-            const filteredSchedule = useMemo(() => {
-                if (!schedule) return [];
-                return schedule.map(week => ({
-                    ...week,
-                    modules: week.modules
-                        .filter(module => !filter || module.discipline === filter)
-                        .map(module => {
-                            if (!searchTerm) return module;
-
-                            const searchLower = searchTerm.toLowerCase();
-                            const moduleInfoMatches = module.discipline.toLowerCase().includes(searchLower) || module.title.toLowerCase().includes(searchLower);
-
-                            const filteredLessons = module.lessons.filter(lesson => lesson.name.toLowerCase().includes(searchLower));
-                            const filteredBonusLessons = (module.bonusLessons || []).filter(lesson => lesson.name.toLowerCase().includes(searchLower));
-
-                            if (moduleInfoMatches || filteredLessons.length > 0 || filteredBonusLessons.length > 0) {
-                                return {
-                                    ...module,
-                                    lessons: moduleInfoMatches ? module.lessons : filteredLessons,
-                                    bonusLessons: moduleInfoMatches ? module.bonusLessons : filteredBonusLessons
-                                };
-                            }
-                            return null;
-                        })
-                        .filter(Boolean)
-                })).filter(week => week.modules.length > 0);
-            }, [schedule, searchTerm, filter]);
-            
-            const activeWeekData = useMemo(() => schedule ? schedule.find(w => w.week === activeWeek) : null, [schedule, activeWeek]);
-            const isFilteredOrMobile = searchTerm || filter || (typeof window !== 'undefined' && window.innerWidth < 768);
-
-            const renderContent = () => {
-                if (!schedule || schedule.length === 0) return null;
-                if (isFilteredOrMobile) {
-                    return (
-                        <div className="space-y-4">
-                            {filteredSchedule.length > 0 ? (
-                                filteredSchedule.map(week => (
-                                    <div key={week.week} className="p-4 rounded-xl bg-slate-100 dark:bg-slate-900/50">
-                                        <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-100">Semana {String(week.week).padStart(2, '0')}</h3>
-                                        <div className="space-y-4">
-                                            {week.modules.map((module, moduleIndex) => (
-                                                <ModuleCard key={`${module.code}-${week.week}`} module={module} weekIndex={schedule.findIndex(w => w.week === week.week)} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-16 px-6 bg-white dark:bg-slate-800 rounded-2xl shadow-md">
-                                    <Icon name="SearchX" className="mx-auto w-16 h-16 text-slate-400 dark:text-slate-500 mb-4" />
-                                    <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Nenhum resultado encontrado</h3>
-                                    <p className="text-slate-500 dark:text-slate-400 mt-2">Tente ajustar seus termos de busca ou filtros.</p>
-                                </div>
-                            )}
-                        </div>
-                    );
-                }
-                
-                return (
-                    activeWeekData && (
-                        <div className="space-y-5">
-                             <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Semana {String(activeWeekData.week).padStart(2, '0')}</h3>
-                             {activeWeekData.modules.map((module, moduleIndex) => (
-                                <ModuleCard key={module.code} module={module} weekIndex={activeWeek - 1} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson}/>
-                             ))}
-                        </div>
-                    )
-                );
-            };
-
-            if (loading) {
-                return (
-                    <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
-                        <div className="flex items-center gap-4">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
-                            <span className="text-xl font-semibold text-slate-700 dark:text-slate-300">Carregando seus estudos...</span>
-                        </div>
-                    </div>
-                );
-            }
-
-            return (
-                <div className="h-screen flex flex-col bg-slate-100 dark:bg-slate-900">
-                    {showWelcome && <WelcomeModal onClose={() => setShowWelcome(false)} />}
-                    <Header onSearch={setSearchTerm} onFilter={setFilter} onThemeToggle={handleThemeToggle} currentTheme={theme} />
-                    <div className="flex-1 flex overflow-hidden">
-                        {!isFilteredOrMobile && schedule && <Sidebar weeks={schedule} activeWeek={activeWeek} onSelectWeek={setActiveWeek} />}
-                        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-                           {renderContent()}
-                        </main>
-                    </div>
-                </div>
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Checklist de Estudos - Medcurso 2024</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         window.firebase = { initializeApp, getAuth, signInAnonymously, getFirestore, doc, setDoc, onSnapshot };
     </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide-react@0.395.0/dist/lucide-react.js"></script>
     
     <!-- DADOS DO CRONOGRAMA -->
     <!-- O script abaixo será a fonte principal de dados. Se ele falhar, um cronograma mínimo será usado. -->
@@ -692,7 +49,6 @@
         const { getFirestore, doc, setDoc, onSnapshot } = window.firebase;
         
         // --- DATA ---
-        // Fallback data in case scheduleData.js is not loaded
         const minimalInitialSchedule = {
             disciplineMapping: {'EX': 'Exemplo'},
             get disciplines() { return ['Exemplo']; },
@@ -703,14 +59,34 @@
         };
 
         const { disciplines, apostilasData, weeklyLayout, disciplineMapping } = window.scheduleData || minimalInitialSchedule;
-        const SCHEDULE_VERSION = "1.4_universal_user_fix";
+        const SCHEDULE_VERSION = "1.5_universal_fix";
         const UNIVERSAL_USER_ID = "universal_checklist_data";
         
         // --- COMPONENTES ---
 
-        const Icon = ({ name, ...props }) => {
-            if (!window.lucide || !window.lucide[name]) return <span className="w-6 h-6 inline-block" />;
-            return React.createElement(window.lucide[name], props);
+        const SvgIcon = ({ name, className }) => {
+            const icons = {
+                ClipboardCheck: <><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="m9 14 2 2 4-4"/></>,
+                Search: <><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></>,
+                Moon: <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>,
+                Sun: <><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></>,
+                Youtube: <><path d="M2.5 17a24.12 24.12 0 0 1 0-10C2.5 6 4.5 4 7 4h10a4.5 4.5 0 0 1 4.5 4.5v0A4.5 4.5 0 0 1 17 13H7a4.5 4.5 0 0 1-4.5 4.5v0Z"/><path d="M14 10.5v-1a2 2 0 1 1 4 0v1"/></>,
+                Copy: <><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></>,
+                Repeat: <><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></>,
+                Check: <path d="M20 6 9 17l-5-5"/>,
+                X: <><path d="M18 6 6 18"/><path d="m6 6 12 12"/></>,
+                PlusCircle: <><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></>,
+                ChevronUp: <path d="m18 15-6-6-6 6"/>,
+                ChevronDown: <path d="m6 9 6 6 6-6"/>,
+                Trash2: <><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></>,
+                SearchX: <><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/></>,
+            };
+
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    {icons[name]}
+                </svg>
+            );
         };
         
         const ChecklistItem = ({ lessonId, progress, onToggle }) => {
@@ -725,7 +101,7 @@
                         return (
                              <button key={opt.id} title={opt.label} onClick={() => onToggle(lessonId, opt.id)}
                                 className={`flex items-center gap-2 cursor-pointer p-2 rounded-lg transition-all duration-200 border-2 ${isChecked ? 'bg-sky-500/10 border-sky-500/30 text-sky-400' : 'bg-transparent border-transparent hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-500 dark:text-slate-400'}`}>
-                                <Icon name={opt.icon} className={`w-5 h-5`} />
+                                <SvgIcon name={opt.icon} className="w-5 h-5" />
                                 <span className={`text-sm font-semibold hidden lg:inline`}>{opt.label}</span>
                             </button>
                         );
@@ -752,8 +128,8 @@
                 <form onSubmit={handleSubmit} className="flex items-center gap-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50">
                     <input ref={inputRef} type="text" value={lessonName} onChange={(e) => setLessonName(e.target.value)} placeholder="Nome da nova aula"
                         className="flex-grow bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none"/>
-                    <button type="submit" className="p-2 rounded-md bg-sky-500 text-white hover:bg-sky-600 transition-colors"><Icon name="Check" className="w-4 h-4"/></button>
-                    <button type="button" onClick={onCancel} className="p-2 rounded-md bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"><Icon name="X" className="w-4 h-4"/></button>
+                    <button type="submit" className="p-2 rounded-md bg-sky-500 text-white hover:bg-sky-600 transition-colors"><SvgIcon name="Check" className="w-4 h-4"/></button>
+                    <button type="button" onClick={onCancel} className="p-2 rounded-md bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"><SvgIcon name="X" className="w-4 h-4"/></button>
                 </form>
             );
         };
@@ -793,7 +169,7 @@
                            <div className="flex items-center gap-2">
                                <ChecklistItem lessonId={lesson.id} progress={progress[lesson.id]} onToggle={onToggle} />
                                <button onClick={() => onRemoveLesson(weekIndex, moduleIndex, lessonIndex, isBonus)} className="p-1.5 rounded-full text-slate-400 hover:bg-red-100 hover:text-red-500 dark:hover:bg-red-900/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                                   <Icon name="Trash2" className="w-4 h-4"/>
+                                   <SvgIcon name="Trash2" className="w-4 h-4"/>
                                </button>
                            </div>
                        </li>
@@ -818,7 +194,7 @@
                     <div className="mt-3">
                         {isAdding ? <AddLessonForm onAddLesson={(name) => handleAddLesson(name, false)} onCancel={() => setIsAdding(false)} />
                         : <button onClick={() => setIsAdding(true)} className="w-full text-sm font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
-                               <Icon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula
+                               <SvgIcon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula
                            </button>
                         }
                     </div>
@@ -827,7 +203,7 @@
                         <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                             <button onClick={() => setIsBonusVisible(!isBonusVisible)} className="w-full flex justify-between items-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/60">
                                 <h5 className="font-bold text-slate-600 dark:text-slate-300">Aulas Bônus</h5>
-                                <Icon name={isBonusVisible ? "ChevronUp" : "ChevronDown"} className="w-5 h-5 text-slate-500"/>
+                                <SvgIcon name={isBonusVisible ? "ChevronUp" : "ChevronDown"} className="w-5 h-5 text-slate-500"/>
                             </button>
                             {isBonusVisible && (
                                 <div className="mt-2 pl-2 border-l-2 border-sky-200 dark:border-sky-800">
@@ -835,7 +211,7 @@
                                      <div className="mt-3">
                                         {isBonusAdding ? <AddLessonForm onAddLesson={(name) => handleAddLesson(name, true)} onCancel={() => setIsBonusAdding(false)} />
                                         : <button onClick={() => setIsBonusAdding(true)} className="w-full text-sm font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
-                                                <Icon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula Bônus
+                                                <SvgIcon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula Bônus
                                             </button>
                                         }
                                     </div>
@@ -851,12 +227,12 @@
             <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className="bg-sky-500 p-2 rounded-lg"><Icon name="ClipboardCheck" className="w-6 h-6 text-white" /></div>
+                        <div className="bg-sky-500 p-2 rounded-lg"><SvgIcon name="ClipboardCheck" className="w-6 h-6 text-white" /></div>
                         <h1 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 hidden sm:block">Checklist Medcurso</h1>
                     </div>
                     <div className="flex-1 flex justify-center min-w-0 px-4">
                         <div className="relative w-full max-w-lg">
-                            <Icon name="Search" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                            <SvgIcon name="Search" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                             <input type="text" placeholder="Buscar aula ou disciplina..." onChange={(e) => onSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors" />
                         </div>
                     </div>
@@ -866,7 +242,7 @@
                             {disciplines.map(d => <option key={d} value={d} className="dark:bg-slate-800">{d}</option>)}
                         </select>
                         <button onClick={onThemeToggle} title="Mudar tema" className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                            <Icon name={currentTheme === 'dark' ? 'Sun' : 'Moon'} className="w-6 h-6 text-slate-600 dark:text-slate-300" />
+                            <SvgIcon name={currentTheme === 'dark' ? 'Sun' : 'Moon'} className="w-6 h-6 text-slate-600 dark:text-slate-300" />
                         </button>
                     </div>
                 </div>
@@ -900,7 +276,6 @@
             const [theme, setTheme] = useState('light');
             const [db, setDb] = useState(null);
             const [loading, setLoading] = useState(true);
-            const [showWelcome, setShowWelcome] = useState(false);
             const [activeWeek, setActiveWeek] = useState(1);
             
             const firebaseConfig = {
@@ -943,11 +318,6 @@
                     const firestore = getFirestore(app);
                     setDb(firestore);
                 } catch (e) { console.error("Firebase init error:", e); setLoading(false); }
-                
-                if (!localStorage.getItem('hasVisitedMedChecklistV6')) {
-                    setShowWelcome(true);
-                    localStorage.setItem('hasVisitedMedChecklistV6', 'true');
-                }
             }, []);
 
             useEffect(() => {
@@ -1093,7 +463,7 @@
                                 ))
                             ) : (
                                 <div className="text-center py-16 px-6 bg-white dark:bg-slate-800 rounded-2xl shadow-md">
-                                    <Icon name="SearchX" className="mx-auto w-16 h-16 text-slate-400 dark:text-slate-500 mb-4" />
+                                    <SvgIcon name="SearchX" className="mx-auto w-16 h-16 text-slate-400 dark:text-slate-500 mb-4" />
                                     <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Nenhum resultado encontrado</h3>
                                     <p className="text-slate-500 dark:text-slate-400 mt-2">Tente ajustar seus termos de busca ou filtros.</p>
                                 </div>
