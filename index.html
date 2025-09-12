@@ -26,11 +26,11 @@
     <meta name="theme-color" content="#020617">
     <style>
         :root { color-scheme: dark; }
-        body { background-color: #020617; color: #f1f5f9; } /* slate-950, slate-100 */
+        body { background-color: #020617; color: #f1f5f9; }
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; } /* slate-900 */
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; } /* slate-700 */
-        ::-webkit-scrollbar-thumb:hover { background: #475569; } /* slate-600 */
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
 <body class="antialiased font-sans">
@@ -42,7 +42,6 @@
         const { getAuth, signInAnonymously } = window.firebase;
         const { getFirestore, doc, setDoc, onSnapshot } = window.firebase;
         
-        // --- DATA ---
         const minimalInitialSchedule = {
             disciplineMapping: {'EX': 'Exemplo'},
             get disciplines() { return ['Exemplo']; },
@@ -51,7 +50,7 @@
         };
 
         const { disciplines, apostilasData, weeklyLayout, disciplineMapping } = window.scheduleData || minimalInitialSchedule;
-        const SCHEDULE_VERSION = "1.6_mobile_nav";
+        const SCHEDULE_VERSION = "1.9_final_fixes";
         const UNIVERSAL_USER_ID = "universal_checklist_data";
         
         // --- COMPONENTES ---
@@ -69,6 +68,7 @@
                 ChevronDown: <><path d="m6 9 6 6 6-6"/></>,
                 Trash2: <><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></>,
                 SearchX: <><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/></>,
+                Sparkles: <><path d="m12 3-1.9 4.2-4.2 1.9 4.2 1.9L12 15l1.9-4.2 4.2-1.9-4.2-1.9L12 3Z"/><path d="M5 9v4"/><path d="M19 9v4"/><path d="M3 12h4"/><path d="M17 12h4"/></>
             };
             return <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{icons[name]}</svg>;
         };
@@ -112,7 +112,7 @@
             );
         };
 
-        const ModuleCard = ({ module, weekIndex, moduleIndex, progress, onToggle, onAddLesson, onRemoveLesson }) => {
+        const ModuleCard = ({ module, weekIndex, moduleIndex, progress, onToggle, onAddLesson, onRemoveLesson, onOpenAI }) => {
             const [isAdding, setIsAdding] = useState(false);
             const [isBonusAdding, setIsBonusAdding] = useState(false);
             const [isBonusVisible, setIsBonusVisible] = useState(true);
@@ -156,12 +156,17 @@
 
             return (
                 <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-sm">
-                    <div className="flex justify-between items-center mb-3">
-                        <div>
+                    <div className="flex justify-between items-start mb-3">
+                        <div className="flex-1 min-w-0">
                             <span className="text-xs font-bold uppercase text-sky-400 tracking-wider">{module.discipline} - {module.code}</span>
-                            <h4 className="font-bold text-slate-100">{module.title}</h4>
+                            <h4 className="font-bold text-slate-100 truncate">{module.title}</h4>
                         </div>
-                        <span className="text-sm font-semibold text-slate-400">{Math.round(progressPercentage)}%</span>
+                        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                             <button onClick={() => onOpenAI(module)} title="Assistente de Estudos Gemini" className="p-2 rounded-full hover:bg-slate-700 transition-colors">
+                                <SvgIcon name="Sparkles" className="w-5 h-5 text-yellow-400"/>
+                            </button>
+                            <span className="text-sm font-semibold text-slate-400">{Math.round(progressPercentage)}%</span>
+                        </div>
                     </div>
                     <div className="w-full bg-slate-700 rounded-full h-2 mb-4">
                         <div className="bg-sky-500 h-2 rounded-full transition-all duration-300" style={{ width: `${progressPercentage}%` }}></div>
@@ -197,7 +202,7 @@
                     )}
                 </div>
             )
-        }
+        };
         
         const Header = ({ onSearch, onFilter, weeks, activeWeek, onSelectWeek }) => (
             <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-lg border-b border-slate-800 py-3 px-4 sm:px-6">
@@ -244,6 +249,101 @@
              </aside>
         );
 
+        const AIAssistantModal = ({ module, onClose }) => {
+            const [isLoading, setIsLoading] = useState(false);
+            const [generatedContent, setGeneratedContent] = useState('');
+            const [customPrompt, setCustomPrompt] = useState('');
+            const [textToAnalyze, setTextToAnalyze] = useState('');
+
+            const systemInstruction = "Você é um especialista em educação médica e um tutor para estudantes de medicina se preparando para provas de residência. Suas respostas devem ser claras, objetivas, bem formatadas em markdown e focadas nos conceitos de alto rendimento (high-yield).";
+
+            const handleGenerate = async (prompt) => {
+                setIsLoading(true);
+                setGeneratedContent('');
+                try {
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                    
+                    const payload = {
+                        contents: [{ parts: [{ text: prompt }] }],
+                        systemInstruction: { parts: [{ text: systemInstruction }] }
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Não foi possível gerar uma resposta. Tente novamente.";
+                    setGeneratedContent(text);
+
+                } catch (error) {
+                    console.error("Gemini API error:", error);
+                    setGeneratedContent("Ocorreu um erro ao conectar com a IA. Verifique o console para mais detalhes.");
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+            
+            const promptOptions = [
+                { label: 'Resumo Estratégico', prompt: `Crie um resumo estratégico sobre "${module.title}", focando nos pontos mais importantes para provas de residência médica.` },
+                { label: 'Caso Clínico', prompt: `Elabore um caso clínico sobre um paciente apresentando um quadro relacionado a "${module.title}". Inclua uma pergunta de múltipla escolha com 5 opções e, ao final, a resposta correta com uma justificativa detalhada.` },
+                { label: 'Flashcards', prompt: `Crie 5 flashcards no formato "Pergunta: ..." e "Resposta: ..." sobre os conceitos mais importantes de "${module.title}".` }
+            ];
+
+            return (
+                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4" onClick={onClose}>
+                    <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+                       <div className="flex justify-between items-center p-4 border-b border-slate-700">
+                            <div className="flex items-center gap-3">
+                               <SvgIcon name="Sparkles" className="w-6 h-6 text-yellow-400"/>
+                               <div>
+                                   <h2 className="text-xl font-bold text-slate-100">Assistente de Estudos Gemini</h2>
+                                   <p className="text-sm text-slate-400">{module.discipline}: {module.title}</p>
+                               </div>
+                           </div>
+                           <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-700 transition-colors"><SvgIcon name="X" className="w-6 h-6 text-slate-400" /></button>
+                       </div>
+                       
+                       <div className="flex-1 overflow-y-auto p-4">
+                           {isLoading ? (
+                               <div className="flex flex-col items-center justify-center h-full">
+                                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
+                                   <p className="mt-4 text-slate-300">Gerando conteúdo...</p>
+                               </div>
+                           ) : generatedContent ? (
+                               <div className="prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: generatedContent.replace(/\n/g, '<br />') }}></div>
+                           ) : (
+                               <div className="space-y-4">
+                                   <p className="text-slate-300">Selecione uma ação ou escreva seu próprio comando:</p>
+                                   <div className="flex flex-wrap gap-2">
+                                       {promptOptions.map(opt => <button key={opt.label} onClick={() => handleGenerate(opt.prompt)} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-sky-400 font-semibold rounded-lg text-sm transition-colors">{opt.label}</button>)}
+                                   </div>
+                                   <div>
+                                       <textarea value={textToAnalyze} onChange={e => setTextToAnalyze(e.target.value)} placeholder="Cole um texto aqui para análise ou resumo..." className="w-full h-24 p-2 bg-slate-800 border border-slate-700 rounded-md text-sm focus:ring-2 focus:ring-sky-500"></textarea>
+                                       <button onClick={() => handleGenerate(`Analise e resuma o seguinte texto no contexto de "${module.title}":\n\n${textToAnalyze}`)} disabled={!textToAnalyze} className="mt-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-500 text-white font-semibold rounded-lg text-sm transition-colors">Analisar Texto</button>
+                                   </div>
+                                    <div>
+                                       <textarea value={customPrompt} onChange={e => setCustomPrompt(e.target.value)} placeholder="Ou digite seu prompt personalizado aqui..." className="w-full h-24 p-2 bg-slate-800 border border-slate-700 rounded-md text-sm focus:ring-2 focus:ring-sky-500"></textarea>
+                                   </div>
+                               </div>
+                           )}
+                       </div>
+
+                       <div className="p-4 border-t border-slate-700">
+                           <button onClick={() => handleGenerate(customPrompt)} disabled={!customPrompt || isLoading} className="w-full bg-sky-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-700 disabled:bg-sky-800 disabled:text-sky-500 transition-colors">Gerar</button>
+                       </div>
+                    </div>
+                </div>
+            );
+        };
+
         const App = () => {
             const [schedule, setSchedule] = useState(null);
             const [progress, setProgress] = useState({});
@@ -251,14 +351,11 @@
             const [filter, setFilter] = useState('');
             const [db, setDb] = useState(null);
             const [loading, setLoading] = useState(true);
-            const [activeWeek, setActiveWeek] = useState(() => {
-                const saved = localStorage.getItem('lastActiveWeek');
-                return saved ? parseInt(saved, 10) : 1;
-            });
+            const [activeWeek, setActiveWeek] = useState(() => parseInt(localStorage.getItem('lastActiveWeek') || '1', 10));
+            const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+            const [selectedModuleForAI, setSelectedModuleForAI] = useState(null);
 
-            useEffect(() => {
-                localStorage.setItem('lastActiveWeek', activeWeek);
-            }, [activeWeek]);
+            useEffect(() => { localStorage.setItem('lastActiveWeek', activeWeek); }, [activeWeek]);
             
             const firebaseConfig = {
                 apiKey: "AIzaSyCvqp5HYUMnogWmwT0O1LFLOMsfqj9P83s",
@@ -277,12 +374,17 @@
                 
                 return sourceLayout.map(weekInfo => ({
                     ...weekInfo,
-                    modules: weekInfo.modules.map(module => ({
-                        ...module,
-                        discipline: sourceMapping[module.code.split(' ')[0]] || 'Desconhecida',
-                        lessons: module.lessons.map(lessonName => ({ name: lessonName, id: `W${weekInfo.week}-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}` })),
-                        bonusLessons: (sourceApostilas[module.code]?.bonusLessons || []).map(lessonName => ({ name: lessonName, id: `B-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}` }))
-                    }))
+                    modules: weekInfo.modules.map(module => {
+                        const moduleLessons = Array.isArray(module.lessons) ? module.lessons : [];
+                        const moduleBonusLessons = Array.isArray(sourceApostilas[module.code]?.bonusLessons) ? sourceApostilas[module.code].bonusLessons : [];
+
+                        return {
+                            ...module,
+                            discipline: sourceMapping[module.code.split(' ')[0]] || 'Desconhecida',
+                            lessons: moduleLessons.map(lessonName => ({ name: lessonName, id: `W${weekInfo.week}-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}` })),
+                            bonusLessons: moduleBonusLessons.map(lessonName => ({ name: lessonName, id: `B-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}` }))
+                        }
+                    })
                 }));
             }, []);
 
@@ -356,69 +458,65 @@
                 try { await setDoc(doc(db, 'progress', UNIVERSAL_USER_ID), newProgress, { merge: true }); } 
                 catch (error) { console.error("Error saving progress: ", error); }
             }, [progress, db]);
-            
-            const isFiltered = searchTerm || filter;
 
-            const filteredSchedule = useMemo(() => {
+             const handleOpenAIModal = (module) => {
+                setSelectedModuleForAI(module);
+                setIsAIModalOpen(true);
+            };
+
+            const isFilterActive = searchTerm || filter;
+
+            const contentToRender = useMemo(() => {
                 if (!schedule) return [];
-                return schedule.map(week => ({
-                    ...week,
-                    modules: week.modules
-                        .filter(module => !filter || module.discipline === filter)
-                        .map(module => {
-                            if (!searchTerm) return module;
+                
+                if (isFilterActive) {
+                    return schedule.map(week => ({
+                        ...week,
+                        modules: week.modules
+                            .filter(module => !filter || module.discipline === filter)
+                            .map(module => {
+                                if (!searchTerm) return module;
+                                const searchLower = searchTerm.toLowerCase();
+                                const moduleInfoMatches = module.discipline.toLowerCase().includes(searchLower) || module.title.toLowerCase().includes(searchLower);
+                                const filteredLessons = module.lessons.filter(lesson => lesson.name.toLowerCase().includes(searchLower));
+                                const filteredBonusLessons = (module.bonusLessons || []).filter(lesson => lesson.name.toLowerCase().includes(searchLower));
 
-                            const searchLower = searchTerm.toLowerCase();
-                            const moduleInfoMatches = module.discipline.toLowerCase().includes(searchLower) || module.title.toLowerCase().includes(searchLower);
+                                if (moduleInfoMatches || filteredLessons.length > 0 || filteredBonusLessons.length > 0) {
+                                    return { ...module, lessons: moduleInfoMatches ? module.lessons : filteredLessons, bonusLessons: moduleInfoMatches ? module.bonusLessons : filteredBonusLessons };
+                                }
+                                return null;
+                            }).filter(Boolean)
+                    })).filter(week => week.modules.length > 0);
+                }
+                
+                const activeWeekData = schedule.find(w => w.week === activeWeek);
+                return activeWeekData ? [activeWeekData] : [];
 
-                            const filteredLessons = module.lessons.filter(lesson => lesson.name.toLowerCase().includes(searchLower));
-                            const filteredBonusLessons = (module.bonusLessons || []).filter(lesson => lesson.name.toLowerCase().includes(searchLower));
-
-                            if (moduleInfoMatches || filteredLessons.length > 0 || filteredBonusLessons.length > 0) {
-                                return { ...module, lessons: moduleInfoMatches ? module.lessons : filteredLessons, bonusLessons: moduleInfoMatches ? module.bonusLessons : filteredBonusLessons };
-                            }
-                            return null;
-                        })
-                        .filter(Boolean)
-                })).filter(week => week.modules.length > 0);
-            }, [schedule, searchTerm, filter]);
+            }, [schedule, activeWeek, searchTerm, filter]);
             
-            const activeWeekData = useMemo(() => schedule ? schedule.find(w => w.week === activeWeek) : null, [schedule, activeWeek]);
-
             const renderContent = () => {
-                 if (isFiltered) {
+                 if (contentToRender.length === 0) {
                     return (
-                        <div className="space-y-4">
-                            {filteredSchedule.length > 0 ? (
-                                filteredSchedule.map(week => (
-                                    <div key={week.week} className="p-4 rounded-xl bg-slate-900/50">
-                                        <h3 className="text-xl font-bold mb-3 text-slate-100">Semana {String(week.week).padStart(2, '0')}</h3>
-                                        <div className="space-y-4">
-                                            {week.modules.map((module, moduleIndex) => (
-                                                <ModuleCard key={`${module.code}-${week.week}`} module={module} weekIndex={schedule.findIndex(w => w.week === week.week)} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-16 px-6 bg-slate-800 rounded-2xl shadow-md">
-                                    <SvgIcon name="SearchX" className="mx-auto w-16 h-16 text-slate-500 mb-4" />
-                                    <h3 className="text-xl font-semibold text-slate-100">Nenhum resultado encontrado</h3>
-                                    <p className="text-slate-400 mt-2">Tente ajustar seus termos de busca ou filtros.</p>
-                                </div>
-                            )}
+                        <div className="text-center py-16 px-6 bg-slate-800 rounded-2xl shadow-md">
+                            <SvgIcon name="SearchX" className="mx-auto w-16 h-16 text-slate-500 mb-4" />
+                            <h3 className="text-xl font-semibold text-slate-100">Nenhum resultado encontrado</h3>
+                            <p className="text-slate-400 mt-2">Tente ajustar seus termos de busca ou filtros.</p>
                         </div>
                     );
                 }
-
-                if (!activeWeekData) return null;
                 
                 return (
-                    <div className="space-y-5">
-                         <h3 className="text-2xl font-bold text-slate-100">Semana {String(activeWeekData.week).padStart(2, '0')}</h3>
-                         {activeWeekData.modules.map((module, moduleIndex) => (
-                            <ModuleCard key={module.code + module.title} module={module} weekIndex={activeWeek - 1} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson}/>
-                         ))}
+                    <div className="space-y-6">
+                        {contentToRender.map(week => (
+                            <div key={week.week}>
+                                <h3 className="text-2xl font-bold text-slate-100 mb-4">Semana {String(week.week).padStart(2, '0')}</h3>
+                                <div className="space-y-5">
+                                    {week.modules.map((module, moduleIndex) => (
+                                        <ModuleCard key={`${module.code}-${module.title}`} module={module} weekIndex={schedule.findIndex(w => w.week === week.week)} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson} onOpenAI={handleOpenAIModal}/>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 );
             };
@@ -436,6 +534,7 @@
 
             return (
                 <div className="h-screen flex flex-col bg-slate-900">
+                    {isAIModalOpen && <AIAssistantModal module={selectedModuleForAI} onClose={() => setIsAIModalOpen(false)} />}
                     <Header onSearch={setSearchTerm} onFilter={setFilter} weeks={schedule} activeWeek={activeWeek} onSelectWeek={setActiveWeek} />
                     <div className="flex-1 flex overflow-hidden">
                         <Sidebar weeks={schedule} activeWeek={activeWeek} onSelectWeek={setActiveWeek} />
