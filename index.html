@@ -356,43 +356,62 @@
                 try { await setDoc(doc(db, 'progress', UNIVERSAL_USER_ID), newProgress, { merge: true }); } 
                 catch (error) { console.error("Error saving progress: ", error); }
             }, [progress, db]);
+            
+            const isFiltered = searchTerm || filter;
 
-            const activeWeekData = useMemo(() => {
-                if (!schedule) return null;
-                const currentWeek = schedule.find(w => w.week === activeWeek);
-                if (!currentWeek) return null;
+            const filteredSchedule = useMemo(() => {
+                if (!schedule) return [];
+                return schedule.map(week => ({
+                    ...week,
+                    modules: week.modules
+                        .filter(module => !filter || module.discipline === filter)
+                        .map(module => {
+                            if (!searchTerm) return module;
 
-                if (!searchTerm && !filter) return currentWeek;
-                
-                const filteredModules = currentWeek.modules
-                    .filter(module => !filter || module.discipline === filter)
-                    .map(module => {
-                        if (!searchTerm) return module;
-                        const searchLower = searchTerm.toLowerCase();
-                        const moduleInfoMatches = module.discipline.toLowerCase().includes(searchLower) || module.title.toLowerCase().includes(searchLower);
-                        const filteredLessons = module.lessons.filter(lesson => lesson.name.toLowerCase().includes(searchLower));
-                        const filteredBonusLessons = (module.bonusLessons || []).filter(lesson => lesson.name.toLowerCase().includes(searchLower));
+                            const searchLower = searchTerm.toLowerCase();
+                            const moduleInfoMatches = module.discipline.toLowerCase().includes(searchLower) || module.title.toLowerCase().includes(searchLower);
 
-                        if (moduleInfoMatches || filteredLessons.length > 0 || filteredBonusLessons.length > 0) {
-                            return { ...module, lessons: moduleInfoMatches ? module.lessons : filteredLessons, bonusLessons: moduleInfoMatches ? module.bonusLessons : filteredBonusLessons };
-                        }
-                        return null;
-                    }).filter(Boolean);
+                            const filteredLessons = module.lessons.filter(lesson => lesson.name.toLowerCase().includes(searchLower));
+                            const filteredBonusLessons = (module.bonusLessons || []).filter(lesson => lesson.name.toLowerCase().includes(searchLower));
 
-                return { ...currentWeek, modules: filteredModules };
-
-            }, [schedule, activeWeek, searchTerm, filter]);
+                            if (moduleInfoMatches || filteredLessons.length > 0 || filteredBonusLessons.length > 0) {
+                                return { ...module, lessons: moduleInfoMatches ? module.lessons : filteredLessons, bonusLessons: moduleInfoMatches ? module.bonusLessons : filteredBonusLessons };
+                            }
+                            return null;
+                        })
+                        .filter(Boolean)
+                })).filter(week => week.modules.length > 0);
+            }, [schedule, searchTerm, filter]);
+            
+            const activeWeekData = useMemo(() => schedule ? schedule.find(w => w.week === activeWeek) : null, [schedule, activeWeek]);
 
             const renderContent = () => {
-                if (!activeWeekData || activeWeekData.modules.length === 0) {
-                     return (
-                        <div className="text-center py-16 px-6 bg-slate-800 rounded-2xl shadow-md">
-                            <SvgIcon name="SearchX" className="mx-auto w-16 h-16 text-slate-500 mb-4" />
-                            <h3 className="text-xl font-semibold text-slate-100">Nenhum resultado encontrado</h3>
-                            <p className="text-slate-400 mt-2">Tente ajustar seus termos de busca ou filtros para esta semana.</p>
+                 if (isFiltered) {
+                    return (
+                        <div className="space-y-4">
+                            {filteredSchedule.length > 0 ? (
+                                filteredSchedule.map(week => (
+                                    <div key={week.week} className="p-4 rounded-xl bg-slate-900/50">
+                                        <h3 className="text-xl font-bold mb-3 text-slate-100">Semana {String(week.week).padStart(2, '0')}</h3>
+                                        <div className="space-y-4">
+                                            {week.modules.map((module, moduleIndex) => (
+                                                <ModuleCard key={`${module.code}-${week.week}`} module={module} weekIndex={schedule.findIndex(w => w.week === week.week)} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-16 px-6 bg-slate-800 rounded-2xl shadow-md">
+                                    <SvgIcon name="SearchX" className="mx-auto w-16 h-16 text-slate-500 mb-4" />
+                                    <h3 className="text-xl font-semibold text-slate-100">Nenhum resultado encontrado</h3>
+                                    <p className="text-slate-400 mt-2">Tente ajustar seus termos de busca ou filtros.</p>
+                                </div>
+                            )}
                         </div>
                     );
                 }
+
+                if (!activeWeekData) return null;
                 
                 return (
                     <div className="space-y-5">
