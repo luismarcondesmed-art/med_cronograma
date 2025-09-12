@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,27 +19,21 @@
     </script>
     
     <!-- DADOS DO CRONOGRAMA -->
-    <!-- O script abaixo será a fonte principal de dados. Se ele falhar, um cronograma mínimo será usado. -->
     <script src="./scheduleData.js"></script>
 
     <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkNoZWNrbGlzdCBNZWRjdXJzbyAyMDI0IiwKICAic2hvcnRfbmFtZSI6ICJNZWRDaGVjayIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtsYXRpbjE8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJ1dGYtOCI/PjwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIEdlbmVyYXRvcjogU1ZHIFJlcG8gTWl4ZXIgVG9vbHMgLS0+PHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxMkwxMS41MTQ3IDE0LjUxNDdDMTIuMjAyMiAxNS4yMDIyIDEzLjI1MjMgMTUuMjAyMiAxMy45Mjk5IDE0LjUxNDdMMjAgNyIgc3Ryb2tlPSIjMzMzMzMzIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik00IDIwVjRDNCAyLjc5MDkgNC43OTA4NiAyIDYgMkgxOEMxOS4yMDkxIDIgMjAgMi43OTA4NiAyMCA0VjIwQzIwIDIxLjIwOTEgMTkuMjA5MSAyMiAxOCAyMkg2QzQuNzkwODYgMjIgNCAyMS4yMDkxIDQgMjBaIiBzdHJva2U9IiMzMzMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+IiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7bGF0aW4xPD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPjxzdmcgd2lkdGg9IjgwMHB4IiBoZWlnaHQ9IjgwMHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkgMTJMMTEuNTE0NyAxNC41MTQ3QzEyLjIwMjIgMTUuMjAyMiAxMy4yNTIzIDE1LjIwMjIgMTMuOTI5OSAxNC41MTQ3TDIwIDciIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNCAyMFY0QzQgMi43OTA5IDQuNzkwODYgMiA2IDJIMThDMTkuMjA5MSAyIDIwIDIuNzkwODYgMjAgNFYyMEMyMCAyMS4yMDkxIDE5LjIwOTEgMjIgMTggMjJINkM0Ljc5MDg2IDIyIDQgMjEuMjA5MSA0IDIwWiIgc3Ryb2tlPSIjMzMzMzMzIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIKICAgIH0KICBdLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgInRoZW1lX2NvbG9yIjogIiMwMjA2MTciLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMjA2MTciCn0=">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkNoZWNrbGlzdCBNZWRjdXJzbyAyMDI0IiwKICAic2hvcnRfbmFtZSI6ICJNZWRDaGVjayIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtsYXRpbjE8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJ1dGYtOCI/PjwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIEdlbmVyYXRvcjogU1ZHIFJlcG8gTWl4ZXIgVG9vbHMgLS0+PHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxMkwxMS41MTQ3IDE0LjUxNDdDMTIuMjAyMiAxNS4yMDIyIDEzLjI1MjMgMTUuMjAyMiAxMy45Mjk5IDE0LjUxNDdMMjAgNyIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik00IDIwVjRDNCAyLjc5MDkgNC43OTA4NiAyIDYgMkgxOEMxOS4yMDkxIDIgMjAgMi43OTA4NiAyMCA0VjIwQzIwIDIxLjIwOTEgMTkuMjA5MSAyMiAxOCAyMkg2QzQuNzkwODYgMjIgNCAyMS4yMDkxIDQgMjBaIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+IiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIgogICAgfQogIF0sCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAidGhlbWVfY29sb3IiOiAiIzAyMDYxNyIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzAyMDYxNyIKfQ==">
     <meta name="theme-color" content="#020617">
     <style>
-        :root { color-scheme: light; }
-        html.dark { color-scheme: dark; }
-        body { background-color: #f8fafc; color: #0f172a; } /* slate-50, slate-900 */
-        html.dark body { background-color: #020617; color: #f1f5f9; } /* slate-950, slate-100 */
+        :root { color-scheme: dark; }
+        body { background-color: #020617; color: #f1f5f9; } /* slate-950, slate-100 */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #e2e8f0; } /* slate-200 */
-        html.dark ::-webkit-scrollbar-track { background: #0f172a; } /* slate-900 */
-        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; } /* slate-400 */
-        html.dark ::-webkit-scrollbar-thumb { background: #334155; } /* slate-700 */
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; } /* slate-500 */
-        html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; } /* slate-600 */
+        ::-webkit-scrollbar-track { background: #0f172a; } /* slate-900 */
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; } /* slate-700 */
+        ::-webkit-scrollbar-thumb:hover { background: #475569; } /* slate-600 */
     </style>
 </head>
-<body class="antialiased font-sans transition-colors duration-300">
+<body class="antialiased font-sans">
     <div id="root"></div>
 
     <script type="text/babel">
@@ -53,23 +47,18 @@
             disciplineMapping: {'EX': 'Exemplo'},
             get disciplines() { return ['Exemplo']; },
             apostilasData: { "EX 01": { bonusLessons: ["Aula Bônus Exemplo"] } },
-            weeklyLayout: [
-                { week: 1, modules: [ { code: "EX 01", title: "Carregamento Falhou", lessons: ["Verifique sua conexão", "Tente recarregar a página"] } ] }
-            ]
+            weeklyLayout: [ { week: 1, modules: [ { code: "EX 01", title: "Carregamento Falhou", lessons: ["Verifique sua conexão", "Tente recarregar a página"] } ] } ]
         };
 
         const { disciplines, apostilasData, weeklyLayout, disciplineMapping } = window.scheduleData || minimalInitialSchedule;
-        const SCHEDULE_VERSION = "1.5_universal_fix";
+        const SCHEDULE_VERSION = "1.6_mobile_nav";
         const UNIVERSAL_USER_ID = "universal_checklist_data";
         
         // --- COMPONENTES ---
-
         const SvgIcon = ({ name, className }) => {
             const icons = {
                 ClipboardCheck: <><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="m9 14 2 2 4-4"/></>,
                 Search: <><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></>,
-                Moon: <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>,
-                Sun: <><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></>,
                 Youtube: <><path d="M2.5 17a24.12 24.12 0 0 1 0-10C2.5 6 4.5 4 7 4h10a4.5 4.5 0 0 1 4.5 4.5v0A4.5 4.5 0 0 1 17 13H7a4.5 4.5 0 0 1-4.5 4.5v0Z"/><path d="M14 10.5v-1a2 2 0 1 1 4 0v1"/></>,
                 Copy: <><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></>,
                 Repeat: <><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></>,
@@ -81,12 +70,7 @@
                 Trash2: <><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></>,
                 SearchX: <><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/></>,
             };
-
-            return (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                    {icons[name]}
-                </svg>
-            );
+            return <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{icons[name]}</svg>;
         };
         
         const ChecklistItem = ({ lessonId, progress, onToggle }) => {
@@ -100,7 +84,7 @@
                         const isChecked = progress && progress[opt.id];
                         return (
                              <button key={opt.id} title={opt.label} onClick={() => onToggle(lessonId, opt.id)}
-                                className={`flex items-center gap-2 cursor-pointer p-2 rounded-lg transition-all duration-200 border-2 ${isChecked ? 'bg-sky-500/10 border-sky-500/30 text-sky-400' : 'bg-transparent border-transparent hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-500 dark:text-slate-400'}`}>
+                                className={`flex items-center gap-2 cursor-pointer p-2 rounded-lg transition-all duration-200 border-2 ${isChecked ? 'bg-sky-500/10 border-sky-500/30 text-sky-400' : 'bg-transparent border-transparent hover:bg-slate-700/60 text-slate-400'}`}>
                                 <SvgIcon name={opt.icon} className="w-5 h-5" />
                                 <span className={`text-sm font-semibold hidden lg:inline`}>{opt.label}</span>
                             </button>
@@ -113,23 +97,17 @@
         const AddLessonForm = ({ onAddLesson, onCancel }) => {
             const [lessonName, setLessonName] = useState('');
             const inputRef = useRef(null);
-
             useEffect(() => { inputRef.current?.focus(); }, []);
-
             const handleSubmit = (e) => {
                 e.preventDefault();
-                if (lessonName.trim()) {
-                    onAddLesson(lessonName.trim());
-                    setLessonName('');
-                }
+                if (lessonName.trim()) { onAddLesson(lessonName.trim()); setLessonName(''); }
             };
-
             return (
-                <form onSubmit={handleSubmit} className="flex items-center gap-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50">
+                <form onSubmit={handleSubmit} className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/50">
                     <input ref={inputRef} type="text" value={lessonName} onChange={(e) => setLessonName(e.target.value)} placeholder="Nome da nova aula"
-                        className="flex-grow bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none"/>
+                        className="flex-grow bg-slate-700 border border-slate-600 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none"/>
                     <button type="submit" className="p-2 rounded-md bg-sky-500 text-white hover:bg-sky-600 transition-colors"><SvgIcon name="Check" className="w-4 h-4"/></button>
-                    <button type="button" onClick={onCancel} className="p-2 rounded-md bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"><SvgIcon name="X" className="w-4 h-4"/></button>
+                    <button type="button" onClick={onCancel} className="p-2 rounded-md bg-slate-600 hover:bg-slate-500 transition-colors"><SvgIcon name="X" className="w-4 h-4"/></button>
                 </form>
             );
         };
@@ -157,18 +135,17 @@
 
             const handleAddLesson = (lessonName, isBonus = false) => {
                 onAddLesson(weekIndex, moduleIndex, lessonName, isBonus);
-                if (isBonus) setIsBonusAdding(false);
-                else setIsAdding(false);
+                if (isBonus) setIsBonusAdding(false); else setIsAdding(false);
             }
 
             const LessonList = ({ lessons, isBonus = false }) => (
                 <ul className="space-y-1">
                     {lessons.map((lesson, lessonIndex) => (
-                       <li key={lesson.id} className="group flex flex-col sm:flex-row justify-between sm:items-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/40 transition-colors">
-                           <p className="text-sm font-medium text-slate-700 dark:text-slate-300 flex-grow mr-2 min-w-0 truncate">{lesson.name}</p>
+                       <li key={lesson.id} className="group flex flex-col sm:flex-row justify-between sm:items-center p-2 rounded-lg hover:bg-slate-700/40 transition-colors">
+                           <p className="text-sm font-medium text-slate-300 flex-grow mr-2 min-w-0 truncate">{lesson.name}</p>
                            <div className="flex items-center gap-2">
                                <ChecklistItem lessonId={lesson.id} progress={progress[lesson.id]} onToggle={onToggle} />
-                               <button onClick={() => onRemoveLesson(weekIndex, moduleIndex, lessonIndex, isBonus)} className="p-1.5 rounded-full text-slate-400 hover:bg-red-100 hover:text-red-500 dark:hover:bg-red-900/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                               <button onClick={() => onRemoveLesson(weekIndex, moduleIndex, lessonIndex, isBonus)} className="p-1.5 rounded-full text-slate-400 hover:bg-red-900/50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
                                    <SvgIcon name="Trash2" className="w-4 h-4"/>
                                </button>
                            </div>
@@ -178,39 +155,38 @@
             );
 
             return (
-                <div className="bg-white dark:bg-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-sm">
                     <div className="flex justify-between items-center mb-3">
                         <div>
-                            <span className="text-xs font-bold uppercase text-sky-500 dark:text-sky-400 tracking-wider">{module.discipline} - {module.code}</span>
-                            <h4 className="font-bold text-slate-800 dark:text-slate-100">{module.title}</h4>
+                            <span className="text-xs font-bold uppercase text-sky-400 tracking-wider">{module.discipline} - {module.code}</span>
+                            <h4 className="font-bold text-slate-100">{module.title}</h4>
                         </div>
-                        <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{Math.round(progressPercentage)}%</span>
+                        <span className="text-sm font-semibold text-slate-400">{Math.round(progressPercentage)}%</span>
                     </div>
-                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 mb-4">
+                    <div className="w-full bg-slate-700 rounded-full h-2 mb-4">
                         <div className="bg-sky-500 h-2 rounded-full transition-all duration-300" style={{ width: `${progressPercentage}%` }}></div>
                     </div>
-                    
                     <LessonList lessons={module.lessons} />
                     <div className="mt-3">
                         {isAdding ? <AddLessonForm onAddLesson={(name) => handleAddLesson(name, false)} onCancel={() => setIsAdding(false)} />
-                        : <button onClick={() => setIsAdding(true)} className="w-full text-sm font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        : <button onClick={() => setIsAdding(true)} className="w-full text-sm font-semibold text-sky-400 hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
                                <SvgIcon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula
                            </button>
                         }
                     </div>
 
                     {module.bonusLessons && module.bonusLessons.length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                            <button onClick={() => setIsBonusVisible(!isBonusVisible)} className="w-full flex justify-between items-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/60">
-                                <h5 className="font-bold text-slate-600 dark:text-slate-300">Aulas Bônus</h5>
-                                <SvgIcon name={isBonusVisible ? "ChevronUp" : "ChevronDown"} className="w-5 h-5 text-slate-500"/>
+                        <div className="mt-4 pt-4 border-t border-slate-700">
+                            <button onClick={() => setIsBonusVisible(!isBonusVisible)} className="w-full flex justify-between items-center p-2 rounded-lg hover:bg-slate-700/60">
+                                <h5 className="font-bold text-slate-300">Aulas Bônus</h5>
+                                <SvgIcon name={isBonusVisible ? "ChevronUp" : "ChevronDown"} className="w-5 h-5 text-slate-400"/>
                             </button>
                             {isBonusVisible && (
-                                <div className="mt-2 pl-2 border-l-2 border-sky-200 dark:border-sky-800">
+                                <div className="mt-2 pl-2 border-l-2 border-sky-800">
                                     <LessonList lessons={module.bonusLessons} isBonus={true} />
                                      <div className="mt-3">
                                         {isBonusAdding ? <AddLessonForm onAddLesson={(name) => handleAddLesson(name, true)} onCancel={() => setIsBonusAdding(false)} />
-                                        : <button onClick={() => setIsBonusAdding(true)} className="w-full text-sm font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                        : <button onClick={() => setIsBonusAdding(true)} className="w-full text-sm font-semibold text-sky-400 hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
                                                 <SvgIcon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula Bônus
                                             </button>
                                         }
@@ -223,43 +199,43 @@
             )
         }
         
-        const Header = ({ onSearch, onFilter, onThemeToggle, currentTheme }) => (
-            <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6">
+        const Header = ({ onSearch, onFilter, weeks, activeWeek, onSelectWeek }) => (
+            <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-lg border-b border-slate-800 py-3 px-4 sm:px-6">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 flex-shrink-0">
                         <div className="bg-sky-500 p-2 rounded-lg"><SvgIcon name="ClipboardCheck" className="w-6 h-6 text-white" /></div>
-                        <h1 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 hidden sm:block">Checklist Medcurso</h1>
+                        <h1 className="text-lg sm:text-xl font-bold text-slate-100 hidden sm:block">Checklist Medcurso</h1>
                     </div>
                     <div className="flex-1 flex justify-center min-w-0 px-4">
                         <div className="relative w-full max-w-lg">
                             <SvgIcon name="Search" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                            <input type="text" placeholder="Buscar aula ou disciplina..." onChange={(e) => onSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors" />
+                            <input type="text" placeholder="Buscar aula ou disciplina..." onChange={(e) => onSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-700 bg-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors" />
                         </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                        <select onChange={(e) => onFilter(e.target.value)} className="py-2 px-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors appearance-none hidden md:block">
-                            <option value="">Todas</option>
-                            {disciplines.map(d => <option key={d} value={d} className="dark:bg-slate-800">{d}</option>)}
+                        <select onChange={(e) => onSelectWeek(parseInt(e.target.value, 10))} value={activeWeek} className="py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors md:hidden">
+                            {weeks.map(w => <option key={w.week} value={w.week}>Semana {String(w.week).padStart(2, '0')}</option>)}
                         </select>
-                        <button onClick={onThemeToggle} title="Mudar tema" className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                            <SvgIcon name={currentTheme === 'dark' ? 'Sun' : 'Moon'} className="w-6 h-6 text-slate-600 dark:text-slate-300" />
-                        </button>
+                        <select onChange={(e) => onFilter(e.target.value)} className="py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors hidden md:block">
+                            <option value="">Todas</option>
+                            {disciplines.map(d => <option key={d} value={d}>{d}</option>)}
+                        </select>
                     </div>
                 </div>
             </header>
         );
 
         const Sidebar = ({ weeks, activeWeek, onSelectWeek }) => (
-             <aside className="w-60 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col hidden md:flex">
-                 <div className="p-4 border-b border-slate-200 dark:border-slate-800">
-                     <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">Semanas</h2>
+             <aside className="w-60 bg-slate-900 border-r border-slate-800 flex-col hidden md:flex">
+                 <div className="p-4 border-b border-slate-800">
+                     <h2 className="font-bold text-lg text-slate-100">Semanas</h2>
                  </div>
                  <nav className="flex-1 overflow-y-auto p-2 space-y-1">
                      {weeks.map(week => (
                          <button 
                             key={week.week} 
                             onClick={() => onSelectWeek(week.week)}
-                            className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeWeek === week.week ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
+                            className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeWeek === week.week ? 'bg-sky-900/50 text-sky-300' : 'hover:bg-slate-800 text-slate-400'}`}
                          >
                              Semana {String(week.week).padStart(2, '0')}
                          </button>
@@ -273,10 +249,16 @@
             const [progress, setProgress] = useState({});
             const [searchTerm, setSearchTerm] = useState('');
             const [filter, setFilter] = useState('');
-            const [theme, setTheme] = useState('light');
             const [db, setDb] = useState(null);
             const [loading, setLoading] = useState(true);
-            const [activeWeek, setActiveWeek] = useState(1);
+            const [activeWeek, setActiveWeek] = useState(() => {
+                const saved = localStorage.getItem('lastActiveWeek');
+                return saved ? parseInt(saved, 10) : 1;
+            });
+
+            useEffect(() => {
+                localStorage.setItem('lastActiveWeek', activeWeek);
+            }, [activeWeek]);
             
             const firebaseConfig = {
                 apiKey: "AIzaSyCvqp5HYUMnogWmwT0O1LFLOMsfqj9P83s",
@@ -289,23 +271,17 @@
             };
 
             const processInitialSchedule = useCallback(() => {
-                const sourceLayout = window.scheduleData ? window.scheduleData.weeklyLayout : minimalInitialSchedule.weeklyLayout;
-                const sourceApostilas = window.scheduleData ? window.scheduleData.apostilasData : minimalInitialSchedule.apostilasData;
-                const sourceMapping = window.scheduleData ? window.scheduleData.disciplineMapping : minimalInitialSchedule.disciplineMapping;
+                const sourceLayout = window.scheduleData?.weeklyLayout || minimalInitialSchedule.weeklyLayout;
+                const sourceApostilas = window.scheduleData?.apostilasData || minimalInitialSchedule.apostilasData;
+                const sourceMapping = window.scheduleData?.disciplineMapping || minimalInitialSchedule.disciplineMapping;
                 
                 return sourceLayout.map(weekInfo => ({
                     ...weekInfo,
                     modules: weekInfo.modules.map(module => ({
                         ...module,
                         discipline: sourceMapping[module.code.split(' ')[0]] || 'Desconhecida',
-                        lessons: module.lessons.map(lessonName => ({
-                            name: lessonName,
-                            id: `W${weekInfo.week}-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}`
-                        })),
-                        bonusLessons: (sourceApostilas[module.code]?.bonusLessons || []).map(lessonName => ({
-                            name: lessonName,
-                            id: `B-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}`
-                        }))
+                        lessons: module.lessons.map(lessonName => ({ name: lessonName, id: `W${weekInfo.week}-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}` })),
+                        bonusLessons: (sourceApostilas[module.code]?.bonusLessons || []).map(lessonName => ({ name: lessonName, id: `B-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}` }))
                     }))
                 }));
             }, []);
@@ -315,63 +291,34 @@
                     const app = initializeApp(firebaseConfig);
                     const auth = getAuth(app);
                     signInAnonymously(auth).catch(e => console.error("Anonymous sign-in error", e));
-                    const firestore = getFirestore(app);
-                    setDb(firestore);
+                    setDb(getFirestore(app));
                 } catch (e) { console.error("Firebase init error:", e); setLoading(false); }
             }, []);
 
             useEffect(() => {
                 if (!db) return;
-
                 const progressDocRef = doc(db, 'progress', UNIVERSAL_USER_ID);
                 const scheduleDocRef = doc(db, 'schedules', UNIVERSAL_USER_ID);
 
-                const unsubProgress = onSnapshot(progressDocRef, (docSnap) => {
-                    if (docSnap.exists()) setProgress(docSnap.data());
-                }, (error) => console.error("Progress snapshot error: ", error));
-
+                const unsubProgress = onSnapshot(progressDocRef, (docSnap) => { if (docSnap.exists()) setProgress(docSnap.data()); });
                 const unsubSchedule = onSnapshot(scheduleDocRef, (docSnap) => {
                     if (docSnap.exists() && docSnap.data().schedule && docSnap.data().version === SCHEDULE_VERSION) {
                         setSchedule(docSnap.data().schedule);
                     } else {
-                        console.log("Outdated or no custom schedule found. Initializing/updating with default.");
                         const processedSchedule = processInitialSchedule();
                         setDoc(scheduleDocRef, { schedule: processedSchedule, version: SCHEDULE_VERSION });
                         setSchedule(processedSchedule);
                     }
                     setLoading(false);
-                }, (error) => { 
-                    console.error("Schedule snapshot error: ", error); 
-                    setSchedule(processInitialSchedule());
-                    setLoading(false); 
-                });
+                }, () => { setSchedule(processInitialSchedule()); setLoading(false); });
 
-                return () => {
-                    unsubProgress();
-                    unsubSchedule();
-                };
+                return () => { unsubProgress(); unsubSchedule(); };
             }, [db, processInitialSchedule]);
-
-            useEffect(() => {
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                setTheme(savedTheme);
-                document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-            }, []);
-
-            const handleThemeToggle = () => {
-                const newTheme = theme === 'light' ? 'dark' : 'light';
-                setTheme(newTheme);
-                localStorage.setItem('theme', newTheme);
-                document.documentElement.classList.toggle('dark', newTheme === 'dark');
-            };
             
             const handleUpdateSchedule = useCallback(async (newSchedule) => {
                  if (!db) return;
-                 try {
-                     await setDoc(doc(db, 'schedules', UNIVERSAL_USER_ID), { schedule: newSchedule, version: SCHEDULE_VERSION });
-                 } catch (error) {
-                     console.error("Error saving schedule:", error);
-                 }
+                 try { await setDoc(doc(db, 'schedules', UNIVERSAL_USER_ID), { schedule: newSchedule, version: SCHEDULE_VERSION }); } 
+                 catch (error) { console.error("Error saving schedule:", error); }
             }, [db]);
 
             const handleAddLesson = (weekIndex, moduleIndex, lessonName, isBonus) => {
@@ -380,11 +327,7 @@
                 if (week) {
                     const module = week.modules[moduleIndex];
                     const lessonList = isBonus ? module.bonusLessons : module.lessons;
-                    
-                    const newLesson = {
-                        name: lessonName,
-                        id: `${isBonus ? 'B-' : `W${week.week}-`}${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}-${Date.now()}`
-                    };
+                    const newLesson = { name: lessonName, id: `${isBonus ? 'B-' : `W${week.week}-`}${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}-${Date.now()}` };
                     lessonList.push(newLesson);
                     setSchedule(newSchedule);
                     handleUpdateSchedule(newSchedule);
@@ -405,8 +348,8 @@
             };
 
             const handleToggle = useCallback(async (lessonId, checkType) => {
-                if (!db) { alert("Conexão com banco de dados falhou."); return; }
-                const newProgress = JSON.parse(JSON.stringify(progress));
+                if (!db) { return; }
+                const newProgress = { ...progress };
                 if (!newProgress[lessonId]) newProgress[lessonId] = {};
                 newProgress[lessonId][checkType] = !newProgress[lessonId][checkType];
                 setProgress(newProgress);
@@ -414,92 +357,69 @@
                 catch (error) { console.error("Error saving progress: ", error); }
             }, [progress, db]);
 
-            const filteredSchedule = useMemo(() => {
-                if (!schedule) return [];
-                return schedule.map(week => ({
-                    ...week,
-                    modules: week.modules
-                        .filter(module => !filter || module.discipline === filter)
-                        .map(module => {
-                            if (!searchTerm) return module;
+            const activeWeekData = useMemo(() => {
+                if (!schedule) return null;
+                const currentWeek = schedule.find(w => w.week === activeWeek);
+                if (!currentWeek) return null;
 
-                            const searchLower = searchTerm.toLowerCase();
-                            const moduleInfoMatches = module.discipline.toLowerCase().includes(searchLower) || module.title.toLowerCase().includes(searchLower);
+                if (!searchTerm && !filter) return currentWeek;
+                
+                const filteredModules = currentWeek.modules
+                    .filter(module => !filter || module.discipline === filter)
+                    .map(module => {
+                        if (!searchTerm) return module;
+                        const searchLower = searchTerm.toLowerCase();
+                        const moduleInfoMatches = module.discipline.toLowerCase().includes(searchLower) || module.title.toLowerCase().includes(searchLower);
+                        const filteredLessons = module.lessons.filter(lesson => lesson.name.toLowerCase().includes(searchLower));
+                        const filteredBonusLessons = (module.bonusLessons || []).filter(lesson => lesson.name.toLowerCase().includes(searchLower));
 
-                            const filteredLessons = module.lessons.filter(lesson => lesson.name.toLowerCase().includes(searchLower));
-                            const filteredBonusLessons = (module.bonusLessons || []).filter(lesson => lesson.name.toLowerCase().includes(searchLower));
+                        if (moduleInfoMatches || filteredLessons.length > 0 || filteredBonusLessons.length > 0) {
+                            return { ...module, lessons: moduleInfoMatches ? module.lessons : filteredLessons, bonusLessons: moduleInfoMatches ? module.bonusLessons : filteredBonusLessons };
+                        }
+                        return null;
+                    }).filter(Boolean);
 
-                            if (moduleInfoMatches || filteredLessons.length > 0 || filteredBonusLessons.length > 0) {
-                                return {
-                                    ...module,
-                                    lessons: moduleInfoMatches ? module.lessons : filteredLessons,
-                                    bonusLessons: moduleInfoMatches ? module.bonusLessons : filteredBonusLessons
-                                };
-                            }
-                            return null;
-                        })
-                        .filter(Boolean)
-                })).filter(week => week.modules.length > 0);
-            }, [schedule, searchTerm, filter]);
-            
-            const activeWeekData = useMemo(() => schedule ? schedule.find(w => w.week === activeWeek) : null, [schedule, activeWeek]);
-            const isFilteredOrMobile = searchTerm || filter || (typeof window !== 'undefined' && window.innerWidth < 768);
+                return { ...currentWeek, modules: filteredModules };
+
+            }, [schedule, activeWeek, searchTerm, filter]);
 
             const renderContent = () => {
-                if (!schedule || schedule.length === 0) return null;
-                if (isFilteredOrMobile) {
-                    return (
-                        <div className="space-y-4">
-                            {filteredSchedule.length > 0 ? (
-                                filteredSchedule.map(week => (
-                                    <div key={week.week} className="p-4 rounded-xl bg-slate-100 dark:bg-slate-900/50">
-                                        <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-100">Semana {String(week.week).padStart(2, '0')}</h3>
-                                        <div className="space-y-4">
-                                            {week.modules.map((module, moduleIndex) => (
-                                                <ModuleCard key={`${module.code}-${week.week}`} module={module} weekIndex={schedule.findIndex(w => w.week === week.week)} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-16 px-6 bg-white dark:bg-slate-800 rounded-2xl shadow-md">
-                                    <SvgIcon name="SearchX" className="mx-auto w-16 h-16 text-slate-400 dark:text-slate-500 mb-4" />
-                                    <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Nenhum resultado encontrado</h3>
-                                    <p className="text-slate-500 dark:text-slate-400 mt-2">Tente ajustar seus termos de busca ou filtros.</p>
-                                </div>
-                            )}
+                if (!activeWeekData || activeWeekData.modules.length === 0) {
+                     return (
+                        <div className="text-center py-16 px-6 bg-slate-800 rounded-2xl shadow-md">
+                            <SvgIcon name="SearchX" className="mx-auto w-16 h-16 text-slate-500 mb-4" />
+                            <h3 className="text-xl font-semibold text-slate-100">Nenhum resultado encontrado</h3>
+                            <p className="text-slate-400 mt-2">Tente ajustar seus termos de busca ou filtros para esta semana.</p>
                         </div>
                     );
                 }
                 
                 return (
-                    activeWeekData && (
-                        <div className="space-y-5">
-                             <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Semana {String(activeWeekData.week).padStart(2, '0')}</h3>
-                             {activeWeekData.modules.map((module, moduleIndex) => (
-                                <ModuleCard key={module.code} module={module} weekIndex={activeWeek - 1} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson}/>
-                             ))}
-                        </div>
-                    )
+                    <div className="space-y-5">
+                         <h3 className="text-2xl font-bold text-slate-100">Semana {String(activeWeekData.week).padStart(2, '0')}</h3>
+                         {activeWeekData.modules.map((module, moduleIndex) => (
+                            <ModuleCard key={module.code + module.title} module={module} weekIndex={activeWeek - 1} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson}/>
+                         ))}
+                    </div>
                 );
             };
 
-            if (loading) {
+            if (loading || !schedule) {
                 return (
-                    <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
+                    <div className="flex items-center justify-center min-h-screen bg-slate-950">
                         <div className="flex items-center gap-4">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
-                            <span className="text-xl font-semibold text-slate-700 dark:text-slate-300">Carregando seus estudos...</span>
+                            <span className="text-xl font-semibold text-slate-300">Carregando seus estudos...</span>
                         </div>
                     </div>
                 );
             }
 
             return (
-                <div className="h-screen flex flex-col bg-slate-100 dark:bg-slate-900">
-                    <Header onSearch={setSearchTerm} onFilter={setFilter} onThemeToggle={handleThemeToggle} currentTheme={theme} />
+                <div className="h-screen flex flex-col bg-slate-900">
+                    <Header onSearch={setSearchTerm} onFilter={setFilter} weeks={schedule} activeWeek={activeWeek} onSelectWeek={setActiveWeek} />
                     <div className="flex-1 flex overflow-hidden">
-                        {!isFilteredOrMobile && schedule && <Sidebar weeks={schedule} activeWeek={activeWeek} onSelectWeek={setActiveWeek} />}
+                        <Sidebar weeks={schedule} activeWeek={activeWeek} onSelectWeek={setActiveWeek} />
                         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                            {renderContent()}
                         </main>
