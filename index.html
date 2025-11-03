@@ -1,554 +1,786 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-br" class="">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Checklist de Estudos - Medcurso 2024</title>
-    <!-- Tailwind CSS -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma Pediatria UFPR</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        window.firebase = { initializeApp, getAuth, signInAnonymously, getFirestore, doc, setDoc, onSnapshot };
-    </script>
-    
-    <!-- DADOS DO CRONOGRAMA -->
-    <script src="./scheduleData.js"></script>
-
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkNoZWNrbGlzdCBNZWRjdXJzbyAyMDI0IiwKICAic2hvcnRfbmFtZSI6ICJNZWRDaGVjayIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtsYXRpbjE8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJ1dGYtOCI/PjwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIEdlbmVyYXRvcjogU1ZHIFJlcG8gTWl4ZXIgVG9vbHMgLS0+PHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxMkwxMS41MTQ3IDE0LjUxNDdDMTIuMjAyMiAxNS4yMDIyIDEzLjI1MjMgMTUuMjAyMiAxMy45Mjk5IDE0LjUxNDdMMjAgNyIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik00IDIwVjRDNCAyLjc5MDkgNC43OTA4NiAyIDYgMkgxOEMxOS4yMDkxIDIgMjAgMi43OTA4NiAyMCA0VjIwQzIwIDIxLjIwOTEgMTkuMjA5MSAyMiAxOCAyMkg2QzQuNzkwODYgMjIgNCAyMS4yMDkxIDQgMjBaIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+IiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIgogICAgfQogIF0sCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAidGhlbWVfY29sb3IiOiAiIzAyMDYxNyIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzAyMDYxNyIKfQ==">
-    <meta name="theme-color" content="#020617">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Ícones (Feather Icons) -->
+    <script src="https://unpkg.com/feather-icons"></script>
     <style>
-        :root { color-scheme: dark; }
-        body { background-color: #020617; color: #f1f5f9; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilo para o menu modal */
+        #menu-modal {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        #menu-modal.hidden {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        /* Estilo para a barra de scroll no modo escuro */
+        html.dark ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        html.dark ::-webkit-scrollbar-track {
+            background: #1f2937; /* gray-800 */
+        }
+        html.dark ::-webkit-scrollbar-thumb {
+            background-color: #4b5563; /* gray-600 */
+            border-radius: 20px;
+            border: 3px solid #1f2937; /* gray-800 */
+        }
+        html ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        html ::-webkit-scrollbar-track {
+            background: #f3f4f6; /* gray-100 */
+        }
+        html ::-webkit-scrollbar-thumb {
+            background-color: #9ca3af; /* gray-400 */
+            border-radius: 20px;
+            border: 3px solid #f3f4f6; /* gray-100 */
+        }
     </style>
 </head>
-<body class="antialiased font-sans">
-    <div id="root"></div>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
 
-    <script type="text/babel">
-        const { useState, useEffect, useMemo, useCallback, useRef } = React;
-        const { initializeApp } = window.firebase;
-        const { getAuth, signInAnonymously } = window.firebase;
-        const { getFirestore, doc, setDoc, onSnapshot } = window.firebase;
-        
-        const minimalInitialSchedule = {
-            disciplineMapping: {'EX': 'Exemplo'},
-            get disciplines() { return ['Exemplo']; },
-            apostilasData: { "EX 01": { bonusLessons: ["Aula Bônus Exemplo"] } },
-            weeklyLayout: [ { week: 1, modules: [ { code: "EX 01", title: "Carregamento Falhou", lessons: ["Verifique sua conexão", "Tente recarregar a página"] } ] } ]
-        };
+    <!-- Container Principal -->
+    <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
 
-        const { disciplines, apostilasData, weeklyLayout, disciplineMapping } = window.scheduleData || minimalInitialSchedule;
-        const SCHEDULE_VERSION = "1.9_final_fixes";
-        const UNIVERSAL_USER_ID = "universal_checklist_data";
-        
-        // --- COMPONENTES ---
-        const SvgIcon = ({ name, className }) => {
-            const icons = {
-                ClipboardCheck: <><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="m9 14 2 2 4-4"/></>,
-                Search: <><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></>,
-                Youtube: <><path d="M2.5 17a24.12 24.12 0 0 1 0-10C2.5 6 4.5 4 7 4h10a4.5 4.5 0 0 1 4.5 4.5v0A4.5 4.5 0 0 1 17 13H7a4.5 4.5 0 0 1-4.5 4.5v0Z"/><path d="M14 10.5v-1a2 2 0 1 1 4 0v1"/></>,
-                Copy: <><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></>,
-                Repeat: <><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></>,
-                Check: <><path d="M20 6 9 17l-5-5"/></>,
-                X: <><path d="M18 6 6 18"/><path d="m6 6 12 12"/></>,
-                PlusCircle: <><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></>,
-                ChevronUp: <><path d="m18 15-6-6-6 6"/></>,
-                ChevronDown: <><path d="m6 9 6 6 6-6"/></>,
-                Trash2: <><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></>,
-                SearchX: <><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/></>,
-                Sparkles: <><path d="m12 3-1.9 4.2-4.2 1.9 4.2 1.9L12 15l1.9-4.2 4.2-1.9-4.2-1.9L12 3Z"/><path d="M5 9v4"/><path d="M19 9v4"/><path d="M3 12h4"/><path d="M17 12h4"/></>
-            };
-            return <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{icons[name]}</svg>;
-        };
-        
-        const ChecklistItem = ({ lessonId, progress, onToggle }) => {
-            const checklistOptions = [
-                { id: 'aula', label: 'Aula', icon: 'Youtube' }, { id: 'anki', label: 'Anki', icon: 'Copy' },
-                { id: 'exercicios', label: 'Exercícios', icon: 'ClipboardCheck' }, { id: 'revisao', label: 'Revisão', icon: 'Repeat' }
-            ];
-            return (
-                <div className="flex flex-shrink-0 flex-wrap items-center justify-start sm:justify-end gap-1 sm:gap-2 mt-2 sm:mt-0">
-                    {checklistOptions.map(opt => {
-                        const isChecked = progress && progress[opt.id];
-                        return (
-                             <button key={opt.id} title={opt.label} onClick={() => onToggle(lessonId, opt.id)}
-                                className={`flex items-center gap-2 cursor-pointer p-2 rounded-lg transition-all duration-200 border-2 ${isChecked ? 'bg-sky-500/10 border-sky-500/30 text-sky-400' : 'bg-transparent border-transparent hover:bg-slate-700/60 text-slate-400'}`}>
-                                <SvgIcon name={opt.icon} className="w-5 h-5" />
-                                <span className={`text-sm font-semibold hidden lg:inline`}>{opt.label}</span>
-                            </button>
-                        );
-                    })}
+        <!-- Cabeçalho -->
+        <header class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">Cronograma de Pediatria</h1>
+                <p class="text-lg text-gray-600 dark:text-gray-300">Estágio Obrigatório UFPR - Turma B 2025</p>
+            </div>
+            <button id="menu-button" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <i data-feather="menu" class="h-6 w-6"></i>
+            </button>
+        </header>
+
+        <!-- Menu Modal (Navegação) -->
+        <div id="menu-modal" class="fixed top-0 right-0 h-full w-72 sm:w-80 bg-white dark:bg-gray-800 shadow-xl z-50 p-6 transform translate-x-full transition-transform duration-300 ease-in-out hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-xl font-semibold">Menu</h2>
+                <button id="close-menu-button" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <i data-feather="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+            <nav class="flex flex-col space-y-4">
+                <button id="show-main-content-btn" data-view="main-content" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center space-x-3">
+                    <i data-feather="calendar" class="h-5 w-5 text-blue-500"></i>
+                    <span>Meu Rodízio</span>
+                </button>
+                <button id="show-all-rotations-btn" data-view="all-rotations-view" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center space-x-3">
+                    <i data-feather="grid" class="h-5 w-5 text-green-500"></i>
+                    <span>Todos os Rodízios</span>
+                </button>
+                <button id="show-general-themes-btn" data-view="general-themes-view" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center space-x-3">
+                    <i data-feather="book-open" class="h-5 w-5 text-indigo-500"></i>
+                    <span>Temas Gerais</span>
+                </button>
+                
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <label for="dark-mode-toggle" class="flex items-center justify-between cursor-pointer px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="flex items-center space-x-3">
+                            <i data-feather="moon" class="h-5 w-5 text-purple-500"></i>
+                            <span>Modo Escuro</span>
+                        </span>
+                        <div class="relative">
+                            <input type="checkbox" id="dark-mode-toggle" class="sr-only">
+                            <div class="block bg-gray-300 dark:bg-gray-600 w-12 h-7 rounded-full transition-colors"></div>
+                            <div id="dark-mode-slider" class="dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform transform translate-x-0 dark:translate-x-5"></div>
+                        </div>
+                    </label>
                 </div>
-            );
-        };
-        
-        const AddLessonForm = ({ onAddLesson, onCancel }) => {
-            const [lessonName, setLessonName] = useState('');
-            const inputRef = useRef(null);
-            useEffect(() => { inputRef.current?.focus(); }, []);
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                if (lessonName.trim()) { onAddLesson(lessonName.trim()); setLessonName(''); }
-            };
-            return (
-                <form onSubmit={handleSubmit} className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/50">
-                    <input ref={inputRef} type="text" value={lessonName} onChange={(e) => setLessonName(e.target.value)} placeholder="Nome da nova aula"
-                        className="flex-grow bg-slate-700 border border-slate-600 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none"/>
-                    <button type="submit" className="p-2 rounded-md bg-sky-500 text-white hover:bg-sky-600 transition-colors"><SvgIcon name="Check" className="w-4 h-4"/></button>
-                    <button type="button" onClick={onCancel} className="p-2 rounded-md bg-slate-600 hover:bg-slate-500 transition-colors"><SvgIcon name="X" className="w-4 h-4"/></button>
-                </form>
-            );
-        };
+            </nav>
+        </div>
+        <!-- Overlay do Menu -->
+        <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
 
-        const ModuleCard = ({ module, weekIndex, moduleIndex, progress, onToggle, onAddLesson, onRemoveLesson, onOpenAI }) => {
-            const [isAdding, setIsAdding] = useState(false);
-            const [isBonusAdding, setIsBonusAdding] = useState(false);
-            const [isBonusVisible, setIsBonusVisible] = useState(true);
 
-            const calculateProgress = (lessons) => {
-                if (!lessons || lessons.length === 0) return { completed: 0, total: 0 };
-                const totalItems = lessons.length * 4;
-                const completedItems = lessons.reduce((acc, lesson) => {
-                    const lessonProgress = progress[lesson.id] || {};
-                    return acc + Object.values(lessonProgress).filter(Boolean).length;
-                }, 0);
-                return { completed: completedItems, total: totalItems };
-            }
+        <!-- === SEÇÃO PRINCIPAL (Meu Rodízio) === -->
+        <main id="main-content" class="view-content">
+            <!-- Seletor de Grupo (REMOVIDO) -->
+            <!-- 
+            <div class="mb-6 bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+                <label for="student-group-select" class="block text-lg font-semibold mb-3">Selecione seu grupo:</label>
+                <select id="student-group-select" class="w-full max-w-md p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Por favor, escolha um grupo --</option>
+                    <option value="GRUPO I">Grupo I</option>
+                    <option value="GRUPO II">Grupo II</option>
+                    <option value="GRUPO III">Grupo III</option>
+                    <option value="GRUPO IV">Grupo IV</option>
+                    <option value="GRUPO V">Grupo V</option>
+                    <option value="GRUPO VI">Grupo VI</option>
+                    <option value="GRUPO VII">Grupo VII</option>
+                    <option value="GRUPO VIII">Grupo VIII</option>
+                    <option value="GRUPO IX">Grupo IX</option>
+                </select>
+            </div>
+            -->
 
-            const mainProgress = calculateProgress(module.lessons);
-            const bonusProgress = calculateProgress(module.bonusLessons);
-            const totalCompleted = mainProgress.completed + bonusProgress.completed;
-            const totalItems = mainProgress.total + bonusProgress.total;
-            const progressPercentage = totalItems > 0 ? (totalCompleted / totalItems) * 100 : 0;
-
-            const handleAddLesson = (lessonName, isBonus = false) => {
-                onAddLesson(weekIndex, moduleIndex, lessonName, isBonus);
-                if (isBonus) setIsBonusAdding(false); else setIsAdding(false);
-            }
-
-            const LessonList = ({ lessons, isBonus = false }) => (
-                <ul className="space-y-1">
-                    {lessons.map((lesson, lessonIndex) => (
-                       <li key={lesson.id} className="group flex flex-col sm:flex-row justify-between sm:items-center p-2 rounded-lg hover:bg-slate-700/40 transition-colors">
-                           <p className="text-sm font-medium text-slate-300 flex-grow mr-2 min-w-0 truncate">{lesson.name}</p>
-                           <div className="flex items-center gap-2">
-                               <ChecklistItem lessonId={lesson.id} progress={progress[lesson.id]} onToggle={onToggle} />
-                               <button onClick={() => onRemoveLesson(weekIndex, moduleIndex, lessonIndex, isBonus)} className="p-1.5 rounded-full text-slate-400 hover:bg-red-900/50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                                   <SvgIcon name="Trash2" className="w-4 h-4"/>
-                               </button>
-                           </div>
-                       </li>
-                    ))}
-                </ul>
-            );
-
-            return (
-                <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-sm">
-                    <div className="flex justify-between items-start mb-3">
-                        <div className="flex-1 min-w-0">
-                            <span className="text-xs font-bold uppercase text-sky-400 tracking-wider">{module.discipline} - {module.code}</span>
-                            <h4 className="font-bold text-slate-100 truncate">{module.title}</h4>
-                        </div>
-                        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                             <button onClick={() => onOpenAI(module)} title="Assistente de Estudos Gemini" className="p-2 rounded-full hover:bg-slate-700 transition-colors">
-                                <SvgIcon name="Sparkles" className="w-5 h-5 text-yellow-400"/>
-                            </button>
-                            <span className="text-sm font-semibold text-slate-400">{Math.round(progressPercentage)}%</span>
-                        </div>
+            <!-- Visualização do Cronograma -->
+            <div id="schedule-view" class="">
+                <!-- Informações Atuais -->
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 p-4 rounded-lg shadow">
+                        <p class="text-sm font-medium opacity-80">Data de Hoje</p>
+                        <p id="current-date" class="text-lg font-semibold"></p>
                     </div>
-                    <div className="w-full bg-slate-700 rounded-full h-2 mb-4">
-                        <div className="bg-sky-500 h-2 rounded-full transition-all duration-300" style={{ width: `${progressPercentage}%` }}></div>
+                    <div class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 p-4 rounded-lg shadow">
+                        <p class="text-sm font-medium opacity-80">Seu Grupo</p>
+                        <p id="selected-group-name" class="text-lg font-semibold">Grupo VI</p>
                     </div>
-                    <LessonList lessons={module.lessons} />
-                    <div className="mt-3">
-                        {isAdding ? <AddLessonForm onAddLesson={(name) => handleAddLesson(name, false)} onCancel={() => setIsAdding(false)} />
-                        : <button onClick={() => setIsAdding(true)} className="w-full text-sm font-semibold text-sky-400 hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
-                               <SvgIcon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula
-                           </button>
-                        }
-                    </div>
-
-                    {module.bonusLessons && module.bonusLessons.length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-slate-700">
-                            <button onClick={() => setIsBonusVisible(!isBonusVisible)} className="w-full flex justify-between items-center p-2 rounded-lg hover:bg-slate-700/60">
-                                <h5 className="font-bold text-slate-300">Aulas Bônus</h5>
-                                <SvgIcon name={isBonusVisible ? "ChevronUp" : "ChevronDown"} className="w-5 h-5 text-slate-400"/>
-                            </button>
-                            {isBonusVisible && (
-                                <div className="mt-2 pl-2 border-l-2 border-sky-800">
-                                    <LessonList lessons={module.bonusLessons} isBonus={true} />
-                                     <div className="mt-3">
-                                        {isBonusAdding ? <AddLessonForm onAddLesson={(name) => handleAddLesson(name, true)} onCancel={() => setIsBonusAdding(false)} />
-                                        : <button onClick={() => setIsBonusAdding(true)} className="w-full text-sm font-semibold text-sky-400 hover:bg-sky-900/50 p-2 rounded-lg transition-colors flex items-center justify-center gap-2">
-                                                <SvgIcon name="PlusCircle" className="w-4 h-4"/> Adicionar Aula Bônus
-                                            </button>
-                                        }
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
-            )
-        };
-        
-        const Header = ({ onSearch, onFilter, weeks, activeWeek, onSelectWeek }) => (
-            <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-lg border-b border-slate-800 py-3 px-4 sm:px-6">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className="bg-sky-500 p-2 rounded-lg"><SvgIcon name="ClipboardCheck" className="w-6 h-6 text-white" /></div>
-                        <h1 className="text-lg sm:text-xl font-bold text-slate-100 hidden sm:block">Checklist Medcurso</h1>
-                    </div>
-                    <div className="flex-1 flex justify-center min-w-0 px-4">
-                        <div className="relative w-full max-w-lg">
-                            <SvgIcon name="Search" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                            <input type="text" placeholder="Buscar aula ou disciplina..." onChange={(e) => onSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-700 bg-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors" />
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                        <select onChange={(e) => onSelectWeek(parseInt(e.target.value, 10))} value={activeWeek} className="py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors md:hidden">
-                            {weeks.map(w => <option key={w.week} value={w.week}>Semana {String(w.week).padStart(2, '0')}</option>)}
-                        </select>
-                        <select onChange={(e) => onFilter(e.target.value)} className="py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors hidden md:block">
-                            <option value="">Todas</option>
-                            {disciplines.map(d => <option key={d} value={d}>{d}</option>)}
-                        </select>
+                    <div class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-100 p-4 rounded-lg shadow">
+                        <p class="text-sm font-medium opacity-80">Período Atual</p>
+                        <p id="current-period-text" class="text-lg font-semibold">-</p>
                     </div>
                 </div>
-            </header>
-        );
 
-        const Sidebar = ({ weeks, activeWeek, onSelectWeek }) => (
-             <aside className="w-60 bg-slate-900 border-r border-slate-800 flex-col hidden md:flex">
-                 <div className="p-4 border-b border-slate-800">
-                     <h2 className="font-bold text-lg text-slate-100">Semanas</h2>
-                 </div>
-                 <nav className="flex-1 overflow-y-auto p-2 space-y-1">
-                     {weeks.map(week => (
-                         <button 
-                            key={week.week} 
-                            onClick={() => onSelectWeek(week.week)}
-                            className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeWeek === week.week ? 'bg-sky-900/50 text-sky-300' : 'hover:bg-slate-800 text-slate-400'}`}
-                         >
-                             Semana {String(week.week).padStart(2, '0')}
-                         </button>
-                     ))}
-                 </nav>
-             </aside>
-        );
-
-        const AIAssistantModal = ({ module, onClose }) => {
-            const [isLoading, setIsLoading] = useState(false);
-            const [generatedContent, setGeneratedContent] = useState('');
-            const [customPrompt, setCustomPrompt] = useState('');
-            const [textToAnalyze, setTextToAnalyze] = useState('');
-
-            const systemInstruction = "Você é um especialista em educação médica e um tutor para estudantes de medicina se preparando para provas de residência. Suas respostas devem ser claras, objetivas, bem formatadas em markdown e focadas nos conceitos de alto rendimento (high-yield).";
-
-            const handleGenerate = async (prompt) => {
-                setIsLoading(true);
-                setGeneratedContent('');
-                try {
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                <!-- Rodízio Atual -->
+                <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+                    <h3 class="text-2xl font-bold mb-1">Rodízio Atual:</h3>
+                    <p id="current-rotation-name" class="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-4">-</p>
                     
-                    const payload = {
-                        contents: [{ parts: [{ text: prompt }] }],
-                        systemInstruction: { parts: [{ text: systemInstruction }] }
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API error: ${response.statusText}`);
-                    }
-
-                    const result = await response.json();
-                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Não foi possível gerar uma resposta. Tente novamente.";
-                    setGeneratedContent(text);
-
-                } catch (error) {
-                    console.error("Gemini API error:", error);
-                    setGeneratedContent("Ocorreu um erro ao conectar com a IA. Verifique o console para mais detalhes.");
-                } finally {
-                    setIsLoading(false);
-                }
-            };
-            
-            const promptOptions = [
-                { label: 'Resumo Estratégico', prompt: `Crie um resumo estratégico sobre "${module.title}", focando nos pontos mais importantes para provas de residência médica.` },
-                { label: 'Caso Clínico', prompt: `Elabore um caso clínico sobre um paciente apresentando um quadro relacionado a "${module.title}". Inclua uma pergunta de múltipla escolha com 5 opções e, ao final, a resposta correta com uma justificativa detalhada.` },
-                { label: 'Flashcards', prompt: `Crie 5 flashcards no formato "Pergunta: ..." e "Resposta: ..." sobre os conceitos mais importantes de "${module.title}".` }
-            ];
-
-            return (
-                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4" onClick={onClose}>
-                    <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
-                       <div className="flex justify-between items-center p-4 border-b border-slate-700">
-                            <div className="flex items-center gap-3">
-                               <SvgIcon name="Sparkles" className="w-6 h-6 text-yellow-400"/>
-                               <div>
-                                   <h2 className="text-xl font-bold text-slate-100">Assistente de Estudos Gemini</h2>
-                                   <p className="text-sm text-slate-400">{module.discipline}: {module.title}</p>
-                               </div>
-                           </div>
-                           <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-700 transition-colors"><SvgIcon name="X" className="w-6 h-6 text-slate-400" /></button>
-                       </div>
-                       
-                       <div className="flex-1 overflow-y-auto p-4">
-                           {isLoading ? (
-                               <div className="flex flex-col items-center justify-center h-full">
-                                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
-                                   <p className="mt-4 text-slate-300">Gerando conteúdo...</p>
-                               </div>
-                           ) : generatedContent ? (
-                               <div className="prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: generatedContent.replace(/\n/g, '<br />') }}></div>
-                           ) : (
-                               <div className="space-y-4">
-                                   <p className="text-slate-300">Selecione uma ação ou escreva seu próprio comando:</p>
-                                   <div className="flex flex-wrap gap-2">
-                                       {promptOptions.map(opt => <button key={opt.label} onClick={() => handleGenerate(opt.prompt)} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-sky-400 font-semibold rounded-lg text-sm transition-colors">{opt.label}</button>)}
-                                   </div>
-                                   <div>
-                                       <textarea value={textToAnalyze} onChange={e => setTextToAnalyze(e.target.value)} placeholder="Cole um texto aqui para análise ou resumo..." className="w-full h-24 p-2 bg-slate-800 border border-slate-700 rounded-md text-sm focus:ring-2 focus:ring-sky-500"></textarea>
-                                       <button onClick={() => handleGenerate(`Analise e resuma o seguinte texto no contexto de "${module.title}":\n\n${textToAnalyze}`)} disabled={!textToAnalyze} className="mt-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-500 text-white font-semibold rounded-lg text-sm transition-colors">Analisar Texto</button>
-                                   </div>
-                                    <div>
-                                       <textarea value={customPrompt} onChange={e => setCustomPrompt(e.target.value)} placeholder="Ou digite seu prompt personalizado aqui..." className="w-full h-24 p-2 bg-slate-800 border border-slate-700 rounded-md text-sm focus:ring-2 focus:ring-sky-500"></textarea>
-                                   </div>
-                               </div>
-                           )}
-                       </div>
-
-                       <div className="p-4 border-t border-slate-700">
-                           <button onClick={() => handleGenerate(customPrompt)} disabled={!customPrompt || isLoading} className="w-full bg-sky-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-700 disabled:bg-sky-800 disabled:text-sky-500 transition-colors">Gerar</button>
-                       </div>
+                    <h4 class="text-xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">Atividades da Semana</h4>
+                    <div id="current-week-schedule-content" class="space-y-4">
+                        <!-- Conteúdo será injetado aqui -->
                     </div>
                 </div>
-            );
+            </div>
+
+            <!-- Mensagem de "Selecione um Grupo" (REMOVIDA) -->
+            <!-- 
+            <div id="select-group-message" class="text-center p-10 bg-white dark:bg-gray-800 shadow-md rounded-lg">
+                <i data-feather="info" class="h-12 w-12 text-blue-500 mx-auto mb-4"></i>
+                <h2 class="text-2xl font-semibold mb-2">Bem-vindo!</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300">Selecione seu grupo acima para ver seu cronograma atual.</p>
+            </div>
+            -->
+
+            <!-- Mensagem de "Fora do Período" -->
+            <div id="out-of-period-message" class="hidden text-center p-10 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 shadow-md rounded-lg">
+                <i data-feather="coffee" class="h-12 w-12 mx-auto mb-4"></i>
+                <h2 class="text-2xl font-semibold mb-2" id="out-of-period-title">Fora do Período</h2>
+                <p class="text-lg" id="out-of-period-text">Não há atividades programadas para a data de hoje.</p>
+            </div>
+        </main>
+
+        <!-- === SEÇÃO DE TODOS OS RODÍZIOS === -->
+        <section id="all-rotations-view" class="view-content hidden">
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-300 dark:border-gray-600">Todos os Rodízios</h2>
+            <div id="all-rotations-content" class="space-y-6">
+                <!-- Conteúdo será injetado pelo JavaScript -->
+            </div>
+        </section>
+
+        <!-- === SEÇÃO DE TEMAS GERAIS === -->
+        <section id="general-themes-view" class="view-content hidden">
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-300 dark:border-gray-600">Temas Gerais</h2>
+            <p class="mb-6 text-lg text-gray-700 dark:text-gray-300">Lista de temas de estudo categorizados por área de conhecimento.</p>
+            <div id="general-themes-content" class="space-y-4">
+                <!-- Conteúdo será injetado pelo JavaScript -->
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- INICIALIZAÇÃO DOS ÍCONES ---
+        feather.replace();
+
+        // --- BANCO DE DADOS (JSON) ---
+
+        // Dados dos Rodízios (A-I)
+        const rotationsSchedule = {
+            "A": {
+                "title": "INFECTOPEDIATRIA / REUMATO / U&E 1 / PUERI-PRESCRIÇÃO MÉDICA",
+                "details": [
+                    { "type": "local", "title": "INFECTOLOGIA", "text": "Ambulatório Prédio Central: SAM 2 (3ª, 5ª e 6ª feiras), SAM 30 (4ª feira de manhã)" },
+                    { "type": "prof", "title": "Professores", "text": "Profª Cristina de Oliveira Rodrigues, Drª Andréa Maciel O. Rossoni, Prof. Tony Tannous Tahan" }
+                ],
+                "schedule": [
+                    { "day": "2ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "HORÁRIO ESTUDO" },
+                    { "day": "3ª FEIRA", "morning": "Infecto (08:00-10:30 h)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" },
+                    { "day": "4ª FEIRA", "morning": "Infecto (08:00-12:00 h)", "afternoon": "HORÁRIO ESTUDO" },
+                    { "day": "5ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "Infecto (13:00-17:00 h)" },
+                    { "day": "6ª FEIRA", "morning": "Infecto (08:00-10:00 h)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "Infecto (13:00-17:00 h)" }
+                ]
+            },
+            "B": {
+                "title": "IMUNOALERGOLOGIA / PNEUMOLOGIA / SEC / REUMATO",
+                "details": [
+                    { "type": "local", "title": "PNEUMOLOGIA", "text": "Serviço Medicina Respiratória Pediátrica do CHC/EBSERH - R. Pe. Camargo, 453 (SAM 32)." },
+                    { "type": "local", "title": "SEC/REUMATO", "text": "SEC/PA pediatria - CHC Prédio Central" },
+                    { "type": "prof", "title": "Professores", "text": "Prof Débora Carla Chong e Silva, Prof Herberto José Chong Neto, Profª Laura Araújo, Profª Thais Cugler Meneghetti" }
+                ],
+                "schedule": [
+                    { "day": "2ª FEIRA", "morning": "SEC (08:00-10:00 h, prof Thais)", "afternoon": "Pneumologia (profª Débora)" },
+                    { "day": "3ª FEIRA", "morning": "SEC (08:00-10:00 h, profª Thais)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Imuno-alergo (Profº Chong)" },
+                    { "day": "4ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "Imuno-alergo (Profº Chong)" },
+                    { "day": "5ª FEIRA", "morning": "Reumato (08:30-12:00 h, profª Thais)", "afternoon": "Pneumologia (profª Laura)" },
+                    { "day": "6ª FEIRA", "morning": "Pneumo (08:00 h, profª Débora)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                ]
+            },
+            "C": {
+                "title": "SEC/ENDOCRINO/CLÍNICA PEDITRICA I",
+                "details": [
+                    { "type": "local", "title": "ENDOCRINOLOGIA", "text": "UEP Rua Pe Camargo, 250" },
+                    { "type": "local", "title": "CLÍNICA PED I", "text": "Sala Pós Graduação no 14º andar" },
+                    { "type": "prof", "title": "Professores", "text": "Profª Suzana Nesi França, Prof Rosana Marques Pereira, Prof Julienne Angela Ramires de Carvalho, Prof Geraldo Miranda Graça Filho" }
+                ],
+                "schedule": [
+                    { "day": "2ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "Endócrino (13:00-16:30 h, profª Suzana)" },
+                    { "day": "3ª FEIRA", "morning": "Clínica Ped I (08:30-10:00 h, profº Geraldo)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Endócrino (13:00-16:30 h, profª Rosana)" },
+                    { "day": "4ª FEIRA", "morning": "Endócrino (07:30-12:00 h, profª Julienne)", "afternoon": "Endócrino (13:00-16:30 h, profª Rosana)" },
+                    { "day": "5ª FEIRA", "morning": "Clínica Ped I (07:30-10:00 h, profº Geraldo)", "afternoon": "HORÁRIO ESTUDO" },
+                    { "day": "6ª FEIRA", "morning": "Endócrino (07:30-10:00 h, profª Suzana)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                ]
+            },
+            "D": {
+                "title": "ALOJA. CONJUNTO / CENTRO CIRURGICO OBSTÉTRICO / SIMULAÇÃO II / GRUPO S.A.C.I.",
+                "details": [
+                    { "type": "local", "title": "ALOJA. CONJUNTO", "text": "Ponto de encontro no hall 3º andar prédio da Maternidade" },
+                    { "type": "local", "title": "CCO", "text": "Centro Cirúrgico Obstétrico 1º andar (Maternidade)" },
+                    { "type": "local", "title": "SIMULAÇÃO I", "text": "Centro de Simulação CHC Profª Leide Parolin 5º andar Prédio do Laboratório" },
+                    { "type": "local", "title": "GRUPO S.A.C.I", "text": "14º andar Prédio Central HC/EBSERH" },
+                    { "type": "prof", "title": "Professores", "text": "Prof Paulyne Stadler Venzon, Profª Regina Paula G.V.C. da Silva, Prof Daniela Hespanha Marinho, Prof Fabiano Steil da Silva, Prof Carlos Alberto Fernandes Baltar, dr André Luis" }
+                ],
+                "schedule": [
+                    { "day": "2ª FEIRA", "morning": "AC (08:00-11:00 h, profª Regina)", "afternoon": "CCO (13:30-16:30 h, profº Fabiano)" },
+                    { "day": "3ª FEIRA", "morning": "Grupo S.A.C.I. (08:00-09:30 h, drs André e Baltar)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" },
+                    { "day": "4ª FEIRA", "morning": "AC (08:00-11:00 h, profª Paulyne)", "afternoon": "HORÁRIO ESTUDO" },
+                    { "day": "5ª FEIRA", "morning": "AC (08:00-11:00 h, profª Regina)", "afternoon": "Simulação I (13:00-17:00h, profº Baltar)" },
+                    { "day": "6ª FEIRA", "morning": "CCO (08:00-10:30 h, profº Fabiano)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "CCO (12:30-15:30 h, profº Daniela)" }
+                ]
+            },
+            "E": {
+                "title": "NEUROLOGIA PEDIÁTRICA + PUERICULTURA ALTO RISCO",
+                "details": [
+                    { "type": "local", "title": "NEUROLOGIA", "text": "CENEP R. Floriano Essenfelder, 81." },
+                    { "type": "prof", "title": "Professores", "text": "Profª Ana Chrystina de Souza Crippa, Prof Sérgio Antonio Antoniuk, Dra. Fernanda Wagner Fredo dos Santos, Dr. Gustavo Manoel Scher Dória, Dra. Daniela Bufara, Dr. Eduardo Mister, Dra. Nathália Vargas" }
+                ],
+                "schedule": [
+                    { "day": "2ª FEIRA", "morning": "Neuro Autismo (07:30-11:30 h, profº Sérgio/dra. Fernanda)", "afternoon": "Neuro Geral (13:00-16:00 h, Drª Nathália)" },
+                    { "day": "3ª FEIRA", "morning": "Neuro Complexos (07:30-10:30 h, profª Ana Crippa)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Neuro Bate papo (13:30-15:30 h, profª Ana Crippa)" },
+                    { "day": "4ª FEIRA", "morning": "Neuro Dificuldade aprendizado (07:30-11:30 h, dr. Eduardo/prof Ana Crippa)", "afternoon": "Neuro Geral (13:00-16:00 h, dr. Eduardo)" },
+                    { "day": "5ª FEIRA", "morning": "Neuro Epilepsia 1ª crise (07:30-11:30 h, profº Sérgio/profª Ana Crippa/dr. Eduardo)", "afternoon": "Neuro Geral (13:00-16:00 h, Drª Fernanda)" },
+                    { "day": "6ª FEIRA", "morning": "Friday Meeting Neurologia (07:30-10:00 h, prof Ana Crippa)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "Neuro Geral (13:00-16:00 h, Dr. Eduardo)" }
+                ]
+            },
+            "F": {
+                "title": "PUERICULTURA / ONCOHEMATOLOGIA",
+                "details": [
+                    { "type": "local", "title": "ONCOHEMATOLOGIA", "text": "Ambulatório 9º andar // Enfermaria 14º andar, Prédio Central CHC/EBSERH" },
+                    { "type": "local", "title": "PUERICULTURA", "text": "SAM 11 Casa da Puericultura ao lado do CHC/EBSERH" },
+                    { "type": "local", "title": "UBS", "text": "UBS Vila Diana. R, Renê Descartes, 537, Abranches." },
+                    { "type": "prof", "title": "Professores", "text": "Prof Tiago Hessel Tormen, Profª Leniza Costa Lima Lichtvan, Dra Melina Sayuri Takata, Profª Cristine Secco Rosário" }
+                ],
+                "schedule": [
+                    { "day": "2ª FEIRA", "morning": "PUERICULTURA (Dra. Melina, 08-12 h)", "afternoon": "UBS (14:00-16:00 h, Profª Cristine)" },
+                    { "day": "3ª FEIRA", "morning": "PUERICULTURA (Dra. Melina, 08-10:30 h)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Hematologia Ambulatório (13:30-17:30 h, profº Tiago)" },
+                    { "day": "4ª FEIRA", "morning": "PUERICULTURA (Dra. Melina, 08-12 h)", "afternoon": "UBS (14:00-16:00 h, Profª Cristine)" },
+                    { "day": "5ª FEIRA", "morning": "PUERICULTURA (Dra. Melina, 08-12 h)", "afternoon": "Hematologia Ambulatório (14:00-18:00 h, profª Leniza)" },
+                    { "day": "6ª FEIRA", "morning": "HORÁRIO ESTUDO<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                ]
+            },
+            "G": {
+                "title": "PA PEDIATRIA (DIURNO)",
+                "details": [
+                    { "type": "local", "title": "PA PEDIATRIA", "text": "PA Pediatria 1º andar Prédio Central CHC/EBSERH" },
+                    { "type": "prof", "title": "Preceptores", "text": "Drs Eduardo Mister, Luis Fernando Matoso Mendes" },
+                    { "type": "prof", "title": "Professor", "text": "Profº Carlos A Baltar (semidireta)" },
+                    { "type": "info", "title": "Observação", "text": "PLANTÕES 12 HORAS (07:30 a 19:30 h). 03 alunos por turno. Alunos não escalados estão liberados. Alunos neste rodízio estão liberados das atividades teóricas de 3ª e 6ª." }
+                ],
+                "schedule": [
+                    { "day": "2ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
+                    { "day": "3ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
+                    { "day": "4ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
+                    { "day": "5ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
+                    { "day": "6ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" }
+                ]
+            },
+            "H": {
+                "title": "SEMPR / DERMATOPEDIATRIA / PRONTO ATENDIMENTO PEDIATRIA (NOTURNO)",
+                "details": [
+                    { "type": "local", "title": "DERMATOLOGIA", "text": "Prédio Central CHC/EBSERH, SAM 2." },
+                    { "type": "local", "title": "SEMPR", "text": "Auditório do SEMPR - Av. Agostinho Leão Junior, 285" },
+                    { "type": "local", "title": "PA PEDIATRIA", "text": "PA Pediatria 1º andar Prédio Central CHC/EBSERH" },
+                    { "type": "prof", "title": "Professores", "text": "Profª Vânia de Oliveira Carvalho, Profª Bruna Guerrer, Profª Margaret C. S. Boguszewski" },
+                    { "type": "info", "title": "Plantões PA", "text": "02 plantões noturnos (19:30-07:30 h) / aluno na semana. 02 alunos por plantão." }
+                ],
+                "schedule": [
+                    { "day": "2ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "Dermato (13:00-15:00 h, profª Vânia)", "night": "PA PLANTÃO (19:30-07:30 h)" },
+                    { "day": "3ª FEIRA", "morning": "SEMPR (08:00-10:00 h, profª Margareth)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" },
+                    { "day": "4ª FEIRA", "morning": "Dermato (08:00-10:00 h, profª Vânia)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" },
+                    { "day": "5ª FEIRA", "morning": "Dermato (08:00-10:00 h, profª Vânia)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" },
+                    { "day": "6ª FEIRA", "morning": "HORÁRIO ESTUDO<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" }
+                ]
+            },
+            "I": {
+                "title": "ENFERMARIA PEDIATRIA / GASTRO / U&E 2",
+                "details": [
+                    { "type": "local", "title": "ENFERMARIA", "text": "14º andar do prédio central do CHC" },
+                    { "type": "local", "title": "PUERICULTURA/PRESCRIÇÃO", "text": "Sala 14º andar / ambulatório" },
+                    { "type": "local", "title": "PUERICULTURA (Prematuro)", "text": "Casa de Especialidades Pediátricas - SAM 11" },
+                    { "type": "prof", "title": "Professores", "text": "Prof. André Luis do Carmo, Dr. Luciano Massuda, Profª Gislayne Nieto, Profª Ana Lúcia Figueredo Sarquis" }
+                ],
+                "schedule": [
+                    { "day": "2ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)", "afternoon": "HORÁRIO ESTUDO" },
+                    { "day": "3ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Pueri/P.médica (13:00-15:00 h, profª Gislayne)" },
+                    { "day": "4ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)", "afternoon": "Puericultura (Prematuro) SAM 11 (13:00-16:30 h, profª Ana Lúcia)" },
+                    { "day": "5ª FEIRA", "morning": "Pueri/P.médica (07:30-10:30 h, profª Gislayne)", "afternoon": "HORÁRIO ESTUDO" },
+                    { "day": "6ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                ]
+            }
         };
 
-        const App = () => {
-            const [schedule, setSchedule] = useState(null);
-            const [progress, setProgress] = useState({});
-            const [searchTerm, setSearchTerm] = useState('');
-            const [filter, setFilter] = useState('');
-            const [db, setDb] = useState(null);
-            const [loading, setLoading] = useState(true);
-            const [activeWeek, setActiveWeek] = useState(() => parseInt(localStorage.getItem('lastActiveWeek') || '1', 10));
-            const [isAIModalOpen, setIsAIModalOpen] = useState(false);
-            const [selectedModuleForAI, setSelectedModuleForAI] = useState(null);
+        // Cronograma Mestre (Grupo x Rodízio x Data)
+        // ATUALIZADO DE ACORDO COM A IMAGEM FORNECIDA
+        const masterSchedule = [
+            { "start": "2025-11-03T00:00:00", "end": "2025-11-07T23:59:59", "label": "03/11 a 07/11", "assignments": { "GRUPO I": "A", "GRUPO II": "I", "GRUPO III": "H", "GRUPO IV": "G", "GRUPO V": "F", "GRUPO VI": "E", "GRUPO VII": "D", "GRUPO VIII": "C", "GRUPO IX": "B" } },
+            { "start": "2025-11-10T00:00:00", "end": "2025-11-14T23:59:59", "label": "10/11 a 14/11", "assignments": { "GRUPO I": "B", "GRUPO II": "A", "GRUPO III": "I", "GRUPO IV": "H", "GRUPO V": "G", "GRUPO VI": "F", "GRUPO VII": "E", "GRUPO VIII": "D", "GRUPO IX": "C" } },
+            { "start": "2025-11-17T00:00:00", "end": "2025-11-28T23:59:59", "label": "17/11 a 28/11", "assignments": { "GRUPO I": "C", "GRUPO II": "B", "GRUPO III": "A", "GRUPO IV": "I", "GRUPO V": "H", "GRUPO VI": "G", "GRUPO VII": "F", "GRUPO VIII": "E", "GRUPO IX": "D" } },
+            { "start": "2025-12-01T00:00:00", "end": "2025-12-05T23:59:59", "label": "01/12 a 05/12", "assignments": { "GRUPO I": "D", "GRUPO II": "C", "GRUPO III": "B", "GRUPO IV": "A", "GRUPO V": "I", "GRUPO VI": "H", "GRUPO VII": "G", "GRUPO VIII": "F", "GRUPO IX": "E" } },
+            { "start": "2025-12-08T00:00:00", "end": "2025-12-12T23:59:59", "label": "08/12 a 12/12", "assignments": { "GRUPO I": "E", "GRUPO II": "D", "GRUPO III": "C", "GRUPO IV": "B", "GRUPO V": "A", "GRUPO VI": "I", "GRUPO VII": "H", "GRUPO VIII": "G", "GRUPO IX": "F" } },
+            { "start": "2025-12-15T00:00:00", "end": "2025-12-19T23:59:59", "label": "15/12 a 19/12", "assignments": { "GRUPO I": "F", "GRUPO II": "E", "GRUPO III": "D", "GRUPO IV": "C", "GRUPO V": "B", "GRUPO VI": "A", "GRUPO VII": "I", "GRUPO VIII": "H", "GRUPO IX": "G" } },
+            { "start": "2025-12-20T00:00:00", "end": "2026-01-04T23:59:59", "label": "Recesso", "assignments": "Recesso" },
+            { "start": "2026-01-05T00:00:00", "end": "2026-01-09T23:59:59", "label": "05/01 a 09/01", "assignments": { "GRUPO I": "G", "GRUPO II": "F", "GRUPO III": "E", "GRUPO IV": "D", "GRUPO V": "C", "GRUPO VI": "B", "GRUPO VII": "A", "GRUPO VIII": "I", "GRUPO IX": "H" } },
+            { "start": "2026-01-12T00:00:00", "end": "2026-01-16T23:59:59", "label": "12/01 a 16/01", "assignments": { "GRUPO I": "H", "GRUPO II": "G", "GRUPO III": "F", "GRUPO IV": "E", "GRUPO V": "D", "GRUPO VI": "C", "GRUPO VII": "B", "GRUPO VIII": "A", "GRUPO IX": "I" } },
+            { "start": "2026-01-19T00:00:00", "end": "2026-01-23T23:59:59", "label": "19/01 a 23/01", "assignments": { "GRUPO I": "I", "GRUPO II": "H", "GRUPO III": "G", "GRUPO IV": "F", "GRUPO V": "E", "GRUPO VI": "D", "GRUPO VII": "C", "GRUPO VIII": "B", "GRUPO IX": "A" } }
+        ];
 
-            useEffect(() => { localStorage.setItem('lastActiveWeek', activeWeek); }, [activeWeek]);
-            
-            const firebaseConfig = {
-                apiKey: "AIzaSyCvqp5HYUMnogWmwT0O1LFLOMsfqj9P83s",
-                authDomain: "med-heklp.firebaseapp.com",
-                projectId: "med-heklp",
-                storageBucket: "med-heklp.appspot.com",
-                messagingSenderId: "675054342845",
-                appId: "1:675054342845:web:91e53e21060a087123ddd4",
-                measurementId: "G-BLWYTWFFTZ"
-            };
+        // Temas Gerais Categorizados
+        // (OBJETO CORRIGIDO E COMPLETO)
+        const generalThemes = {
+            "Neonatologia e Puericultura": [
+                "Aleitamento materno", "Assistência ao Rn no Alojamento conjunto", "Atendimento ao Rn na sala de parto",
+                "Circulação Transicional", "Icterícia neonatal", "Prematuridade", "Protocolos de alojamento conjunto",
+                "Protocolos de TORCHES", "Testes de triagem neonatal", "Triagem neonatal", "Calendário vacinal"
+            ],
+            "Crescimento e Nutrição": [
+                "Crescimento e Desenvolvimento", "Alta estatura", "Baixa Estatura", "Cardápio no Primeiro Ano de Vida",
+                "Anorexia", "Desnutrição", "Obesidade", "Fórmulas Infantis", "Hipovitaminoses", "Anemias Carenciais"
+            ],
+            "Imunologia e Alergia": [
+                "Alergia a Proteína do Leite de Vaca", "Asma e crise de asma", "Dermatite atópica", "Renite alérgica",
+                "Síndrome do Bebê Chiador"
+            ],
+            "Infectologia": [
+                "Dengue", "IVAS (Infecções de Vias Aéreas Superiores)", "Meningites e outras infecções sistema nervoso",
+                "Síndrome de imunodeficiência adquirida (HIV)", "Tuberculose", "Viroses exantemáticas", "Choque Séptico"
+            ],
+            "Endocrinologia": [
+                "Cetoacidose Diabética", "Diabetes Melllitus", "Hipertireoidismo", "Hipotireoidismo congênito",
+                "Puberdade Precoce e Tardia"
+            ],
+            "Neurologia": [
+                "Autismo", "Cefaleia na Infância", "Crises Convulsivas", "Desenvolvimento Neuropsicomotor",
+                "Epilepsias", "Paralisia cerebral", "Retardo Mental", "TDAH e transtornos e dificuldade de aprendizado",
+                "Tumores do Sistema Nervoso Central"
+            ],
+            "Gastroenterologia": [
+                "Constipação Intestinal", "Diarreia Crônica", "Doenças Inflamatórias Intestinais", "Dor abdominal",
+                "Hemorragias Digestivas"
+            ],
+            "Hematologia e Oncologia": [
+                "Anemia Falciforme", "Anemias Carenciais", "Leucemias e Linfomas", "Linfonodomegalia"
+            ],
+            "Pneumologia": [
+                "Asma e crise de asma", "Fibrose Cística", "Síndrome do Bebê Chiador"
+            ],
+            "Dermatologia": [
+                "Dermatite atópica", "Dermatopatia da infância", "Doenças cutâneas parasitárias"
+            ],
+            "Reumatologia": [
+                "Doenças inflamatórias e reumatológicas na infância"
+            ],
+            "Nefrologia e Metabolismo": [
+                "Distúrbio Hidroeletrolíticos", "Erros Inatos do Metabolismo"
+            ],
+            "Cardiologia": [
+                "Hipertensão Arterial Sistêmica"
+            ],
+            "Urgência e Terapia Intensiva": [
+                "Choque Séptico", "Parada Cardiorespiratória"
+            ],
+            "Farmacologia e Geral": [
+                "Corticoterapia", "Prescrição médica em pediatria", "Ética"
+            ]
+        };
 
-            const processInitialSchedule = useCallback(() => {
-                const sourceLayout = window.scheduleData?.weeklyLayout || minimalInitialSchedule.weeklyLayout;
-                const sourceApostilas = window.scheduleData?.apostilasData || minimalInitialSchedule.apostilasData;
-                const sourceMapping = window.scheduleData?.disciplineMapping || minimalInitialSchedule.disciplineMapping;
-                
-                return sourceLayout.map(weekInfo => ({
-                    ...weekInfo,
-                    modules: weekInfo.modules.map(module => {
-                        const moduleLessons = Array.isArray(module.lessons) ? module.lessons : [];
-                        const moduleBonusLessons = Array.isArray(sourceApostilas[module.code]?.bonusLessons) ? sourceApostilas[module.code].bonusLessons : [];
+        // --- REMOÇÃO DAS DEFINIÇÕES DUPLICADAS ---
+        /*
+        // Cronograma Mestre (Grupo x Rodízio x Data)
+        // ATUALIZADO DE ACORDO COM A IMAGEM FORNECIDA
+        const masterSchedule = [
+            // ... DADOS DUPLICADOS REMOVIDOS ...
+        ];
 
-                        return {
-                            ...module,
-                            discipline: sourceMapping[module.code.split(' ')[0]] || 'Desconhecida',
-                            lessons: moduleLessons.map(lessonName => ({ name: lessonName, id: `W${weekInfo.week}-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}` })),
-                            bonusLessons: moduleBonusLessons.map(lessonName => ({ name: lessonName, id: `B-${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}` }))
-                        }
-                    })
-                }));
-            }, []);
+        // Temas Gerais Categorizados
+        const generalThemes = {
+            // ... DADOS DUPLICADOS REMOVIDOS ...
+        };
+        */
 
-            useEffect(() => {
-                try {
-                    const app = initializeApp(firebaseConfig);
-                    const auth = getAuth(app);
-                    signInAnonymously(auth).catch(e => console.error("Anonymous sign-in error", e));
-                    setDb(getFirestore(app));
-                } catch (e) { console.error("Firebase init error:", e); setLoading(false); }
-            }, []);
 
-            useEffect(() => {
-                if (!db) return;
-                const progressDocRef = doc(db, 'progress', UNIVERSAL_USER_ID);
-                const scheduleDocRef = doc(db, 'schedules', UNIVERSAL_USER_ID);
+        // --- DOM ELEMENTS ---
+        // const studentSelect = document.getElementById('student-group-select'); // REMOVIDO
+        const scheduleView = document.getElementById('schedule-view');
+        // const selectGroupMessage = document.getElementById('select-group-message'); // REMOVIDO
+        const outOfPeriodMessage = document.getElementById('out-of-period-message');
+        const outOfPeriodTitle = document.getElementById('out-of-period-title');
+        const outOfPeriodText = document.getElementById('out-of-period-text');
+        
+        const currentDateElem = document.getElementById('current-date');
+        // const selectedGroupElem = document.getElementById('selected-group-name'); // REMOVIDO (HTML está fixo)
+        const currentPeriodElem = document.getElementById('current-period-text');
+        const currentRotationElem = document.getElementById('current-rotation-name');
+        const currentScheduleContentElem = document.getElementById('current-week-schedule-content');
 
-                const unsubProgress = onSnapshot(progressDocRef, (docSnap) => { if (docSnap.exists()) setProgress(docSnap.data()); });
-                const unsubSchedule = onSnapshot(scheduleDocRef, (docSnap) => {
-                    if (docSnap.exists() && docSnap.data().schedule && docSnap.data().version === SCHEDULE_VERSION) {
-                        setSchedule(docSnap.data().schedule);
-                    } else {
-                        const processedSchedule = processInitialSchedule();
-                        setDoc(scheduleDocRef, { schedule: processedSchedule, version: SCHEDULE_VERSION });
-                        setSchedule(processedSchedule);
-                    }
-                    setLoading(false);
-                }, () => { setSchedule(processInitialSchedule()); setLoading(false); });
+        // Menu Elements
+        const menuButton = document.getElementById('menu-button');
+        const closeMenuButton = document.getElementById('close-menu-button');
+        const menuModal = document.getElementById('menu-modal');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const navButtons = document.querySelectorAll('.nav-button');
 
-                return () => { unsubProgress(); unsubSchedule(); };
-            }, [db, processInitialSchedule]);
-            
-            const handleUpdateSchedule = useCallback(async (newSchedule) => {
-                 if (!db) return;
-                 try { await setDoc(doc(db, 'schedules', UNIVERSAL_USER_ID), { schedule: newSchedule, version: SCHEDULE_VERSION }); } 
-                 catch (error) { console.error("Error saving schedule:", error); }
-            }, [db]);
+        // View Content Elements
+        const views = document.querySelectorAll('.view-content');
+        const allRotationsContainer = document.getElementById('all-rotations-content');
+        const generalThemesContainer = document.getElementById('general-themes-content');
 
-            const handleAddLesson = (weekIndex, moduleIndex, lessonName, isBonus) => {
-                const newSchedule = JSON.parse(JSON.stringify(schedule));
-                const week = newSchedule[weekIndex];
-                if (week) {
-                    const module = week.modules[moduleIndex];
-                    const lessonList = isBonus ? module.bonusLessons : module.lessons;
-                    const newLesson = { name: lessonName, id: `${isBonus ? 'B-' : `W${week.week}-`}${module.code.replace(/\s/g, '')}-${lessonName.replace(/[^a-zA-Z0-9]/g, '')}-${Date.now()}` };
-                    lessonList.push(newLesson);
-                    setSchedule(newSchedule);
-                    handleUpdateSchedule(newSchedule);
-                }
-            };
-            
-            const handleRemoveLesson = (weekIndex, moduleIndex, lessonIndex, isBonus) => {
-                if (!confirm('Tem certeza que deseja remover esta aula?')) return;
-                const newSchedule = JSON.parse(JSON.stringify(schedule));
-                const week = newSchedule[weekIndex];
-                if (week) {
-                    const module = week.modules[moduleIndex];
-                    const lessonList = isBonus ? module.bonusLessons : module.lessons;
-                    lessonList.splice(lessonIndex, 1);
-                    setSchedule(newSchedule);
-                    handleUpdateSchedule(newSchedule);
-                }
-            };
+        // Dark Mode Elements
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const darkModeSlider = document.getElementById('dark-mode-slider');
+        const htmlElement = document.documentElement;
 
-            const handleToggle = useCallback(async (lessonId, checkType) => {
-                if (!db) { return; }
-                const newProgress = { ...progress };
-                if (!newProgress[lessonId]) newProgress[lessonId] = {};
-                newProgress[lessonId][checkType] = !newProgress[lessonId][checkType];
-                setProgress(newProgress);
-                try { await setDoc(doc(db, 'progress', UNIVERSAL_USER_ID), newProgress, { merge: true }); } 
-                catch (error) { console.error("Error saving progress: ", error); }
-            }, [progress, db]);
+        // --- FUNÇÕES ---
 
-             const handleOpenAIModal = (module) => {
-                setSelectedModuleForAI(module);
-                setIsAIModalOpen(true);
-            };
+        /**
+         * Retorna o período de estágio atual com base na data de hoje.
+         */
+        function getCurrentPeriodInfo() {
+            const today = new Date();
+            // Para testes:
+            // const today = new Date('2025-11-04T10:00:00'); // Semana 1
+            // const today = new Date('2025-12-25T10:00:00'); // Recesso
+            // const today = new Date('2026-01-06T10:00:00'); // Semana pós-recesso
+            // const today = new Date('2025-11-03T10:00:00'); // Simula o primeiro dia
 
-            const isFilterActive = searchTerm || filter;
+            return masterSchedule.find(period => {
+                const startDate = new Date(period.start);
+                const endDate = new Date(period.end);
+                return today >= startDate && today <= endDate;
+            });
+        }
 
-            const contentToRender = useMemo(() => {
-                if (!schedule) return [];
-                
-                if (isFilterActive) {
-                    return schedule.map(week => ({
-                        ...week,
-                        modules: week.modules
-                            .filter(module => !filter || module.discipline === filter)
-                            .map(module => {
-                                if (!searchTerm) return module;
-                                const searchLower = searchTerm.toLowerCase();
-                                const moduleInfoMatches = module.discipline.toLowerCase().includes(searchLower) || module.title.toLowerCase().includes(searchLower);
-                                const filteredLessons = module.lessons.filter(lesson => lesson.name.toLowerCase().includes(searchLower));
-                                const filteredBonusLessons = (module.bonusLessons || []).filter(lesson => lesson.name.toLowerCase().includes(searchLower));
-
-                                if (moduleInfoMatches || filteredLessons.length > 0 || filteredBonusLessons.length > 0) {
-                                    return { ...module, lessons: moduleInfoMatches ? module.lessons : filteredLessons, bonusLessons: moduleInfoMatches ? module.bonusLessons : filteredBonusLessons };
-                                }
-                                return null;
-                            }).filter(Boolean)
-                    })).filter(week => week.modules.length > 0);
-                }
-                
-                const activeWeekData = schedule.find(w => w.week === activeWeek);
-                return activeWeekData ? [activeWeekData] : [];
-
-            }, [schedule, activeWeek, searchTerm, filter]);
-            
-            const renderContent = () => {
-                 if (contentToRender.length === 0) {
-                    return (
-                        <div className="text-center py-16 px-6 bg-slate-800 rounded-2xl shadow-md">
-                            <SvgIcon name="SearchX" className="mx-auto w-16 h-16 text-slate-500 mb-4" />
-                            <h3 className="text-xl font-semibold text-slate-100">Nenhum resultado encontrado</h3>
-                            <p className="text-slate-400 mt-2">Tente ajustar seus termos de busca ou filtros.</p>
-                        </div>
-                    );
-                }
-                
-                return (
-                    <div className="space-y-6">
-                        {contentToRender.map(week => (
-                            <div key={week.week}>
-                                <h3 className="text-2xl font-bold text-slate-100 mb-4">Semana {String(week.week).padStart(2, '0')}</h3>
-                                <div className="space-y-5">
-                                    {week.modules.map((module, moduleIndex) => (
-                                        <ModuleCard key={`${module.code}-${module.title}`} module={module} weekIndex={schedule.findIndex(w => w.week === week.week)} moduleIndex={moduleIndex} progress={progress} onToggle={handleToggle} onAddLesson={handleAddLesson} onRemoveLesson={handleRemoveLesson} onOpenAI={handleOpenAIModal}/>
-                                    ))}
-                                </div>
+        /**
+         * Gera o HTML para um único rodízio.
+         */
+        function createRotationHTML(rotationId, rotationData) {
+            let scheduleHtml = '';
+            rotationData.schedule.forEach(day => {
+                scheduleHtml += `
+                    <div class="border-b border-gray-200 dark:border-gray-700 pb-3 mb-3">
+                        <h5 class="text-md font-semibold text-blue-700 dark:text-blue-300">${day.day}</h5>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
+                            <div>
+                                <strong class="text-gray-500 dark:text-gray-400">Manhã:</strong>
+                                <div class="pl-2">${day.morning || '-'}</div>
                             </div>
-                        ))}
-                    </div>
-                );
-            };
-
-            if (loading || !schedule) {
-                return (
-                    <div className="flex items-center justify-center min-h-screen bg-slate-950">
-                        <div className="flex items-center gap-4">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
-                            <span className="text-xl font-semibold text-slate-300">Carregando seus estudos...</span>
+                            <div>
+                                <strong class="text-gray-500 dark:text-gray-400">Tarde:</strong>
+                                <div class="pl-2">${day.afternoon || '-'}</div>
+                            </div>
+                            ${day.night ? `
+                            <div class="sm:col-span-2">
+                                <strong class="text-gray-500 dark:text-gray-400">Noite:</strong>
+                                <div class="pl-2">${day.night}</div>
+                            </div>` : ''}
                         </div>
                     </div>
-                );
+                `;
+            });
+
+            let detailsHtml = '';
+            if (rotationData.details) {
+                rotationData.details.forEach(detail => {
+                    let icon = 'map-pin';
+                    if (detail.type === 'prof') icon = 'users';
+                    if (detail.type === 'info') icon = 'alert-circle';
+                    
+                    detailsHtml += `
+                        <div class="flex items-start space-x-2 text-sm">
+                            <i data-feather="${icon}" class="w-4 h-4 flex-shrink-0 mt-1 text-gray-500"></i>
+                            <div>
+                                <strong class="dark:text-gray-300">${detail.title}:</strong>
+                                <span class="text-gray-600 dark:text-gray-400">${detail.text}</span>
+                            </div>
+                        </div>
+                    `;
+                });
             }
 
-            return (
-                <div className="h-screen flex flex-col bg-slate-900">
-                    {isAIModalOpen && <AIAssistantModal module={selectedModuleForAI} onClose={() => setIsAIModalOpen(false)} />}
-                    <Header onSearch={setSearchTerm} onFilter={setFilter} weeks={schedule} activeWeek={activeWeek} onSelectWeek={setActiveWeek} />
-                    <div className="flex-1 flex overflow-hidden">
-                        <Sidebar weeks={schedule} activeWeek={activeWeek} onSelectWeek={setActiveWeek} />
-                        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-                           {renderContent()}
-                        </main>
+            return `
+                <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
+                    <div class="bg-gray-50 dark:bg-gray-700 p-4 border-b border-gray-200 dark:border-gray-600">
+                        <h3 class="text-xl font-bold text-blue-600 dark:text-blue-400">Rodízio ${rotationId}: ${rotationData.title}</h3>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div class="space-y-2">${detailsHtml}</div>
+                        <h4 class="text-lg font-semibold pt-2 border-t border-gray-200 dark:border-gray-600">Cronograma</h4>
+                        <div>${scheduleHtml}</div>
                     </div>
                 </div>
-            );
-        };
+            `;
+        }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+
+        /**
+         * Atualiza a visualização do cronograma com base no grupo selecionado.
+         */
+        function updateScheduleView() {
+            const selectedGroup = "GRUPO VI"; // Fixo para o Grupo VI
+            const periodInfo = getCurrentPeriodInfo();
+
+            /* Bloco de verificação do grupo removido, pois agora é fixo
+            if (!selectedGroup) {
+                scheduleView.classList.add('hidden');
+                outOfPeriodMessage.classList.add('hidden');
+                selectGroupMessage.classList.remove('hidden');
+                return;
+            }
+            */
+
+            // selectGroupMessage.classList.add('hidden'); // REMOVIDO
+            // selectedGroupElem.textContent = selectedGroup; // REMOVIDO
+
+            if (!periodInfo) {
+                // Fora de todos os períodos
+                scheduleView.classList.add('hidden');
+                outOfPeriodTitle.textContent = "Fora do Período";
+                outOfPeriodText.textContent = "O estágio obrigatório (Turma B 2025) não parece estar em andamento na data de hoje.";
+                outOfPeriodMessage.classList.remove('hidden');
+                return;
+            }
+
+            currentPeriodElem.textContent = periodInfo.label;
+
+            if (periodInfo.assignments === "Recesso") {
+                // Período de recesso
+                scheduleView.classList.add('hidden');
+                outOfPeriodTitle.textContent = "Recesso";
+                outOfPeriodText.textContent = "Período de recesso (Natal e Ano Novo). Não há atividades programadas.";
+                outOfPeriodMessage.classList.remove('hidden');
+                return;
+            }
+
+            // Em um período de estágio válido
+            outOfPeriodMessage.classList.add('hidden');
+            
+            const rotationId = periodInfo.assignments[selectedGroup];
+            const rotationData = rotationsSchedule[rotationId];
+
+            if (rotationData) {
+                currentRotationElem.textContent = `${rotationId}: ${rotationData.title}`;
+                
+                // Gerar HTML do cronograma para o rodízio atual
+                const rotationHTML = createRotationHTML(rotationId, rotationData);
+                // Injetar apenas o conteúdo, sem o cabeçalho do card
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = rotationHTML;
+                currentScheduleContentElem.innerHTML = tempDiv.querySelector('.p-4').innerHTML;
+                
+                scheduleView.classList.remove('hidden');
+            } else {
+                // Erro (não deve acontecer)
+                scheduleView.classList.add('hidden');
+                outOfPeriodTitle.textContent = "Erro";
+                outOfPeriodText.textContent = "Não foi possível encontrar dados para seu rodízio atual.";
+                outOfPeriodMessage.classList.remove('hidden');
+            }
+            
+            // Re-aplicar ícones após injeção de HTML
+            feather.replace();
+        }
+
+        /**
+         * Popula a seção "Todos os Rodízios".
+         * (FUNÇÃO REINSERIDA)
+         */
+        function populateAllRotations() {
+            let allHtml = '';
+            for (const rotationId in rotationsSchedule) {
+                allHtml += createRotationHTML(rotationId, rotationsSchedule[rotationId]) + '<br>';
+            }
+            allRotationsContainer.innerHTML = allHtml;
+        }
+
+        /**
+         * Popula a seção "Temas Gerais".
+         * (FUNÇÃO REINSERIDA)
+         */
+        function populateGeneralThemes() {
+            let themesHtml = '';
+            for (const category in generalThemes) {
+                const items = generalThemes[category];
+                const itemsHtml = items.map(item => `<li class="ml-4 p-1">${item}</li>`).join('');
+                
+                themesHtml += `
+                    <details class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+                        <summary class="cursor-pointer font-semibold p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700">
+                            ${category}
+                            <i data-feather="chevron-down" class="chevron-icon transition-transform duration-200"></i>
+                        </summary>
+                        <ul class="list-disc list-inside p-4 border-t border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300">
+                            ${itemsHtml}
+                        </ul>
+                    </details>
+                `;
+            }
+            generalThemesContainer.innerHTML = themesHtml;
+            
+            // Adiciona listener para girar o chevron
+            generalThemesContainer.querySelectorAll('details').forEach(detail => {
+                detail.addEventListener('toggle', (event) => {
+                    const chevron = event.target.querySelector('.chevron-icon');
+                    if (event.target.open) {
+                        chevron.style.transform = 'rotate(180deg)';
+                    } else {
+                        chevron.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+        }
+
+        /**
+         * Salva a preferência de grupo no LocalStorage.
+         */
+        // function handleGroupChange() { // REMOVIDA
+        //     const selectedGroup = studentSelect.value;
+        //     localStorage.setItem('selectedStudentGroup', selectedGroup);
+        //     updateScheduleView();
+        // }
+
+        /**
+         * Carrega o grupo salvo do LocalStorage.
+         */
+        // function loadSavedGroup() { // REMOVIDA
+        //     const savedGroup = localStorage.getItem('selectedStudentGroup');
+        //     if (savedGroup) {
+        //         studentSelect.value = savedGroup;
+        //     }
+        // }
+        
+        // --- Funções do Menu e Navegação ---
+
+        function toggleMenu(show) {
+            if (show) {
+                menuModal.classList.remove('hidden', 'translate-x-full');
+                menuOverlay.classList.remove('hidden');
+                menuOverlay.style.opacity = '1';
+            } else {
+                menuModal.classList.add('translate-x-full');
+                menuOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    menuModal.classList.add('hidden');
+                    menuOverlay.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function showView(viewId) {
+            views.forEach(view => {
+                if (view.id === viewId) {
+                    view.classList.remove('hidden');
+                } else {
+                    view.classList.add('hidden');
+                }
+            });
+            toggleMenu(false); // Fechar menu ao selecionar
+            window.scrollTo(0, 0); // Rolar para o topo
+        }
+
+        // --- Funções do Modo Escuro ---
+
+        function setDarkMode(isDark) {
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                darkModeToggle.checked = true;
+                darkModeSlider.style.transform = 'translateX(1.25rem)'; // 5 * 0.25rem = 20px
+            } else {
+                htmlElement.classList.remove('dark');
+                darkModeToggle.checked = false;
+                darkModeSlider.style.transform = 'translateX(0)';
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark = !darkModeToggle.checked; // O estado será o oposto do atual
+            setDarkMode(isDark);
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        function loadInitialDarkMode() {
+            const savedDarkMode = localStorage.getItem('darkMode');
+            // Checa preferência do sistema se não houver nada salvo
+            if (savedDarkMode === null) {
+                setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+            } else {
+                setDarkMode(savedDarkMode === 'true');
+            }
+        }
+
+        // --- INICIALIZAÇÃO ---
+        function init() {
+            // Data de hoje
+            currentDateElem.textContent = new Date().toLocaleDateString('pt-BR', { dateStyle: 'full' });
+
+            // Modo Escuro
+            loadInitialDarkMode();
+            
+            // Popular seções
+            populateAllRotations();
+            populateGeneralThemes();
+
+            // Carregar grupo salvo e atualizar a view
+            // loadSavedGroup(); // REMOVIDO
+            updateScheduleView(); // Agora mostra o Grupo VI diretamente
+
+            // Adicionar Event Listeners
+            // studentSelect.addEventListener('change', handleGroupChange); // REMOVIDO
+            
+            // Listeners do Menu
+            menuButton.addEventListener('click', () => toggleMenu(true));
+            closeMenuButton.addEventListener('click', () => toggleMenu(false));
+            menuOverlay.addEventListener('click', () => toggleMenu(false));
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => showView(button.dataset.view));
+            });
+            
+            // Listener do Modo Escuro
+            darkModeToggle.addEventListener('change', toggleDarkMode);
+
+            // Re-aplicar ícones uma última vez
+            feather.replace();
+        }
+
+        // Rodar a aplicação
+        document.addEventListener('DOMContentLoaded', init);
+
     </script>
 </body>
 </html>
+
+
+
 
