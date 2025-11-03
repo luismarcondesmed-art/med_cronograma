@@ -49,7 +49,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
 
     <!-- Container Principal -->
     <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -57,8 +57,8 @@
         <!-- Cabeçalho -->
         <header class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">Cronograma de Pediatria</h1>
-                <p class="text-lg text-gray-600 dark:text-gray-300">Estágio Obrigatório UFPR - Turma B 2025</p>
+                <h1 class="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400">Cronograma de Pediatria</h1>
+                <p class="text-xl text-gray-600 dark:text-gray-300">Estágio Obrigatório UFPR - Turma B 2025</p>
             </div>
             <button id="menu-button" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                 <i data-feather="menu" class="h-6 w-6"></i>
@@ -66,7 +66,7 @@
         </header>
 
         <!-- Menu Modal (Navegação) -->
-        <div id="menu-modal" class="fixed top-0 right-0 h-full w-72 sm:w-80 bg-white dark:bg-gray-800 shadow-xl z-50 p-6 transform translate-x-full transition-transform duration-300 ease-in-out hidden">
+        <div id="menu-modal" class="fixed top-0 right-0 h-full w-72 sm:w-80 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-l border-gray-200 dark:border-gray-700 shadow-xl z-50 p-6 transform translate-x-full transition-transform duration-300 ease-in-out hidden">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-xl font-semibold">Menu</h2>
                 <button id="close-menu-button" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
@@ -112,22 +112,22 @@
             <div id="schedule-view" class="">
                 <!-- Informações Atuais -->
                 <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 p-4 rounded-lg shadow">
-                        <p class="text-sm font-medium opacity-80">Data de Hoje</p>
-                        <p id="current-date" class="text-lg font-semibold"></p>
+                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg p-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Data de Hoje</p>
+                        <p id="current-date" class="text-lg font-semibold text-gray-900 dark:text-gray-100"></p>
                     </div>
-                    <div class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 p-4 rounded-lg shadow">
-                        <p class="text-sm font-medium opacity-80">Seu Grupo</p>
-                        <p id="selected-group-name" class="text-lg font-semibold">Grupo VI</p>
+                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg p-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Seu Grupo</p>
+                        <p id="selected-group-name" class="text-lg font-semibold text-gray-900 dark:text-gray-100">Grupo VI</p>
                     </div>
-                    <div class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-100 p-4 rounded-lg shadow">
-                        <p class="text-sm font-medium opacity-80">Período Atual</p>
-                        <p id="current-period-text" class="text-lg font-semibold">-</p>
+                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg p-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Período Atual</p>
+                        <p id="current-period-text" class="text-lg font-semibold text-gray-900 dark:text-gray-100">-</p>
                     </div>
                 </div>
 
                 <!-- Rodízio Atual -->
-                <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+                <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg p-6">
                     <h3 class="text-2xl font-bold mb-1">Rodízio Atual:</h3>
                     <p id="current-rotation-name" class="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-4">-</p>
                     
@@ -310,7 +310,7 @@
                     { "day": "3ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Pueri/P.médica (13:00-15:00 h, profª Gislayne)" },
                     { "day": "4ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)", "afternoon": "Puericultura (Prematuro) SAM 11 (13:00-16:30 h, profª Ana Lúcia)" },
                     { "day": "5ª FEIRA", "morning": "Pueri/P.médica (07:30-10:30 h, profª Gislayne)", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "6ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                    { "day": "6ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>CASOS CLÍNICOS D. Pediatria (10:11-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
                 ]
             }
         };
@@ -495,14 +495,14 @@
             }
 
             return `
-                <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-                    <div class="bg-gray-50 dark:bg-gray-700 p-4 border-b border-gray-200 dark:border-gray-600">
+                <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden">
+                    <div class="bg-gray-50/80 dark:bg-gray-700/80 p-4 border-b border-gray-200 dark:border-gray-600">
                         <h3 class="text-xl font-bold text-blue-600 dark:text-blue-400">Rodízio ${rotationId}: ${rotationData.title}</h3>
                     </div>
                     <div class="p-4 space-y-4">
                         <div class="space-y-2">${detailsHtml}</div>
                         <h4 class="text-lg font-semibold pt-2 border-t border-gray-200 dark:border-gray-600">Cronograma</h4>
-                        <div>${scheduleHtml}</div>
+                        <div class="rotation-week-schedule">${scheduleHtml}</div>
                     </div>
                 </div>
             `;
@@ -550,17 +550,18 @@
                 
                 // --- MODIFICAÇÃO AQUI ---
                 // Injetar apenas o HTML do cronograma (dias da semana),
-                // removendo os detalhes (local, profs) e o sub-título "Cronograma".
+                // usando a nova classe 'rotation-week-schedule'
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = rotationHTML;
                 
-                // Seleciona o '<div>' que contém o scheduleHtml (o último div dentro do .p-4)
-                const scheduleContent = tempDiv.querySelector('.p-4 > div:last-child');
-                
+                // Seleciona o <div> do cronograma de forma mais robusta
+                const scheduleContent = tempDiv.querySelector('.rotation-week-schedule');
+
                 if (scheduleContent) {
                     currentScheduleContentElem.innerHTML = scheduleContent.innerHTML;
                 } else {
-                    currentScheduleContentElem.innerHTML = "<p>Não foi possível carregar o cronograma detalhado.</p>";
+                    // Fallback caso algo dê errado
+                    currentScheduleContentElem.innerHTML = "<p>Não foi possível carregar o cronograma detalhado. Verifique a função createRotationHTML.</p>";
                 }
                 // --- FIM DA MODIFICAÇÃO ---
                 
@@ -599,7 +600,7 @@
                 const itemsHtml = items.map(item => `<li class="ml-4 p-1">${item}</li>`).join('');
                 
                 themesHtml += `
-                    <details class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+                    <details class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden">
                         <summary class="cursor-pointer font-semibold p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700">
                             ${category}
                             <i data-feather="chevron-down" class="chevron-icon transition-transform duration-200"></i>
@@ -670,7 +671,8 @@
         }
 
         function toggleDarkMode() {
-            const isDark = !darkModeToggle.checked; // O estado será o oposto do atual
+            // CORRIGIDO: Lê o estado *atual* do checkbox
+            const isDark = darkModeToggle.checked;
             setDarkMode(isDark);
             localStorage.setItem('darkMode', isDark);
         }
@@ -723,6 +725,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
