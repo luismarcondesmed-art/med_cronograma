@@ -13,16 +13,18 @@
     <script>
         // --- CONFIGURAÇÃO DA NOVA PALETA DE CORES (LIQUID GLASS / NEUTRA) ---
         tailwind.config = {
+            // [CORREÇÃO] Adicionado 'darkMode: 'class'' para habilitar o toggle manual
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         // Paleta de Cores Neutras
                         'light-bg': '#F9F9F9',         // Fundo principal claro
-                        'dark-bg': '#121212',          // Fundo principal escuro
+                        'dark-bg': '#121212',         // Fundo principal escuro
                         'light-card': '#FFFFFF',       // Fundo dos cards claros
-                        'dark-card': '#1E1E1E',        // Fundo dos cards escuros
+                        'dark-card': '#1E1E1E',       // Fundo dos cards escuros
                         'light-text': '#1A1A1A',       // Texto principal claro
-                        'dark-text': '#E5E5E5',        // Texto principal escuro
+                        'dark-text': '#E5E5E5',       // Texto principal escuro
                         'neutral-text': '#888888',     // Texto secundário/neutro
                         'light-border': '#E0E0E0',     // Borda sutil clara
                         'dark-border': '#2D2D2D',      // Borda sutil escura
@@ -141,9 +143,9 @@
                         </span>
                         <div class="relative">
                             <input type="checkbox" id="dark-mode-toggle" class="sr-only">
-                            <!-- [CORREÇÃO] Trilho agora muda para verde no modo escuro -->
+                            <!-- Trilho agora muda para verde no modo escuro -->
                             <div class="block bg-gray-300 dark:bg-accent-green w-12 h-7 rounded-full transition-colors"></div>
-                            <!-- [CORREÇÃO] O slider agora é controlado apenas pelo Tailwind (JS não mexe mais no transform) -->
+                            <!-- O slider agora é controlado apenas pelo Tailwind (JS não mexe mais no transform) -->
                             <div id="dark-mode-slider" class="dot absolute left-1 top-1 bg-white-pure w-5 h-5 rounded-full transition-transform transform translate-x-0 dark:translate-x-5"></div>
                         </div>
                     </label>
@@ -713,20 +715,18 @@
             if (isDark) {
                 htmlElement.classList.add('dark');
                 darkModeToggle.checked = true;
-                // [CORREÇÃO] Remover a linha abaixo. O Tailwind cuida disso.
-                // darkModeSlider.style.transform = 'translateX(1.25rem)'; 
+                // [CORREÇÃO] O Tailwind (dark:translate-x-5) cuida do slider
             } else {
                 htmlElement.classList.remove('dark');
                 darkModeToggle.checked = false;
-                // [CORREÇÃO] Remover a linha abaixo. O Tailwind cuida disso.
-                // darkModeSlider.style.transform = 'translateX(0)';
+                // [CORREÇÃO] O Tailwind (translate-x-0) cuida do slider
             }
         }
 
         function toggleDarkMode() {
             const isDark = darkModeToggle.checked;
             setDarkMode(isDark);
-            localStorage.setItem('darkMode', isDark);
+            localStorage.setItem('darkMode', isDark ? 'true' : 'false'); // Salva como string
         }
 
         function loadInitialDarkMode() {
