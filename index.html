@@ -108,25 +108,6 @@
 
         <!-- === SEÇÃO PRINCIPAL (Meu Rodízio) === -->
         <main id="main-content" class="view-content">
-            <!-- Seletor de Grupo (REMOVIDO) -->
-            <!-- 
-            <div class="mb-6 bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-                <label for="student-group-select" class="block text-lg font-semibold mb-3">Selecione seu grupo:</label>
-                <select id="student-group-select" class="w-full max-w-md p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">-- Por favor, escolha um grupo --</option>
-                    <option value="GRUPO I">Grupo I</option>
-                    <option value="GRUPO II">Grupo II</option>
-                    <option value="GRUPO III">Grupo III</option>
-                    <option value="GRUPO IV">Grupo IV</option>
-                    <option value="GRUPO V">Grupo V</option>
-                    <option value="GRUPO VI">Grupo VI</option>
-                    <option value="GRUPO VII">Grupo VII</option>
-                    <option value="GRUPO VIII">Grupo VIII</option>
-                    <option value="GRUPO IX">Grupo IX</option>
-                </select>
-            </div>
-            -->
-
             <!-- Visualização do Cronograma -->
             <div id="schedule-view" class="">
                 <!-- Informações Atuais -->
@@ -156,15 +137,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Mensagem de "Selecione um Grupo" (REMOVIDA) -->
-            <!-- 
-            <div id="select-group-message" class="text-center p-10 bg-white dark:bg-gray-800 shadow-md rounded-lg">
-                <i data-feather="info" class="h-12 w-12 text-blue-500 mx-auto mb-4"></i>
-                <h2 class="text-2xl font-semibold mb-2">Bem-vindo!</h2>
-                <p class="text-lg text-gray-600 dark:text-gray-300">Selecione seu grupo acima para ver seu cronograma atual.</p>
-            </div>
-            -->
 
             <!-- Mensagem de "Fora do Período" -->
             <div id="out-of-period-message" class="hidden text-center p-10 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 shadow-md rounded-lg">
@@ -354,6 +326,7 @@
             { "start": "2025-12-15T00:00:00", "end": "2025-12-19T23:59:59", "label": "15/12 a 19/12", "assignments": { "GRUPO I": "F", "GRUPO II": "E", "GRUPO III": "D", "GRUPO IV": "C", "GRUPO V": "B", "GRUPO VI": "A", "GRUPO VII": "I", "GRUPO VIII": "H", "GRUPO IX": "G" } },
             { "start": "2025-12-20T00:00:00", "end": "2026-01-04T23:59:59", "label": "Recesso", "assignments": "Recesso" },
             { "start": "2026-01-05T00:00:00", "end": "2026-01-09T23:59:59", "label": "05/01 a 09/01", "assignments": { "GRUPO I": "G", "GRUPO II": "F", "GRUPO III": "E", "GRUPO IV": "D", "GRUPO V": "C", "GRUPO VI": "B", "GRUPO VII": "A", "GRUPO VIII": "I", "GRUPO IX": "H" } },
+            // TODO: [VI] 12/01 a 16/01: C
             { "start": "2026-01-12T00:00:00", "end": "2026-01-16T23:59:59", "label": "12/01 a 16/01", "assignments": { "GRUPO I": "H", "GRUPO II": "G", "GRUPO III": "F", "GRUPO IV": "E", "GRUPO V": "D", "GRUPO VI": "C", "GRUPO VII": "B", "GRUPO VIII": "A", "GRUPO IX": "I" } },
             { "start": "2026-01-19T00:00:00", "end": "2026-01-23T23:59:59", "label": "19/01 a 23/01", "assignments": { "GRUPO I": "I", "GRUPO II": "H", "GRUPO III": "G", "GRUPO IV": "F", "GRUPO V": "E", "GRUPO VI": "D", "GRUPO VII": "C", "GRUPO VIII": "B", "GRUPO IX": "A" } }
         ];
@@ -417,31 +390,13 @@
             ]
         };
 
-        // --- REMOÇÃO DAS DEFINIÇÕES DUPLICADAS ---
-        /*
-        // Cronograma Mestre (Grupo x Rodízio x Data)
-        // ATUALIZADO DE ACORDO COM A IMAGEM FORNECIDA
-        const masterSchedule = [
-            // ... DADOS DUPLICADOS REMOVIDOS ...
-        ];
-
-        // Temas Gerais Categorizados
-        const generalThemes = {
-            // ... DADOS DUPLICADOS REMOVIDOS ...
-        };
-        */
-
-
         // --- DOM ELEMENTS ---
-        // const studentSelect = document.getElementById('student-group-select'); // REMOVIDO
         const scheduleView = document.getElementById('schedule-view');
-        // const selectGroupMessage = document.getElementById('select-group-message'); // REMOVIDO
         const outOfPeriodMessage = document.getElementById('out-of-period-message');
         const outOfPeriodTitle = document.getElementById('out-of-period-title');
         const outOfPeriodText = document.getElementById('out-of-period-text');
         
         const currentDateElem = document.getElementById('current-date');
-        // const selectedGroupElem = document.getElementById('selected-group-name'); // REMOVIDO (HTML está fixo)
         const currentPeriodElem = document.getElementById('current-period-text');
         const currentRotationElem = document.getElementById('current-rotation-name');
         const currentScheduleContentElem = document.getElementById('current-week-schedule-content');
@@ -467,6 +422,7 @@
 
         /**
          * Retorna o período de estágio atual com base na data de hoje.
+         * Se for domingo, verifica o cronograma de segunda-feira.
          */
         function getCurrentPeriodInfo() {
             const today = new Date();
@@ -475,11 +431,19 @@
             // const today = new Date('2025-12-25T10:00:00'); // Recesso
             // const today = new Date('2026-01-06T10:00:00'); // Semana pós-recesso
             // const today = new Date('2025-11-03T10:00:00'); // Simula o primeiro dia
+            // const today = new Date('2025-11-02T10:00:00'); // Simula Domingo
+            
+            let dateToCompare = new Date(today); // Clona a data
+            if (today.getDay() === 0) { // 0 = Domingo
+                // Define dateToCompare como segunda-feira (amanhã)
+                dateToCompare.setDate(today.getDate() + 1);
+            }
 
             return masterSchedule.find(period => {
                 const startDate = new Date(period.start);
                 const endDate = new Date(period.end);
-                return today >= startDate && today <= endDate;
+                // Usa a data de comparação (hoje ou amanhã se for domingo)
+                return dateToCompare >= startDate && dateToCompare <= endDate;
             });
         }
 
@@ -550,19 +514,7 @@
          */
         function updateScheduleView() {
             const selectedGroup = "GRUPO VI"; // Fixo para o Grupo VI
-            const periodInfo = getCurrentPeriodInfo();
-
-            /* Bloco de verificação do grupo removido, pois agora é fixo
-            if (!selectedGroup) {
-                scheduleView.classList.add('hidden');
-                outOfPeriodMessage.classList.add('hidden');
-                selectGroupMessage.classList.remove('hidden');
-                return;
-            }
-            */
-
-            // selectGroupMessage.classList.add('hidden'); // REMOVIDO
-            // selectedGroupElem.textContent = selectedGroup; // REMOVIDO
+            const periodInfo = getCurrentPeriodInfo(); // Função agora lida com o domingo
 
             if (!periodInfo) {
                 // Fora de todos os períodos
@@ -595,10 +547,22 @@
                 
                 // Gerar HTML do cronograma para o rodízio atual
                 const rotationHTML = createRotationHTML(rotationId, rotationData);
-                // Injetar apenas o conteúdo, sem o cabeçalho do card
+                
+                // --- MODIFICAÇÃO AQUI ---
+                // Injetar apenas o HTML do cronograma (dias da semana),
+                // removendo os detalhes (local, profs) e o sub-título "Cronograma".
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = rotationHTML;
-                currentScheduleContentElem.innerHTML = tempDiv.querySelector('.p-4').innerHTML;
+                
+                // Seleciona o '<div>' que contém o scheduleHtml (o último div dentro do .p-4)
+                const scheduleContent = tempDiv.querySelector('.p-4 > div:last-child');
+                
+                if (scheduleContent) {
+                    currentScheduleContentElem.innerHTML = scheduleContent.innerHTML;
+                } else {
+                    currentScheduleContentElem.innerHTML = "<p>Não foi possível carregar o cronograma detalhado.</p>";
+                }
+                // --- FIM DA MODIFICAÇÃO ---
                 
                 scheduleView.classList.remove('hidden');
             } else {
@@ -615,7 +579,6 @@
 
         /**
          * Popula a seção "Todos os Rodízios".
-         * (FUNÇÃO REINSERIDA)
          */
         function populateAllRotations() {
             let allHtml = '';
@@ -623,11 +586,11 @@
                 allHtml += createRotationHTML(rotationId, rotationsSchedule[rotationId]) + '<br>';
             }
             allRotationsContainer.innerHTML = allHtml;
+            feather.replace(); // Adicionado para garantir ícones
         }
 
         /**
          * Popula a seção "Temas Gerais".
-         * (FUNÇÃO REINSERIDA)
          */
         function populateGeneralThemes() {
             let themesHtml = '';
@@ -660,26 +623,8 @@
                     }
                 });
             });
+            feather.replace(); // Adicionado para garantir ícones
         }
-
-        /**
-         * Salva a preferência de grupo no LocalStorage.
-         */
-        // function handleGroupChange() { // REMOVIDA
-        //     const selectedGroup = studentSelect.value;
-        //     localStorage.setItem('selectedStudentGroup', selectedGroup);
-        //     updateScheduleView();
-        // }
-
-        /**
-         * Carrega o grupo salvo do LocalStorage.
-         */
-        // function loadSavedGroup() { // REMOVIDA
-        //     const savedGroup = localStorage.getItem('selectedStudentGroup');
-        //     if (savedGroup) {
-        //         studentSelect.value = savedGroup;
-        //     }
-        // }
         
         // --- Funções do Menu e Navegação ---
 
@@ -752,12 +697,10 @@
             populateAllRotations();
             populateGeneralThemes();
 
-            // Carregar grupo salvo e atualizar a view
-            // loadSavedGroup(); // REMOVIDO
-            updateScheduleView(); // Agora mostra o Grupo VI diretamente
+            // Atualizar a view
+            updateScheduleView(); // Agora mostra o Grupo VI diretamente e lida com o domingo
 
             // Adicionar Event Listeners
-            // studentSelect.addEventListener('change', handleGroupChange); // REMOVIDO
             
             // Listeners do Menu
             menuButton.addEventListener('click', () => toggleMenu(true));
@@ -780,7 +723,6 @@
     </script>
 </body>
 </html>
-
 
 
 
