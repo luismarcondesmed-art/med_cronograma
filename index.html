@@ -10,6 +10,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Ícones (Feather Icons) -->
     <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        // --- CONFIGURAÇÃO DA NOVA PALETA DE CORES ---
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'black-pure': '#000000',
+                        'white-pure': '#FFFFFF',
+                        'gunmetal': '#141414',      // Superfície escura secundária
+                        'midnight': '#28283C',      // Cards escuros
+                        'neutral': '#555555',       // Texto neutro
+                        'accent-green': '#61BB46',
+                        'accent-yellow': '#FDB827',
+                        'accent-blue': '#009DDC',
+                        'accent-red': '#E03A3E',
+                        'accent-purple': '#963D97',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -28,28 +49,28 @@
             height: 12px;
         }
         html.dark ::-webkit-scrollbar-track {
-            background: #1f2937; /* gray-800 */
+            background: #000000; /* black-pure */
         }
         html.dark ::-webkit-scrollbar-thumb {
-            background-color: #4b5563; /* gray-600 */
+            background-color: #555555; /* neutral */
             border-radius: 20px;
-            border: 3px solid #1f2937; /* gray-800 */
+            border: 3px solid #000000; /* black-pure */
         }
         html ::-webkit-scrollbar {
             width: 12px;
             height: 12px;
         }
         html ::-webkit-scrollbar-track {
-            background: #f3f4f6; /* gray-100 */
+            background: #f1f1f1; /* Um cinza bem claro, perto do branco */
         }
         html ::-webkit-scrollbar-thumb {
-            background-color: #9ca3af; /* gray-400 */
+            background-color: #9ca3af; /* cinza-400 */
             border-radius: 20px;
-            border: 3px solid #f3f4f6; /* gray-100 */
+            border: 3px solid #f1f1f1;
         }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+<body class="bg-white-pure dark:bg-black-pure text-black-pure dark:text-white-pure min-h-screen transition-colors duration-300">
 
     <!-- Container Principal -->
     <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -57,46 +78,46 @@
         <!-- Cabeçalho -->
         <header class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400">Cronograma de Pediatria</h1>
-                <p class="text-xl text-gray-600 dark:text-gray-300">Estágio Obrigatório UFPR - Turma B 2025</p>
+                <h1 class="text-3xl sm:text-4xl font-bold text-accent-blue">Cronograma de Pediatria</h1>
+                <p class="text-xl text-neutral dark:text-neutral">Estágio Obrigatório UFPR - Turma B 2025</p>
             </div>
-            <button id="menu-button" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <button id="menu-button" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gunmetal transition-colors">
                 <i data-feather="menu" class="h-6 w-6"></i>
             </button>
         </header>
 
         <!-- Menu Modal (Navegação) -->
-        <div id="menu-modal" class="fixed top-0 right-0 h-full w-72 sm:w-80 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-l border-gray-200 dark:border-gray-700 shadow-xl z-50 p-6 transform translate-x-full transition-transform duration-300 ease-in-out hidden">
+        <div id="menu-modal" class="fixed top-0 right-0 h-full w-72 sm:w-80 bg-white-pure/80 dark:bg-gunmetal/80 backdrop-blur-lg border-l border-gray-200 dark:border-neutral shadow-xl z-50 p-6 transform translate-x-full transition-transform duration-300 ease-in-out hidden">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-xl font-semibold">Menu</h2>
-                <button id="close-menu-button" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                <button id="close-menu-button" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-midnight">
                     <i data-feather="x" class="h-6 w-6"></i>
                 </button>
             </div>
             <nav class="flex flex-col space-y-4">
-                <button id="show-main-content-btn" data-view="main-content" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center space-x-3">
-                    <i data-feather="calendar" class="h-5 w-5 text-blue-500"></i>
+                <button id="show-main-content-btn" data-view="main-content" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-midnight transition-colors flex items-center space-x-3">
+                    <i data-feather="calendar" class="h-5 w-5 text-accent-blue"></i>
                     <span>Meu Rodízio</span>
                 </button>
-                <button id="show-all-rotations-btn" data-view="all-rotations-view" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center space-x-3">
-                    <i data-feather="grid" class="h-5 w-5 text-green-500"></i>
+                <button id="show-all-rotations-btn" data-view="all-rotations-view" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-midnight transition-colors flex items-center space-x-3">
+                    <i data-feather="grid" class="h-5 w-5 text-accent-green"></i>
                     <span>Todos os Rodízios</span>
                 </button>
-                <button id="show-general-themes-btn" data-view="general-themes-view" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center space-x-3">
-                    <i data-feather="book-open" class="h-5 w-5 text-indigo-500"></i>
+                <button id="show-general-themes-btn" data-view="general-themes-view" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-midnight transition-colors flex items-center space-x-3">
+                    <i data-feather="book-open" class="h-5 w-5 text-accent-purple"></i>
                     <span>Temas Gerais</span>
                 </button>
                 
-                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                    <label for="dark-mode-toggle" class="flex items-center justify-between cursor-pointer px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                <div class="border-t border-gray-200 dark:border-neutral pt-4">
+                    <label for="dark-mode-toggle" class="flex items-center justify-between cursor-pointer px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-midnight">
                         <span class="flex items-center space-x-3">
-                            <i data-feather="moon" class="h-5 w-5 text-purple-500"></i>
+                            <i data-feather="moon" class="h-5 w-5 text-accent-purple"></i>
                             <span>Modo Escuro</span>
                         </span>
                         <div class="relative">
                             <input type="checkbox" id="dark-mode-toggle" class="sr-only">
-                            <div class="block bg-gray-300 dark:bg-gray-600 w-12 h-7 rounded-full transition-colors"></div>
-                            <div id="dark-mode-slider" class="dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform transform translate-x-0 dark:translate-x-5"></div>
+                            <div class="block bg-neutral dark:bg-neutral w-12 h-7 rounded-full transition-colors"></div>
+                            <div id="dark-mode-slider" class="dot absolute left-1 top-1 bg-white-pure w-5 h-5 rounded-full transition-transform transform translate-x-0 dark:translate-x-5"></div>
                         </div>
                     </label>
                 </div>
@@ -112,26 +133,28 @@
             <div id="schedule-view" class="">
                 <!-- Informações Atuais -->
                 <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg p-4">
-                        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Data de Hoje</p>
-                        <p id="current-date" class="text-lg font-semibold text-gray-900 dark:text-gray-100"></p>
+                    <div class="bg-white-pure/80 dark:bg-midnight/80 backdrop-blur-lg shadow-lg rounded-lg p-4 border border-gray-100 dark:border-midnight">
+                        <p class="text-sm font-medium text-neutral">Data de Hoje</p>
+                        <p id="current-date" class="text-lg font-semibold text-black-pure dark:text-white-pure"></p>
                     </div>
-                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg p-4">
-                        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Seu Grupo</p>
-                        <p id="selected-group-name" class="text-lg font-semibold text-gray-900 dark:text-gray-100">Grupo VI</p>
+                    <!-- Card do Grupo com acento verde -->
+                    <div class="bg-accent-green/80 dark:bg-accent-green/80 backdrop-blur-lg shadow-lg rounded-lg p-4 border border-accent-green/20">
+                        <p class="text-sm font-medium text-white-pure/80">Seu Grupo</p>
+                        <p id="selected-group-name" class="text-lg font-semibold text-white-pure">Grupo VI</p>
                     </div>
-                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg p-4">
-                        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Período Atual</p>
-                        <p id="current-period-text" class="text-lg font-semibold text-gray-900 dark:text-gray-100">-</p>
+                     <!-- Card do Período com acento azul -->
+                    <div class="bg-accent-blue/80 dark:bg-accent-blue/80 backdrop-blur-lg shadow-lg rounded-lg p-4 border border-accent-blue/20">
+                        <p class="text-sm font-medium text-white-pure/80">Período Atual</p>
+                        <p id="current-period-text" class="text-lg font-semibold text-white-pure">-</p>
                     </div>
                 </div>
 
                 <!-- Rodízio Atual -->
-                <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg p-6">
+                <div class="bg-white-pure/80 dark:bg-midnight/80 backdrop-blur-lg shadow-lg rounded-lg p-6 border border-gray-100 dark:border-midnight">
                     <h3 class="text-2xl font-bold mb-1">Rodízio Atual:</h3>
-                    <p id="current-rotation-name" class="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-4">-</p>
+                    <p id="current-rotation-name" class="text-xl font-semibold text-accent-blue mb-4">-</p>
                     
-                    <h4 class="text-xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">Atividades da Semana</h4>
+                    <h4 class="text-xl font-semibold mb-4 border-b border-gray-200 dark:border-neutral pb-2">Atividades da Semana</h4>
                     <div id="current-week-schedule-content" class="space-y-4">
                         <!-- Conteúdo será injetado aqui -->
                     </div>
@@ -139,7 +162,7 @@
             </div>
 
             <!-- Mensagem de "Fora do Período" -->
-            <div id="out-of-period-message" class="hidden text-center p-10 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 shadow-md rounded-lg">
+            <div id="out-of-period-message" class="hidden text-center p-10 bg-accent-yellow/20 dark:bg-accent-yellow/20 backdrop-blur-lg text-accent-yellow-darker dark:text-accent-yellow shadow-md rounded-lg">
                 <i data-feather="coffee" class="h-12 w-12 mx-auto mb-4"></i>
                 <h2 class="text-2xl font-semibold mb-2" id="out-of-period-title">Fora do Período</h2>
                 <p class="text-lg" id="out-of-period-text">Não há atividades programadas para a data de hoje.</p>
@@ -148,7 +171,7 @@
 
         <!-- === SEÇÃO DE TODOS OS RODÍZIOS === -->
         <section id="all-rotations-view" class="view-content hidden">
-            <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-300 dark:border-gray-600">Todos os Rodízios</h2>
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-neutral">Todos os Rodízios</h2>
             <div id="all-rotations-content" class="space-y-6">
                 <!-- Conteúdo será injetado pelo JavaScript -->
             </div>
@@ -156,8 +179,8 @@
 
         <!-- === SEÇÃO DE TEMAS GERAIS === -->
         <section id="general-themes-view" class="view-content hidden">
-            <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-300 dark:border-gray-600">Temas Gerais</h2>
-            <p class="mb-6 text-lg text-gray-700 dark:text-gray-300">Lista de temas de estudo categorizados por área de conhecimento.</p>
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-neutral">Temas Gerais</h2>
+            <p class="mb-6 text-lg text-neutral dark:text-neutral">Lista de temas de estudo categorizados por área de conhecimento.</p>
             <div id="general-themes-content" class="space-y-4">
                 <!-- Conteúdo será injetado pelo JavaScript -->
             </div>
@@ -197,7 +220,7 @@
                 "schedule": [
                     { "day": "2ª FEIRA", "morning": "SEC (08:00-10:00 h, prof Thais)", "afternoon": "Pneumologia (profª Débora)" },
                     { "day": "3ª FEIRA", "morning": "SEC (08:00-10:00 h, profª Thais)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Imuno-alergo (Profº Chong)" },
-                    { "day": "4ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "Imuno-alergo (Profº Chong)" },
+                    { "day": "4ª FEIRA", "morning": "HORÁrio ESTUDO", "afternoon": "Imuno-alergo (Profº Chong)" },
                     { "day": "5ª FEIRA", "morning": "Reumato (08:30-12:00 h, profª Thais)", "afternoon": "Pneumologia (profª Laura)" },
                     { "day": "6ª FEIRA", "morning": "Pneumo (08:00 h, profª Débora)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
                 ]
@@ -287,6 +310,7 @@
                     { "type": "local", "title": "SEMPR", "text": "Auditório do SEMPR - Av. Agostinho Leão Junior, 285" },
                     { "type": "local", "title": "PA PEDIATRIA", "text": "PA Pediatria 1º andar Prédio Central CHC/EBSERH" },
                     { "type": "prof", "title": "Professores", "text": "Profª Vânia de Oliveira Carvalho, Profª Bruna Guerrer, Profª Margaret C. S. Boguszewski" },
+                    { "type": "prof", "title": "Preceptores PA", "text": "Drs Eduardo Mister, Luis Fernando Matoso Mendes" },
                     { "type": "info", "title": "Plantões PA", "text": "02 plantões noturnos (19:30-07:30 h) / aluno na semana. 02 alunos por plantão." }
                 ],
                 "schedule": [
@@ -310,7 +334,7 @@
                     { "day": "3ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Pueri/P.médica (13:00-15:00 h, profª Gislayne)" },
                     { "day": "4ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)", "afternoon": "Puericultura (Prematuro) SAM 11 (13:00-16:30 h, profª Ana Lúcia)" },
                     { "day": "5ª FEIRA", "morning": "Pueri/P.médica (07:30-10:30 h, profª Gislayne)", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "6ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>CASOS CLÍNICOS D. Pediatria (10:11-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                    { "day": "6ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
                 ]
             }
         };
@@ -326,13 +350,11 @@
             { "start": "2025-12-15T00:00:00", "end": "2025-12-19T23:59:59", "label": "15/12 a 19/12", "assignments": { "GRUPO I": "F", "GRUPO II": "E", "GRUPO III": "D", "GRUPO IV": "C", "GRUPO V": "B", "GRUPO VI": "A", "GRUPO VII": "I", "GRUPO VIII": "H", "GRUPO IX": "G" } },
             { "start": "2025-12-20T00:00:00", "end": "2026-01-04T23:59:59", "label": "Recesso", "assignments": "Recesso" },
             { "start": "2026-01-05T00:00:00", "end": "2026-01-09T23:59:59", "label": "05/01 a 09/01", "assignments": { "GRUPO I": "G", "GRUPO II": "F", "GRUPO III": "E", "GRUPO IV": "D", "GRUPO V": "C", "GRUPO VI": "B", "GRUPO VII": "A", "GRUPO VIII": "I", "GRUPO IX": "H" } },
-            // TODO: [VI] 12/01 a 16/01: C
             { "start": "2026-01-12T00:00:00", "end": "2026-01-16T23:59:59", "label": "12/01 a 16/01", "assignments": { "GRUPO I": "H", "GRUPO II": "G", "GRUPO III": "F", "GRUPO IV": "E", "GRUPO V": "D", "GRUPO VI": "C", "GRUPO VII": "B", "GRUPO VIII": "A", "GRUPO IX": "I" } },
-            { "start": "2026-01-19T00:00:00", "end": "2026-01-23T23:59:59", "label": "19/01 a 23/01", "assignments": { "GRUPO I": "I", "GRUPO II": "H", "GRUPO III": "G", "GRUPO IV": "F", "GRUPO V": "E", "GRUPO VI": "D", "GRUPO VII": "C", "GRUPO VIII": "B", "GRUPO IX": "A" } }
+            { "start": "2G26-01-19T00:00:00", "end": "2026-01-23T23:59:59", "label": "19/01 a 23/01", "assignments": { "GRUPO I": "I", "GRUPO II": "H", "GRUPO III": "G", "GRUPO IV": "F", "GRUPO V": "E", "GRUPO VI": "D", "GRUPO VII": "C", "GRUPO VIII": "B", "GRUPO IX": "A" } }
         ];
 
         // Temas Gerais Categorizados
-        // (OBJETO CORRIGIDO E COMPLETO)
         const generalThemes = {
             "Neonatologia e Puericultura": [
                 "Aleitamento materno", "Assistência ao Rn no Alojamento conjunto", "Atendimento ao Rn na sala de parto",
@@ -454,20 +476,20 @@
             let scheduleHtml = '';
             rotationData.schedule.forEach(day => {
                 scheduleHtml += `
-                    <div class="border-b border-gray-200 dark:border-gray-700 pb-3 mb-3">
-                        <h5 class="text-md font-semibold text-blue-700 dark:text-blue-300">${day.day}</h5>
+                    <div class="border-b border-gray-200 dark:border-neutral pb-3 mb-3">
+                        <h5 class="text-md font-semibold text-accent-blue">${day.day}</h5>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
                             <div>
-                                <strong class="text-gray-500 dark:text-gray-400">Manhã:</strong>
+                                <strong class="text-neutral dark:text-neutral">Manhã:</strong>
                                 <div class="pl-2">${day.morning || '-'}</div>
                             </div>
                             <div>
-                                <strong class="text-gray-500 dark:text-gray-400">Tarde:</strong>
+                                <strong class="text-neutral dark:text-neutral">Tarde:</strong>
                                 <div class="pl-2">${day.afternoon || '-'}</div>
                             </div>
                             ${day.night ? `
                             <div class="sm:col-span-2">
-                                <strong class="text-gray-500 dark:text-gray-400">Noite:</strong>
+                                <strong class="text-neutral dark:text-neutral">Noite:</strong>
                                 <div class="pl-2">${day.night}</div>
                             </div>` : ''}
                         </div>
@@ -484,10 +506,10 @@
                     
                     detailsHtml += `
                         <div class="flex items-start space-x-2 text-sm">
-                            <i data-feather="${icon}" class="w-4 h-4 flex-shrink-0 mt-1 text-gray-500"></i>
+                            <i data-feather="${icon}" class="w-4 h-4 flex-shrink-0 mt-1 text-neutral"></i>
                             <div>
-                                <strong class="dark:text-gray-300">${detail.title}:</strong>
-                                <span class="text-gray-600 dark:text-gray-400">${detail.text}</span>
+                                <strong class="dark:text-white-pure">${detail.title}:</strong>
+                                <span class="text-neutral dark:text-gray-300">${detail.text}</span>
                             </div>
                         </div>
                     `;
@@ -495,13 +517,13 @@
             }
 
             return `
-                <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden">
-                    <div class="bg-gray-50/80 dark:bg-gray-700/80 p-4 border-b border-gray-200 dark:border-gray-600">
-                        <h3 class="text-xl font-bold text-blue-600 dark:text-blue-400">Rodízio ${rotationId}: ${rotationData.title}</h3>
+                <div class="bg-white-pure/80 dark:bg-midnight/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden border border-gray-100 dark:border-midnight">
+                    <div class="bg-white-pure/90 dark:bg-gunmetal/90 p-4 border-b border-gray-200 dark:border-neutral">
+                        <h3 class="text-xl font-bold text-accent-blue">Rodízio ${rotationId}: ${rotationData.title}</h3>
                     </div>
                     <div class="p-4 space-y-4">
                         <div class="space-y-2">${detailsHtml}</div>
-                        <h4 class="text-lg font-semibold pt-2 border-t border-gray-200 dark:border-gray-600">Cronograma</h4>
+                        <h4 class="text-lg font-semibold pt-2 border-t border-gray-200 dark:border-neutral">Cronograma</h4>
                         <div class="rotation-week-schedule">${scheduleHtml}</div>
                     </div>
                 </div>
@@ -525,7 +547,10 @@
                 return;
             }
 
-            currentPeriodElem.textContent = periodInfo.label;
+            // Atualiza o card de período (antes de checar recesso)
+            const periodCardText = document.querySelector('#current-period-text');
+            periodCardText.textContent = periodInfo.label;
+
 
             if (periodInfo.assignments === "Recesso") {
                 // Período de recesso
@@ -548,22 +573,17 @@
                 // Gerar HTML do cronograma para o rodízio atual
                 const rotationHTML = createRotationHTML(rotationId, rotationData);
                 
-                // --- MODIFICAÇÃO AQUI ---
-                // Injetar apenas o HTML do cronograma (dias da semana),
-                // usando a nova classe 'rotation-week-schedule'
+                // Injetar apenas o HTML do cronograma (dias da semana)
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = rotationHTML;
                 
-                // Seleciona o <div> do cronograma de forma mais robusta
                 const scheduleContent = tempDiv.querySelector('.rotation-week-schedule');
 
                 if (scheduleContent) {
                     currentScheduleContentElem.innerHTML = scheduleContent.innerHTML;
                 } else {
-                    // Fallback caso algo dê errado
-                    currentScheduleContentElem.innerHTML = "<p>Não foi possível carregar o cronograma detalhado. Verifique a função createRotationHTML.</p>";
+                    currentScheduleContentElem.innerHTML = "<p>Não foi possível carregar o cronograma detalhado.</p>";
                 }
-                // --- FIM DA MODIFICAÇÃO ---
                 
                 scheduleView.classList.remove('hidden');
             } else {
@@ -600,12 +620,12 @@
                 const itemsHtml = items.map(item => `<li class="ml-4 p-1">${item}</li>`).join('');
                 
                 themesHtml += `
-                    <details class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden">
-                        <summary class="cursor-pointer font-semibold p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <details class="bg-white-pure/80 dark:bg-midnight/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden border border-gray-100 dark:border-midnight">
+                        <summary class="cursor-pointer font-semibold p-4 flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gunmetal">
                             ${category}
                             <i data-feather="chevron-down" class="chevron-icon transition-transform duration-200"></i>
                         </summary>
-                        <ul class="list-disc list-inside p-4 border-t border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300">
+                        <ul class="list-disc list-inside p-4 border-t border-gray-200 dark:border-neutral text-neutral dark:text-gray-300">
                             ${itemsHtml}
                         </ul>
                     </details>
@@ -671,7 +691,6 @@
         }
 
         function toggleDarkMode() {
-            // CORRIGIDO: Lê o estado *atual* do checkbox
             const isDark = darkModeToggle.checked;
             setDarkMode(isDark);
             localStorage.setItem('darkMode', isDark);
@@ -719,14 +738,16 @@
             feather.replace();
         }
 
+        // Corrigir bug no masterSchedule (data '2G26-...' para '2026-...')
+        const lastPeriod = masterSchedule.find(p => p.label === "19/01 a 23/01");
+        if (lastPeriod && lastPeriod.start.startsWith("2G26")) {
+            lastPeriod.start = "2026-01-19T00:00:00";
+        }
+
         // Rodar a aplicação
         document.addEventListener('DOMContentLoaded', init);
 
     </script>
 </body>
 </html>
-
-
-
-
 
