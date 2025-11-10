@@ -195,7 +195,12 @@
                             <h3 class="text-2xl font-bold mb-1">Rodízio Atual:</h3>
                             <p id="current-rotation-name" class="text-xl font-semibold text-light-text dark:text-dark-text mb-4">-</p>
                             
-                            <h4 class="text-xl font-semibold mb-4 border-b border-light-border dark:border-dark-border pb-2">Atividades da Semana</h4>
+                            <!-- [NOVO] Local para os detalhes -->
+                            <div id="current-rotation-details" class="space-y-3 mb-4 pb-4 border-b border-light-border dark:border-dark-border">
+                                <!-- Conteúdo (locais, profs) será injetado aqui -->
+                            </div>
+                            
+                            <h4 class="text-xl font-semibold mb-4 pb-2">Atividades da Semana</h4>
                             <div id="current-week-schedule-content" class="space-y-4">
                                 <!-- Conteúdo será injetado aqui -->
                             </div>
@@ -498,6 +503,7 @@
         const currentPeriodElem = document.getElementById('current-period-text');
         const currentRotationElem = document.getElementById('current-rotation-name');
         const currentScheduleContentElem = document.getElementById('current-week-schedule-content');
+        const currentRotationDetailsElem = document.getElementById('current-rotation-details'); // [NOVO]
 
         // Menu Elements
         const menuButton = document.getElementById('menu-button');
@@ -602,7 +608,8 @@
                         <h3 class="text-xl font-bold text-light-text dark:text-dark-text">Rodízio ${rotationId}: ${rotationData.title}</h3>
                     </div>
                     <div class="p-4 space-y-4">
-                        <div class="space-y-2">${detailsHtml}</div>
+                        <!-- [MUDANÇA] Adicionada classe wrapper -->
+                        <div class="rotation-details-content space-y-2">${detailsHtml}</div>
                         <h4 class="text-lg font-semibold pt-2 border-t border-light-border dark:border-dark-border">Cronograma</h4>
                         <div class="rotation-week-schedule">${scheduleHtml}</div>
                     </div>
@@ -653,6 +660,14 @@
                 const rotationHTML = createRotationHTML(rotationId, rotationData);
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = rotationHTML;
+                
+                // [MUDANÇA] Extrair e injetar os detalhes
+                const detailsContent = tempDiv.querySelector('.rotation-details-content');
+                if (detailsContent) {
+                    currentRotationDetailsElem.innerHTML = detailsContent.innerHTML;
+                } else {
+                    currentRotationDetailsElem.innerHTML = ""; // Limpa se não houver
+                }
                 
                 const scheduleContent = tempDiv.querySelector('.rotation-week-schedule');
 
