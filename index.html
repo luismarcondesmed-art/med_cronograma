@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- [NOVO] Ícone do Site (Favicon) e Ícone da Tela Inicial (iOS) -->
-    <!-- Gerado como Data URI para ser autônomo, usando a cor 'accent-blue' -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23009DDC'/><text x='50' y='50' font-family='Inter, sans-serif' font-size='60' fill='white' text-anchor='middle' dominant-baseline='central' font-weight='bold'>P</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23009DDC'/><text x='50' y='50' font-family='Inter, sans-serif' font-size='60' fill='white' text-anchor='middle' dominant-baseline='central' font-weight='bold'>P</text></svg>">
+    <!-- [MUDANÇA] Alterado para usar a imagem do mascote -->
+    <link rel="icon" href="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg">
+    <link rel="apple-touch-icon" href="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg">
 
     <!-- Ícones (Feather Icons) -->
     <script src="https://unpkg.com/feather-icons"></script>
@@ -113,10 +113,20 @@
 
         <!-- Cabeçalho -->
         <header class="flex justify-between items-center mb-6">
-            <div>
-                <!-- Título agora usa cor de texto neutra -->
-                <h1 class="text-3xl sm:text-4xl font-bold text-light-text dark:text-dark-text">Cronograma de Pediatria</h1>
-                <p class="text-xl text-neutral-text">Estágio Obrigatório UFPR - Turma B 2025</p>
+            <!-- [MUDANÇA] Adicionado flex container para imagem + título -->
+            <div class="flex items-center gap-4">
+                <!-- [NOVO] Imagem do mascote -->
+                <img 
+                    src="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg" 
+                    alt="Mascote Pediatria" 
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-accent-blue/50 shadow-md"
+                    onerror="this.onerror=null; this.src='https://placehold.co/80x80/009DDC/FFFFFF?text=P';">
+                
+                <div>
+                    <!-- Título agora usa cor de texto neutra -->
+                    <h1 class="text-3xl sm:text-4xl font-bold text-light-text dark:text-dark-text">Cronograma de Pediatria</h1>
+                    <p class="text-xl text-neutral-text">Estágio Obrigatório UFPR - Turma B 2025</p>
+                </div>
             </div>
             <button id="menu-button" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-card transition-colors">
                 <i data-feather="menu" class="h-6 w-6"></i>
