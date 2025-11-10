@@ -19,7 +19,7 @@
                     colors: {
                         // Paleta de Cores Neutras
                         'light-bg': '#F9F9F9',         // Fundo principal claro
-                        'dark-bg': '#121212',         // Fundo principal escuro
+                        'dark-bg': '#121212',          // Fundo principal escuro
                         'light-card': '#FFFFFF',       // Fundo dos cards claros
                         'dark-card': '#1E1E1E',       // Fundo dos cards escuros
                         'light-text': '#1A1A1A',       // Texto principal claro
@@ -186,6 +186,14 @@
                             <div class="bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg p-4 border border-light-border/50 dark:border-dark-border/50">
                                 <p class="text-sm font-medium text-neutral-text">Período Atual</p>
                                 <p id="current-period-text" class="text-lg font-semibold text-light-text dark:text-dark-text">-</p>
+                            </div>
+                        </div>
+
+                        <!-- [NOVO] Bloco de Plantões da Semana (Aparece para G e H) -->
+                        <div id="student-schedule-week-view" class="hidden bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg p-6 border border-light-border/50 dark:border-dark-border/50 space-y-4 mb-6">
+                            <h3 class="text-2xl font-bold">Plantões da Semana</h3>
+                            <div id="student-schedule-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                                <!-- Conteúdo será injetado pelo JS -->
                             </div>
                         </div>
 
@@ -376,6 +384,7 @@
                     { "type": "info", "title": "Observação", "text": "PLANTÕES 12 HORAS (07:30 a 19:30 h). 03 alunos por turno. Alunos não escalados estão liberados. Alunos neste rodízio estão liberados das atividades teóricas de 3ª e 6ª." }
                 ],
                 "schedule": [
+                    // [INFO] O cronograma de alunos para os dias específicos será injetado pelo JS
                     { "day": "2ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
                     { "day": "3ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
                     { "day": "4ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
@@ -394,6 +403,7 @@
                     { "type": "info", "title": "Plantões PA", "text": "02 plantões noturnos (19:30-07:30 h) / aluno na semana. 02 alunos por plantão." }
                 ],
                 "schedule": [
+                    // [INFO] O cronograma de alunos para os plantões será injetado pelo JS
                     { "day": "2ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "Dermato (13:00-15:00 h, profª Vânia)", "night": "PA PLANTÃO (19:30-07:30 h)" },
                     { "day": "3ª FEIRA", "morning": "SEMPR (08:00-10:00 h, profª Margareth)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" },
                     { "day": "4ª FEIRA", "morning": "Dermato (08:00-10:00 h, profª Vânia)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" },
@@ -493,10 +503,34 @@
             ]
         };
 
+        // [NOVO] Banco de dados para escalas específicas de alunos
+        // As chaves devem estar no formato YYYY-MM-DD
+        const specificStudentSchedules = {
+            // PA DIURNO (Rotation G) - Alunos do GRUPO VI
+            "2025-11-17": { rotation: "G", students: "Marcondes, Lyan, Jerso" },
+            "2025-11-18": { rotation: "G", students: "Paulo, Big, Negão" },
+            "2025-11-19": { rotation: "G", students: "Marcondes, Big, Negão" },
+            "2025-11-24": { rotation: "G", students: "Jerso, Lyan, Marcondes" },
+            "2025-11-25": { rotation: "G", students: "Big, Paulo, Negão" },
+            "2025-11-26": { rotation: "G", students: "Jerso, Paulo, Lyan" },
+            "2025-11-27": { rotation: "G", students: "Marcondes, Negão, Big" },
+            "2025-11-28": { rotation: "G", students: "Lyan, Jerso, Paulo" },
+            
+            // PA NOTURNO (Rotation H) - Alunos do GRUPO VI
+            "2025-12-01": { rotation: "H", students: "Marcondes, Paulo" },
+            "2025-12-02": { rotation: "H", students: "Jerso, Lyan" },
+            "2025-12-03": { rotation: "H", students: "Marcondes, Paulo" },
+            "2025-12-04": { rotation: "H", students: "Jerso, Lyan" },
+            "2025-12-05": { rotation: "H", students: "Negão, Big" }
+        };
+
+
         // --- CONSTANTES DA APLICAÇÃO ---
         // [OTIMIZAÇÃO] Constantes globais para evitar repetição e facilitar manutenção
         const SELECTED_GROUP = "GRUPO VI";
         const TODAY = new Date();
+        //const TODAY = new Date("2025-11-17T10:00:00"); // DEBUG: Testar PA Diurno
+        // const TODAY = new Date("2025-12-01T10:00:00"); // DEBUG: Testar PA Noturno
 
         // --- DOM ELEMENTS ---
         const scheduleView = document.getElementById('schedule-view');
@@ -509,6 +543,10 @@
         const currentRotationElem = document.getElementById('current-rotation-name');
         const currentScheduleContentElem = document.getElementById('current-week-schedule-content');
         const currentRotationDetailsElem = document.getElementById('current-rotation-details'); 
+
+        // [NOVO] DOM Elements para o bloco de plantões
+        const studentScheduleWeekView = document.getElementById('student-schedule-week-view');
+        const studentScheduleGrid = document.getElementById('student-schedule-grid');
 
         // Menu Elements
         const menuButton = document.getElementById('menu-button');
@@ -544,6 +582,16 @@
                 const endDate = new Date(period.end);
                 return dateToCompare >= startDate && dateToCompare <= endDate;
             });
+        }
+ 
+        /**
+         * [NOVO] Formata uma data para o formato YYYY-MM-DD (para ser compatível com as chaves do objeto)
+         */
+        function getFormattedDate(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
         /**
@@ -634,7 +682,8 @@
             
             // [OTIMIZAÇÃO] Usa a constante global
             const rotationId = periodInfo.assignments[SELECTED_GROUP];
-            const rotationData = rotationsSchedule[rotationId];
+            // [NOVO] Faz uma cópia profunda para evitar modificar o objeto original
+            const rotationData = JSON.parse(JSON.stringify(rotationsSchedule[rotationId]));
 
             if (rotationData) {
                 currentRotationElem.textContent = `${rotationId}: ${rotationData.title}`;
@@ -658,10 +707,17 @@
                     currentScheduleContentElem.innerHTML = "<p>Não foi possível carregar o cronograma detalhado.</p>";
                 }
                 
+                // [NOVO] Popula o bloco de plantões se for G ou H
+                // A função interna cuida de mostrar/esconder
+                populateStudentWeekSchedule(rotationId); 
+
                 scheduleView.classList.remove('hidden');
 
                 // Destacar o dia atual
                 highlightCurrentDay();
+
+                // [MODIFICADO] Injetar datas nos cards (lógica de alunos removida daqui)
+                addDatesToWeekScheduleCards();
 
             } else {
                 scheduleView.classList.add('hidden');
@@ -696,13 +752,131 @@
                     el.style.paddingLeft = "";
                 });
 
-                const todayElem = currentScheduleContentElem.querySelector(`[data-day-name="${todayDayName}"]`);
+                // [CORREÇÃO] O seletor deve buscar pelo início do 'data-day-name'
+                // Isso corrige o problema quando o 'data-day-name' é "2ª FEIRA (17/11)"
+                const todayElem = currentScheduleContentElem.querySelector(`[data-day-name^="${todayDayName}"]`);
                 if (todayElem) {
                     todayElem.classList.add('today-highlight', 'border-accent-blue', 'dark:border-accent-blue', 'bg-accent-blue/10', 'dark:bg-accent-blue/20', 'border-l-4');
                     todayElem.style.paddingLeft = "1rem";
                 }
             }
         }
+
+        /**
+         * [REMOVIDO] A função 'injectSpecificStudentSchedulesForWeek' foi removida.
+         * A lógica agora está em 'populateStudentWeekSchedule' e 'addDatesToWeekScheduleCards'.
+         */
+
+        /**
+         * [NOVO] Adiciona as datas (ex: 17/11) aos cards da semana.
+         */
+        function addDatesToWeekScheduleCards() {
+            // [OTIMIZAÇÃO] Usa a constante global TODAY
+            const todayDayOfWeek = TODAY.getDay(); // 0=Dom, 1=Seg, ..., 6=Sab
+            
+            // Mapeia o data-attribute 'data-day-name' para o número 'getDay()'
+            const dayMap = {
+                "2ª FEIRA": 1,
+                "3ª FEIRA": 2,
+                "4ª FEIRA": 3,
+                "5ª FEIRA": 4,
+                "6ª FEIRA": 5
+            };
+
+            // Pega todos os cards de dia da semana visíveis
+            const dayCards = currentScheduleContentElem.querySelectorAll('.weekly-schedule-day');
+
+            dayCards.forEach(card => {
+                // Extrai apenas o dia da semana, ex: "2ª FEIRA" de "2ª FEIRA (17/11)"
+                const dayName = card.dataset.dayName.split(' ')[0].toUpperCase(); 
+                
+                if (dayMap.hasOwnProperty(dayName)) {
+                    const cardDayOfWeek = dayMap[dayName]; // e.g., 1
+                    
+                    // Calcula a data para este card
+                    // ex: Hoje é Quarta (3). Card é Segunda (1). diff = 1 - 3 = -2.
+                    const dateDiff = cardDayOfWeek - todayDayOfWeek; 
+                    const cardDate = new Date(TODAY);
+                    cardDate.setDate(TODAY.getDate() + dateDiff);
+                    
+                    // Atualiza o título do dia com a data
+                    const dayTitle = card.querySelector('h5');
+                    if (dayTitle && !dayTitle.textContent.includes('/')) {
+                         const dateString = cardDate.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
+                         dayTitle.textContent = `${dayTitle.textContent} (${dateString})`;
+                         // Atualiza o dataset para o seletor de highlight
+                         card.dataset.dayName = dayTitle.textContent; 
+                    }
+                }
+            });
+        }
+
+
+        /**
+         * [NOVO] Popula o bloco "Plantões da Semana" se o rodízio for G ou H.
+         */
+        function populateStudentWeekSchedule(rotationId) {
+            // 1. Esconde o bloco por padrão
+            studentScheduleWeekView.classList.add('hidden');
+
+            // 2. Sai se não for o rodízio G ou H
+            if (rotationId !== 'G' && rotationId !== 'H') {
+                return;
+            }
+
+            studentScheduleGrid.innerHTML = ''; // Limpa o conteúdo
+            
+            const todayDayOfWeek = TODAY.getDay(); // 0=Dom, 1=Seg, ..., 6=Sab
+            const weekDays = [
+                { name: "2ª FEIRA", day: 1 },
+                { name: "3ª FEIRA", day: 2 },
+                { name: "4ª FEIRA", day: 3 },
+                { name: "5ª FEIRA", day: 4 },
+                { name: "6ª FEIRA", day: 5 }
+            ];
+
+            let hasAnyScheduleThisWeek = false;
+
+            // 3. Itera pelos 5 dias da semana
+            weekDays.forEach(dayInfo => {
+                const cardDayOfWeek = dayInfo.day;
+                const dateDiff = cardDayOfWeek - todayDayOfWeek;
+                const cardDate = new Date(TODAY);
+                cardDate.setDate(TODAY.getDate() + dateDiff);
+
+                const formattedCardDate = getFormattedDate(cardDate);
+                const dateString = cardDate.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
+
+                // 4. Verifica se há escala para esse dia e esse rodízio
+                const specificSchedule = specificStudentSchedules[formattedCardDate];
+                let studentsHtml = '';
+
+                if (specificSchedule && specificSchedule.rotation === rotationId) {
+                    // Encontrou escala
+                    studentsHtml = `<p class="text-sm mt-2 font-medium text-light-text dark:text-dark-text">${specificSchedule.students}</p>`;
+                    hasAnyScheduleThisWeek = true;
+                } else {
+                    // Sem escala para este dia
+                    studentsHtml = `<p class="text-sm mt-2 text-neutral-text italic">-</p>`;
+                }
+
+                // 5. Monta o HTML para o card do dia
+                const dayHtml = `
+                    <div class="bg-light-bg dark:bg-dark-bg p-3 rounded-lg border border-light-border dark:border-dark-border">
+                        <h4 class="font-semibold text-accent-green">${dayInfo.name}</h4>
+                        <p class="text-sm text-neutral-text">${dateString}</p>
+                        ${studentsHtml}
+                    </div>
+                `;
+                studentScheduleGrid.innerHTML += dayHtml;
+            });
+
+            // 6. Mostra o bloco APENAS se houver alguma escala encontrada para a semana
+            if (hasAnyScheduleThisWeek) {
+                 studentScheduleWeekView.classList.remove('hidden');
+            }
+        }
+
 
         /**
          * Popula a seção "Todos os Rodízios".
@@ -932,10 +1106,13 @@
         }
 
         // Corrigir bug no masterSchedule
-        const lastPeriod = masterSchedule.find(p => p.label === "19/01 a 23/01");
-        if (lastPeriod && lastPeriod.start.startsWith("2G26")) {
-            lastPeriod.start = "2026-01-19T00:00:00";
+        const lastPeriod = masterSchedule.find(p => p.label === "18/01 a 23/01");
+        if (lastPeriod && lastPeriod.start.startsWith("2G26")) { // Bug de digitação original
+            lastPeriod.start = "2026-01-18T00:00:00";
+        } else if (lastPeriod && lastPeriod.start.startsWith("2026-01-19")) { // Correção de data de início (deve ser domingo)
+             lastPeriod.start = "2026-01-18T00:00:00";
         }
+
 
         // Rodar a aplicação
         document.addEventListener('DOMContentLoaded', init);
