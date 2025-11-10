@@ -493,6 +493,11 @@
             ]
         };
 
+        // --- CONSTANTES DA APLICAÇÃO ---
+        // [OTIMIZAÇÃO] Constantes globais para evitar repetição e facilitar manutenção
+        const SELECTED_GROUP = "GRUPO VI";
+        const TODAY = new Date();
+
         // --- DOM ELEMENTS ---
         const scheduleView = document.getElementById('schedule-view');
         const outOfPeriodMessage = document.getElementById('out-of-period-message');
@@ -503,7 +508,7 @@
         const currentPeriodElem = document.getElementById('current-period-text');
         const currentRotationElem = document.getElementById('current-rotation-name');
         const currentScheduleContentElem = document.getElementById('current-week-schedule-content');
-        const currentRotationDetailsElem = document.getElementById('current-rotation-details'); // [NOVO]
+        const currentRotationDetailsElem = document.getElementById('current-rotation-details'); 
 
         // Menu Elements
         const menuButton = document.getElementById('menu-button');
@@ -517,7 +522,6 @@
         const allRotationsContainer = document.getElementById('all-rotations-content');
         const generalThemesContainer = document.getElementById('general-themes-content');
         const themeSearchInput = document.getElementById('theme-search-input'); 
-        // [MUDANÇA] Alterado de roadmapContainer para roadmapTableBody
         const roadmapTableBody = document.getElementById('roadmap-table-body'); 
 
 
@@ -530,26 +534,14 @@
 
         /**
          * Retorna o período de estágio atual com base na data de hoje.
-         * Se for domingo, verifica o cronograma de segunda-feira.
          */
         function getCurrentPeriodInfo() {
-            const today = new Date();
-            // Para testes:
-             // const testDate = new Date('2025-11-09T10:00:00'); // Simula Domingo (Semana 2)
-             // const testDate = new Date('2025-11-04T10:00:00'); // Simula Terça
-             // const testDate = new Date('2025-12-25T10:00:00'); // Recesso
-             // const testDate = new Date('2026-01-06T10:00:00'); // Semana pós-recesso
-            
-            // [CORREÇÃO] Removida data de teste 'testDate' e lógica de avançar o dia.
-            let dateToCompare = new Date(today); // Clona a data
-            
-            // [CORREÇÃO] Removido o bloco 'if (testDate.getDay() === 0)'
-            // A lógica agora checa o dia atual (incluindo domingo) diretamente.
+            // [OTIMIZAÇÃO] Usa a constante global TODAY
+            let dateToCompare = new Date(TODAY); // Clona a data
 
             return masterSchedule.find(period => {
                 const startDate = new Date(period.start);
                 const endDate = new Date(period.end);
-                // Usa a data de comparação (hoje ou amanhã se for domingo)
                 return dateToCompare >= startDate && dateToCompare <= endDate;
             });
         }
@@ -558,49 +550,43 @@
          * Gera o HTML para um único rodízio.
          */
         function createRotationHTML(rotationId, rotationData) {
-            let scheduleHtml = '';
-            rotationData.schedule.forEach(day => {
-                // Adicionado data-day-name para destacar o dia atual
-                scheduleHtml += `
-                    <div class="weekly-schedule-day border-b border-light-border dark:border-dark-border pb-3 mb-3 transition-all" data-day-name="${day.day.toUpperCase()}">
-                        <h5 class="text-md font-semibold text-accent-green">${day.day}</h5>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
-                            <div>
-                                <strong class="text-neutral-text">Manhã:</strong>
-                                <div class="pl-2">${day.morning || '-'}</div>
-                            </div>
-                            <div>
-                                <strong class="text-neutral-text">Tarde:</strong>
-                                <div class="pl-2">${day.afternoon || '-'}</div>
-                            </div>
-                            ${day.night ? `
-                            <div class="sm:col-span-2">
-                                <strong class="text-neutral-text">Noite:</strong>
-                                <div class="pl-2">${day.night}</div>
-                            </div>` : ''}
+            // [OTIMIZAÇÃO] Convertido para template literals e .map().join() para melhor legibilidade
+            const scheduleHtml = rotationData.schedule.map(day => `
+                <div class="weekly-schedule-day border-b border-light-border dark:border-dark-border pb-3 mb-3 transition-all" data-day-name="${day.day.toUpperCase()}">
+                    <h5 class="text-md font-semibold text-accent-green">${day.day}</h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
+                        <div>
+                            <strong class="text-neutral-text">Manhã:</strong>
+                            <div class="pl-2">${day.morning || '-'}</div>
+                        </div>
+                        <div>
+                            <strong class="text-neutral-text">Tarde:</strong>
+                            <div class="pl-2">${day.afternoon || '-'}</div>
+                        </div>
+                        ${day.night ? `
+                        <div class="sm:col-span-2">
+                            <strong class="text-neutral-text">Noite:</strong>
+                            <div class="pl-2">${day.night}</div>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            const detailsHtml = rotationData.details.map(detail => {
+                let icon = 'map-pin';
+                if (detail.type === 'prof') icon = 'users';
+                if (detail.type === 'info') icon = 'alert-circle';
+                
+                return `
+                    <div class="flex items-start space-x-2 text-sm">
+                        <i data-feather="${icon}" class="w-4 h-4 flex-shrink-0 mt-1 text-neutral-text"></i>
+                        <div>
+                            <strong class="text-light-text dark:text-dark-text">${detail.title}:</strong>
+                            <span class="text-neutral-text">${detail.text}</span>
                         </div>
                     </div>
                 `;
-            });
-
-            let detailsHtml = '';
-            if (rotationData.details) {
-                rotationData.details.forEach(detail => {
-                    let icon = 'map-pin';
-                    if (detail.type === 'prof') icon = 'users';
-                    if (detail.type === 'info') icon = 'alert-circle';
-                    
-                    detailsHtml += `
-                        <div class="flex items-start space-x-2 text-sm">
-                            <i data-feather="${icon}" class="w-4 h-4 flex-shrink-0 mt-1 text-neutral-text"></i>
-                            <div>
-                                <strong class="text-light-text dark:text-dark-text">${detail.title}:</strong>
-                                <span class="text-neutral-text">${detail.text}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
+            }).join('');
 
             return `
                 <div class="bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden border border-light-border/50 dark:border-dark-border/50">
@@ -608,7 +594,6 @@
                         <h3 class="text-xl font-bold text-light-text dark:text-dark-text">Rodízio ${rotationId}: ${rotationData.title}</h3>
                     </div>
                     <div class="p-4 space-y-4">
-                        <!-- [MUDANÇA] Adicionada classe wrapper -->
                         <div class="rotation-details-content space-y-2">${detailsHtml}</div>
                         <h4 class="text-lg font-semibold pt-2 border-t border-light-border dark:border-dark-border">Cronograma</h4>
                         <div class="rotation-week-schedule">${scheduleHtml}</div>
@@ -622,11 +607,10 @@
          * Atualiza a visualização do cronograma com base no grupo selecionado.
          */
         function updateScheduleView() {
-            const selectedGroup = "GRUPO VI"; // Fixo para o Grupo VI
-            const periodInfo = getCurrentPeriodInfo(); // Função agora lida com o domingo
+            // [OTIMIZAÇÃO] Usa a constante global
+            const periodInfo = getCurrentPeriodInfo(); 
 
             if (!periodInfo) {
-                // Fora de todos os períodos
                 scheduleView.classList.add('hidden');
                 outOfPeriodTitle.textContent = "Fora do Período";
                 outOfPeriodText.textContent = "O estágio obrigatório (Turma B 2025) não parece estar em andamento na data de hoje.";
@@ -634,13 +618,11 @@
                 return;
             }
 
-            // Atualiza o card de período (antes de checar recesso)
             const periodCardText = document.querySelector('#current-period-text');
             periodCardText.textContent = periodInfo.label;
 
 
             if (periodInfo.assignments === "Recesso") {
-                // Período de recesso
                 scheduleView.classList.add('hidden');
                 outOfPeriodTitle.textContent = "Recesso";
                 outOfPeriodText.textContent = "Período de recesso (Natal e Ano Novo). Não há atividades programadas.";
@@ -648,10 +630,10 @@
                 return;
             }
 
-            // Em um período de estágio válido
             outOfPeriodMessage.classList.add('hidden');
             
-            const rotationId = periodInfo.assignments[selectedGroup];
+            // [OTIMIZAÇÃO] Usa a constante global
+            const rotationId = periodInfo.assignments[SELECTED_GROUP];
             const rotationData = rotationsSchedule[rotationId];
 
             if (rotationData) {
@@ -661,16 +643,15 @@
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = rotationHTML;
                 
-                // [MUDANÇA] Extrair e injetar os detalhes
+                // Extrai e injeta os detalhes e o cronograma
                 const detailsContent = tempDiv.querySelector('.rotation-details-content');
                 if (detailsContent) {
                     currentRotationDetailsElem.innerHTML = detailsContent.innerHTML;
                 } else {
-                    currentRotationDetailsElem.innerHTML = ""; // Limpa se não houver
+                    currentRotationDetailsElem.innerHTML = "";
                 }
                 
                 const scheduleContent = tempDiv.querySelector('.rotation-week-schedule');
-
                 if (scheduleContent) {
                     currentScheduleContentElem.innerHTML = scheduleContent.innerHTML;
                 } else {
@@ -683,7 +664,6 @@
                 highlightCurrentDay();
 
             } else {
-                // Erro
                 scheduleView.classList.add('hidden');
                 outOfPeriodTitle.textContent = "Erro";
                 outOfPeriodText.textContent = "Não foi possível encontrar dados para seu rodízio atual.";
@@ -697,7 +677,6 @@
          * Destaca o card do dia da semana atual
          */
         function highlightCurrentDay() {
-            // Mapeamento de getDay() para o texto no JSON
             const dayMap = [
                 "DOMINGO", // 0
                 "2ª FEIRA", // 1
@@ -707,23 +686,19 @@
                 "6ª FEIRA", // 5
                 "SÁBADO"  // 6
             ];
-            // [CORREÇÃO] Removida data de teste 'testDate'. Usa a data real.
-            const today = new Date(); // Usa a data real
             
-            const todayDayName = dayMap[today.getDay()];
+            // [OTIMIZAÇÃO] Usa a constante global TODAY
+            const todayDayName = dayMap[TODAY.getDay()];
 
             if (todayDayName) {
-                // Remover destaque antigo (se houver)
                 currentScheduleContentElem.querySelectorAll('.today-highlight').forEach(el => {
                     el.classList.remove('today-highlight', 'border-accent-blue', 'dark:border-accent-blue', 'bg-accent-blue/10', 'dark:bg-accent-blue/20', 'border-l-4');
-                    el.style.paddingLeft = ""; // Resetar padding
+                    el.style.paddingLeft = "";
                 });
 
-                // Encontrar o elemento do dia atual
                 const todayElem = currentScheduleContentElem.querySelector(`[data-day-name="${todayDayName}"]`);
                 if (todayElem) {
                     todayElem.classList.add('today-highlight', 'border-accent-blue', 'dark:border-accent-blue', 'bg-accent-blue/10', 'dark:bg-accent-blue/20', 'border-l-4');
-                    // Adicionar um padding extra para o border-l
                     todayElem.style.paddingLeft = "1rem";
                 }
             }
@@ -742,15 +717,35 @@
         }
 
         /**
+         * [OTIMIZAÇÃO] Nova função handler para o toggle dos temas (Delegação de Eventos)
+         */
+        function handleThemeToggle(event) {
+            // Garante que o evento é de um <details> e que está dentro do container
+            if (event.target.tagName === 'DETAILS' && event.currentTarget.contains(event.target)) {
+                const chevron = event.target.querySelector('.chevron-icon');
+                if (!chevron) return;
+                
+                // O evento 'toggle' dispara *depois* da mudança de estado
+                if (event.target.open) {
+                    chevron.style.transform = 'rotate(180deg)';
+                } else {
+                    chevron.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+
+        /**
          * Popula a seção "Temas Gerais".
          */
         function populateGeneralThemes() {
-            let themesHtml = '';
-            for (const category in generalThemes) {
+            // [OTIMIZAÇÃO] Convertido para .map().join() para clareza
+            const themesHtml = Object.keys(generalThemes).map(category => {
                 const items = generalThemes[category];
-                const itemsHtml = items.map(item => `<li class="ml-4 p-1 theme-item" data-theme-name="${item.toLowerCase()}">${item}</li>`).join('');
+                const itemsHtml = items.map(item => 
+                    `<li class="ml-4 p-1 theme-item" data-theme-name="${item.toLowerCase()}">${item}</li>`
+                ).join('');
                 
-                themesHtml += `
+                return `
                     <details class="theme-category bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden border border-light-border/50 dark:border-dark-border/50">
                         <summary class="cursor-pointer font-semibold p-4 flex justify-between items-center hover:bg-gray-100 dark:hover:bg-dark-border">
                             ${category}
@@ -761,19 +756,9 @@
                         </ul>
                     </details>
                 `;
-            }
-            generalThemesContainer.innerHTML = themesHtml;
+            }).join(''); // Junta todas as categorias
             
-            generalThemesContainer.querySelectorAll('details').forEach(detail => {
-                detail.addEventListener('toggle', (event) => {
-                    const chevron = event.target.querySelector('.chevron-icon');
-                    if (event.target.open) {
-                        chevron.style.transform = 'rotate(180deg)';
-                    } else {
-                        chevron.style.transform = 'rotate(0deg)';
-                    }
-                });
-            });
+            generalThemesContainer.innerHTML = themesHtml;
             feather.replace();
         }
         
@@ -800,7 +785,6 @@
 
                 if (categoryHasVisibleItem) {
                     category.classList.remove('hidden');
-                    // Opcional: abrir a categoria se a busca for ativa
                     if(searchTerm.length > 0) {
                          category.open = true;
                     }
@@ -811,50 +795,42 @@
         }
 
         /**
-         * [MUDANÇA] Popula o roteiro do estágio na página principal como uma TABELA.
+         * Popula o roteiro do estágio na página principal como uma TABELA.
          */
         function populateInternshipRoadmap() {
-            const selectedGroup = "GRUPO VI"; // Fixo
-            const periodInfo = getCurrentPeriodInfo(); // Para destacar o período atual
+            // [OTIMIZAÇÃO] Usa a constante global
+            const periodInfo = getCurrentPeriodInfo(); 
+            if (!roadmapTableBody) return; 
 
-            if (!roadmapTableBody) return; // Proteção
-            roadmapTableBody.innerHTML = ''; // Limpar o tbody da tabela
-
-            masterSchedule.forEach(period => {
+            // [OTIMIZAÇÃO] Convertido para .map().join()
+            const tableRowsHtml = masterSchedule.map(period => {
                 let rotationId = '';
                 let rotationTitle = '';
-                // Verifica se o período atual bate com o do loop
                 let isCurrentPeriod = periodInfo && period.label === periodInfo.label;
 
                 if (period.assignments === "Recesso") {
                     rotationTitle = "Recesso";
                 } else {
-                    rotationId = period.assignments[selectedGroup];
+                    // [OTIMIZAÇÃO] Usa a constante global
+                    rotationId = period.assignments[SELECTED_GROUP];
                     rotationTitle = rotationsSchedule[rotationId] ? `<strong>${rotationId}:</strong> ${rotationsSchedule[rotationId].title}` : 'Rodízio não encontrado';
                 }
 
-                // Criar elementos da tabela
-                const tr = document.createElement('tr');
-                
-                // Aplica destaque se for o período atual (verde) ou borda normal
                 const highlightClasses = isCurrentPeriod 
                     ? 'bg-accent-green/10 dark:bg-accent-green/20' 
                     : 'hover:bg-gray-100/50 dark:hover:bg-dark-border/50';
+                
+                const periodClass = isCurrentPeriod ? 'text-accent-green' : 'text-neutral-text';
 
-                tr.className = `border-b border-light-border dark:border-dark-border ${highlightClasses} transition-colors last:border-b-0`;
+                return `
+                    <tr class="border-b border-light-border dark:border-dark-border ${highlightClasses} transition-colors last:border-b-0">
+                        <td class="p-3 text-sm font-medium ${periodClass}">${period.label}</td>
+                        <td class="p-3 text-sm text-light-text dark:text-dark-text">${rotationTitle}</td>
+                    </tr>
+                `;
+            }).join('');
 
-                const tdPeriod = document.createElement('td');
-                tdPeriod.className = `p-3 text-sm font-medium ${isCurrentPeriod ? 'text-accent-green' : 'text-neutral-text'}`;
-                tdPeriod.textContent = period.label;
-
-                const tdRotation = document.createElement('td');
-                tdRotation.className = 'p-3 text-sm text-light-text dark:text-dark-text';
-                tdRotation.innerHTML = rotationTitle;
-
-                tr.appendChild(tdPeriod);
-                tr.appendChild(tdRotation);
-                roadmapTableBody.appendChild(tr);
-            });
+            roadmapTableBody.innerHTML = tableRowsHtml;
         }
 
         // --- Funções do Menu e Navegação ---
@@ -915,8 +891,10 @@
 
         // --- INICIALIZAÇÃO ---
         function init() {
-            // Data de hoje
-            currentDateElem.textContent = new Date().toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            // [OTIMIZAÇÃO] Usa a constante global TODAY
+            currentDateElem.textContent = TODAY.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            // [OTIMIZAÇÃO] Atualiza o nome do grupo no card
+            document.getElementById('selected-group-name').textContent = SELECTED_GROUP;
 
             // Modo Escuro
             loadInitialDarkMode();
@@ -924,7 +902,7 @@
             // Popular seções
             populateAllRotations();
             populateGeneralThemes();
-            populateInternshipRoadmap(); // Popula a nova tabela
+            populateInternshipRoadmap(); 
 
             // Atualizar a view principal
             updateScheduleView(); 
@@ -944,6 +922,10 @@
 
             // Busca de Temas
             themeSearchInput.addEventListener('input', filterGeneralThemes);
+            
+            // [OTIMIZAÇÃO] Delegação de Eventos para os temas
+            // O 'true' usa "capture phase" para garantir que o evento toggle seja pego
+            generalThemesContainer.addEventListener('toggle', handleThemeToggle, true);
 
             // Re-aplicar ícones
             feather.replace();
