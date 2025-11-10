@@ -416,16 +416,18 @@
 
         // Cronograma Mestre (Grupo x Rodízio x Data)
         const masterSchedule = [
-            { "start": "2025-11-03T00:00:00", "end": "2025-11-07T23:59:59", "label": "03/11 a 07/11", "assignments": { "GRUPO I": "A", "GRUPO II": "I", "GRUPO III": "H", "GRUPO IV": "G", "GRUPO V": "F", "GRUPO VI": "E", "GRUPO VII": "D", "GRUPO VIII": "C", "GRUPO IX": "B" } },
-            { "start": "2025-11-10T00:00:00", "end": "2025-11-14T23:59:59", "label": "10/11 a 14/11", "assignments": { "GRUPO I": "B", "GRUPO II": "A", "GRUPO III": "I", "GRUPO IV": "H", "GRUPO V": "G", "GRUPO VI": "F", "GRUPO VII": "E", "GRUPO VIII": "D", "GRUPO IX": "C" } },
-            { "start": "2025-11-17T00:00:00", "end": "2025-11-28T23:59:59", "label": "17/11 a 28/11", "assignments": { "GRUPO I": "C", "GRUPO II": "B", "GRUPO III": "A", "GRUPO IV": "I", "GRUPO V": "H", "GRUPO VI": "G", "GRUPO VII": "F", "GRUPO VIII": "E", "GRUPO IX": "D" } },
-            { "start": "2025-12-01T00:00:00", "end": "2025-12-05T23:59:59", "label": "01/12 a 05/12", "assignments": { "GRUPO I": "D", "GRUPO II": "C", "GRUPO III": "B", "GRUPO IV": "A", "GRUPO V": "I", "GRUPO VI": "H", "GRUPO VII": "G", "GRUPO VIII": "F", "GRUPO IX": "E" } },
-            { "start": "2025-12-08T00:00:00", "end": "2025-12-12T23:59:59", "label": "08/12 a 12/12", "assignments": { "GRUPO I": "E", "GRUPO II": "D", "GRUPO III": "C", "GRUPO IV": "B", "GRUPO V": "A", "GRUPO VI": "I", "GRUPO VII": "H", "GRUPO VIII": "G", "GRUPO IX": "F" } },
-            { "start": "2025-12-15T00:00:00", "end": "2025-12-19T23:59:59", "label": "15/12 a 19/12", "assignments": { "GRUPO I": "F", "GRUPO II": "E", "GRUPO III": "D", "GRUPO IV": "C", "GRUPO V": "B", "GRUPO VI": "A", "GRUPO VII": "I", "GRUPO VIII": "H", "GRUPO IX": "G" } },
-            { "start": "2025-12-20T00:00:00", "end": "2026-01-04T23:59:59", "label": "Recesso", "assignments": "Recesso" },
-            { "start": "2026-01-05T00:00:00", "end": "2026-01-09T23:59:59", "label": "05/01 a 09/01", "assignments": { "GRUPO I": "G", "GRUPO II": "F", "GRUPO III": "E", "GRUPO IV": "D", "GRUPO V": "C", "GRUPO VI": "B", "GRUPO VII": "A", "GRUPO VIII": "I", "GRUPO IX": "H" } },
-            { "start": "2026-01-12T00:00:00", "end": "2026-01-16T23:59:59", "label": "12/01 a 16/01", "assignments": { "GRUPO I": "H", "GRUPO II": "G", "GRUPO III": "F", "GRUPO IV": "E", "GRUPO V": "D", "GRUPO VI": "C", "GRUPO VII": "B", "GRUPO VIII": "A", "GRUPO IX": "I" } },
-            { "start": "2026-01-19T00:00:00", "end": "2026-01-23T23:59:59", "label": "19/01 a 23/01", "assignments": { "GRUPO I": "I", "GRUPO II": "H", "GRUPO III": "G", "GRUPO IV": "F", "GRUPO V": "E", "GRUPO VI": "D", "GRUPO VII": "C", "GRUPO VIII": "B", "GRUPO IX": "A" } }
+            // [CORREÇÃO] Datas de início movidas para o Domingo e Rótulos atualizados
+            { "start": "2025-11-02T00:00:00", "end": "2025-11-07T23:59:59", "label": "02/11 a 07/11", "assignments": { "GRUPO I": "A", "GRUPO II": "I", "GRUPO III": "H", "GRUPO IV": "G", "GRUPO V": "F", "GRUPO VI": "E", "GRUPO VII": "D", "GRUPO VIII": "C", "GRUPO IX": "B" } },
+            { "start": "2025-11-09T00:00:00", "end": "2025-11-14T23:59:59", "label": "09/11 a 14/11", "assignments": { "GRUPO I": "B", "GRUPO II": "A", "GRUPO III": "I", "GRUPO IV": "H", "GRUPO V": "G", "GRUPO VI": "F", "GRUPO VII": "E", "GRUPO VIII": "D", "GRUPO IX": "C" } },
+            { "start": "2025-11-16T00:00:00", "end": "2025-11-28T23:59:59", "label": "16/11 a 28/11", "assignments": { "GRUPO I": "C", "GRUPO II": "B", "GRUPO III": "A", "GRUPO IV": "I", "GRUPO V": "H", "GRUPO VI": "G", "GRUPO VII": "F", "GRUPO VIII": "E", "GRUPO IX": "D" } },
+            { "start": "2025-11-30T00:00:00", "end": "2025-12-05T23:59:59", "label": "30/11 a 05/12", "assignments": { "GRUPO I": "D", "GRUPO II": "C", "GRUPO III": "B", "GRUPO IV": "A", "GRUPO V": "I", "GRUPO VI": "H", "GRUPO VII": "G", "GRUPO VIII": "F", "GRUPO IX": "E" } },
+            { "start": "2025-12-07T00:00:00", "end": "2025-12-12T23:59:59", "label": "07/12 a 12/12", "assignments": { "GRUPO I": "E", "GRUPO II": "D", "GRUPO III": "C", "GRUPO IV": "B", "GRUPO V": "A", "GRUPO VI": "I", "GRUPO VII": "H", "GRUPO VIII": "G", "GRUPO IX": "F" } },
+            { "start": "2025-12-14T00:00:00", "end": "2025-12-19T23:59:59", "label": "14/12 a 19/12", "assignments": { "GRUPO I": "F", "GRUPO II": "E", "GRUPO III": "D", "GRUPO IV": "C", "GRUPO V": "B", "GRUPO VI": "A", "GRUPO VII": "I", "GRUPO VIII": "H", "GRUPO IX": "G" } },
+            // [CORREÇÃO] Recesso ajustado para terminar no Sábado
+            { "start": "2025-12-20T00:00:00", "end": "2026-01-03T23:59:59", "label": "20/12 a 03/01", "assignments": "Recesso" },
+            { "start": "2026-01-04T00:00:00", "end": "2026-01-09T23:59:59", "label": "04/01 a 09/01", "assignments": { "GRUPO I": "G", "GRUPO II": "F", "GRUPO III": "E", "GRUPO IV": "D", "GRUPO V": "C", "GRUPO VI": "B", "GRUPO VII": "A", "GRUPO VIII": "I", "GRUPO IX": "H" } },
+            { "start": "2026-01-11T00:00:00", "end": "2026-01-16T23:59:59", "label": "11/01 a 16/01", "assignments": { "GRUPO I": "H", "GRUPO II": "G", "GRUPO III": "F", "GRUPO IV": "E", "GRUPO V": "D", "GRUPO VI": "C", "GRUPO VII": "B", "GRUPO VIII": "A", "GRUPO IX": "I" } },
+            { "start": "2026-01-18T00:00:00", "end": "2026-01-23T23:59:59", "label": "18/01 a 23/01", "assignments": { "GRUPO I": "I", "GRUPO II": "H", "GRUPO III": "G", "GRUPO IV": "F", "GRUPO V": "E", "GRUPO VI": "D", "GRUPO VII": "C", "GRUPO VIII": "B", "GRUPO IX": "A" } }
         ];
 
         // Temas Gerais Categorizados
@@ -527,18 +529,16 @@
         function getCurrentPeriodInfo() {
             const today = new Date();
             // Para testes:
-             const testDate = new Date('2025-11-03T10:00:00'); // Simula Segunda (Semana 1)
+             // const testDate = new Date('2025-11-09T10:00:00'); // Simula Domingo (Semana 2)
              // const testDate = new Date('2025-11-04T10:00:00'); // Simula Terça
              // const testDate = new Date('2025-12-25T10:00:00'); // Recesso
              // const testDate = new Date('2026-01-06T10:00:00'); // Semana pós-recesso
-             // const testDate = new Date('2025-11-02T10:00:00'); // Simula Domingo (pegará o período que começa amanhã)
             
-            // [MUDANÇA] Usando testDate para simulação
-            let dateToCompare = new Date(testDate); // Clona a data
-            if (testDate.getDay() === 0) { // 0 = Domingo
-                // Define dateToCompare como segunda-feira (amanhã)
-                dateToCompare.setDate(testDate.getDate() + 1);
-            }
+            // [CORREÇÃO] Removida data de teste 'testDate' e lógica de avançar o dia.
+            let dateToCompare = new Date(today); // Clona a data
+            
+            // [CORREÇÃO] Removido o bloco 'if (testDate.getDay() === 0)'
+            // A lógica agora checa o dia atual (incluindo domingo) diretamente.
 
             return masterSchedule.find(period => {
                 const startDate = new Date(period.start);
@@ -692,9 +692,8 @@
                 "6ª FEIRA", // 5
                 "SÁBADO"  // 6
             ];
-            // [MUDANÇA] Usando a mesma data de teste para consistência
-            const today = new Date('2025-11-03T10:00:00'); // Simula Segunda
-            // const today = new Date(); // Descomente para usar data real
+            // [CORREÇÃO] Removida data de teste 'testDate'. Usa a data real.
+            const today = new Date(); // Usa a data real
             
             const todayDayName = dayMap[today.getDay()];
 
@@ -947,4 +946,3 @@
     </script>
 </body>
 </html>
-
