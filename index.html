@@ -27,9 +27,9 @@
                         'light-bg': '#F9F9F9',         // Fundo principal claro
                         'dark-bg': '#121212',          // Fundo principal escuro
                         'light-card': '#FFFFFF',       // Fundo dos cards claros
-                        'dark-card': '#1E1E1E',       // Fundo dos cards escuros
+                        'dark-card': '#1E1E1E',        // Fundo dos cards escuros
                         'light-text': '#1A1A1A',       // Texto principal claro
-                        'dark-text': '#E5E5E5',       // Texto principal escuro
+                        'dark-text': '#E5E5E5',        // Texto principal escuro
                         'neutral-text': '#888888',     // Texto secundário/neutro
                         'light-border': '#E0E0E0',     // Borda sutil clara
                         'dark-border': '#2D2D2D',      // Borda sutil escura
@@ -103,6 +103,29 @@
         /* Classe de Destaque para o dia atual */
         .today-highlight {
             /* padding-left: 1rem; */ /* Opcional: Adicionado via JS */
+        }
+
+        /* [NOVO] Estilos do Modal de Rodízio */
+        #rotation-modal {
+            transition: opacity 0.3s ease-in-out;
+        }
+        #rotation-modal #rotation-modal-box {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        #rotation-modal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #rotation-modal.hidden #rotation-modal-box {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        #rotation-modal {
+            opacity: 1;
+        }
+        #rotation-modal #rotation-modal-box {
+            transform: scale(1);
+            opacity: 1;
         }
     </style>
 </head>
@@ -291,6 +314,25 @@
         </section>
 
     </div>
+
+    <!-- [NOVO] Modal de Detalhes do Rodízio -->
+    <div id="rotation-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden">
+        <div id="rotation-modal-box" class="bg-light-card/90 dark:bg-dark-card/90 backdrop-blur-xl border border-light-border/50 dark:border-dark-border/50 rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+            <!-- Cabeçalho do Modal -->
+            <div class="flex justify-between items-center p-4 border-b border-light-border dark:border-dark-border flex-shrink-0">
+                <h2 id="rotation-modal-title" class="text-xl font-bold">Detalhes do Rodízio</h2>
+                <button id="rotation-modal-close" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border">
+                    <i data-feather="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+            <!-- Conteúdo Rolável -->
+            <div id="rotation-modal-content" class="p-6 overflow-y-auto space-y-6">
+                <!-- O conteúdo será injetado aqui -->
+            </div>
+        </div>
+    </div>
+    <!-- Fim do Modal -->
+
 
     <script>
         // --- INICIALIZAÇÃO DOS ÍCONES ---
@@ -545,8 +587,9 @@
         // [OTIMIZAÇÃO] Constantes globais para evitar repetição e facilitar manutenção
         const SELECTED_GROUP = "GRUPO VI";
         const TODAY = new Date();
-        //const TODAY = new Date("2025-11-17T10:00:00"); // DEBUG: Testar PA Diurno
-        // const TODAY = new Date("2025-12-01T10:00:00"); // DEBUG: Testar PA Noturno
+        // const TODAY = new Date("2025-11-17T10:00:00"); // DEBUG: Testar PA Diurno (Rodízio G)
+        // const TODAY = new Date("2025-12-01T10:00:00"); // DEBUG: Testar PA Noturno (Rodízio H)
+        // const TODAY = new Date("2025-11-10T10:00:00"); // DEBUG: Testar Rodízio F (Sem PA)
 
         // --- DOM ELEMENTS ---
         const scheduleView = document.getElementById('schedule-view');
@@ -578,6 +621,13 @@
         const themeSearchInput = document.getElementById('theme-search-input'); 
         const roadmapTableBody = document.getElementById('roadmap-table-body'); 
 
+        // [NOVO] Modal de Rodízio
+        const rotationModal = document.getElementById('rotation-modal');
+        const rotationModalBox = document.getElementById('rotation-modal-box');
+        const rotationModalTitle = document.getElementById('rotation-modal-title');
+        const rotationModalContent = document.getElementById('rotation-modal-content');
+        const rotationModalClose = document.getElementById('rotation-modal-close');
+
 
         // Dark Mode Elements
         const darkModeToggle = document.getElementById('dark-mode-toggle');
@@ -599,7 +649,7 @@
                 return dateToCompare >= startDate && dateToCompare <= endDate;
             });
         }
- 
+
         /**
          * [NOVO] Formata uma data para o formato YYYY-MM-DD (para ser compatível com as chaves do objeto)
          */
@@ -1012,8 +1062,22 @@
                 
                 const periodClass = isCurrentPeriod ? 'text-accent-green' : 'text-neutral-text';
 
+                // [NOVO] Adicionar atributos de dados e cursor para o modal
+                let clickableClass = 'transition-colors';
+                let dataAttrs = '';
+
+                if (period.assignments !== "Recesso") {
+                    clickableClass += ' cursor-pointer';
+                    dataAttrs = `
+                        data-rotation-id="${rotationId}"
+                        data-period-start="${period.start}"
+                        data-period-end="${period.end}"
+                        data-period-label="${period.label}"
+                    `;
+                }
+
                 return `
-                    <tr class="border-b border-light-border dark:border-dark-border ${highlightClasses} transition-colors last:border-b-0">
+                    <tr class="border-b border-light-border dark:border-dark-border ${highlightClasses} ${clickableClass} last:border-b-0" ${dataAttrs}>
                         <td class="p-3 text-sm font-medium ${periodClass}">${period.label}</td>
                         <td class="p-3 text-sm text-light-text dark:text-dark-text">${rotationTitle}</td>
                     </tr>
@@ -1021,6 +1085,158 @@
             }).join('');
 
             roadmapTableBody.innerHTML = tableRowsHtml;
+        }
+
+        // --- [NOVO] Funções do Modal de Rodízio ---
+
+        /**
+         * [NOVO] Gera o HTML da escala de plantões (G e H) para um período específico.
+         */
+        function generatePAScheduleForPeriod(rotationId, periodStartStr, periodEndStr) {
+            const startDate = new Date(periodStartStr);
+            const endDate = new Date(periodEndStr);
+            
+            let scheduleHtml = '';
+            let hasSchedule = false;
+
+            // Mapeia getDay() para o nome do dia
+            const dayMap = ["DOM", "2ª FEIRA", "3ª FEIRA", "4ª FEIRA", "5ª FEIRA", "6ª FEIRA", "SÁB"];
+
+            // Itera dia a dia, incluindo o último dia
+            for (let d = new Date(startDate.getTime()); d <= endDate; d.setDate(d.getDate() + 1)) {
+                const dayOfWeek = d.getDay();
+
+                // Pula fins de semana (Domingo = 0, Sábado = 6)
+                if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    continue;
+                }
+
+                const formattedDateKey = getFormattedDate(d); // YYYY-MM-DD
+                const specificSchedule = specificStudentSchedules[formattedDateKey];
+
+                // Verifica se há escala para ESTE dia E ESTE rodízio
+                if (specificSchedule && specificSchedule.rotation === rotationId) {
+                    hasSchedule = true;
+                    const dateString = d.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
+                    
+                    scheduleHtml += `
+                        <div class="bg-light-bg dark:bg-dark-bg p-3 rounded-lg border border-light-border dark:border-dark-border">
+                            <h4 class="font-semibold text-accent-green">${dayMap[dayOfWeek]} (${dateString})</h4>
+                            <p class="text-sm mt-1 font-medium text-light-text dark:text-dark-text">${specificSchedule.students}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            if (!hasSchedule) {
+                return '<p class="text-neutral-text italic">Nenhuma escala de plantão específica (Grupo VI) encontrada para este período.</p>';
+            }
+
+            return `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">${scheduleHtml}</div>`;
+        }
+
+        /**
+         * [NOVO] Monta o HTML completo para o conteúdo do modal de rodízio.
+         */
+        function buildModalContent(rotationId, periodStartStr, periodEndStr, periodLabel) {
+            const rotationData = rotationsSchedule[rotationId];
+            if (!rotationData) return "<p>Erro: Dados do rodízio não encontrados.</p>";
+
+            // 1. Gerar Detalhes (Locais, Profs)
+            const detailsHtml = rotationData.details.map(detail => {
+                let icon = 'map-pin';
+                if (detail.type === 'prof') icon = 'users';
+                if (detail.type === 'info') icon = 'alert-circle';
+                
+                return `
+                    <div class="flex items-start space-x-2 text-sm">
+                        <i data-feather="${icon}" class="w-4 h-4 flex-shrink-0 mt-1 text-neutral-text"></i>
+                        <div>
+                            <strong class="text-light-text dark:text-dark-text">${detail.title}:</strong>
+                            <span class="text-neutral-text">${detail.text}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 2. Gerar Cronograma Genérico da Semana
+            const genericScheduleHtml = rotationData.schedule.map(day => `
+                <div class="weekly-schedule-day border-b border-light-border dark:border-dark-border pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                    <h5 class="text-md font-semibold text-accent-green">${day.day}</h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
+                        <div>
+                            <strong class="text-neutral-text">Manhã:</strong>
+                            <div class="pl-2">${day.morning || '-'}</div>
+                        </div>
+                        <div>
+                            <strong class="text-neutral-text">Tarde:</strong>
+                            <div class="pl-2">${day.afternoon || '-'}</div>
+                        </div>
+                        ${day.night ? `
+                        <div class="sm:col-span-2">
+                            <strong class="text-neutral-text">Noite:</strong>
+                            <div class="pl-2">${day.night}</div>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            // 3. Gerar Cronograma Específico de Plantões (se G ou H)
+            let specificPAScheduleHtml = '';
+            if (rotationId === 'G' || rotationId === 'H') {
+                const paSchedule = generatePAScheduleForPeriod(rotationId, periodStartStr, periodEndStr);
+                specificPAScheduleHtml = `
+                    <div class="pt-4 border-t border-light-border dark:border-dark-border">
+                        <h3 class="text-xl font-semibold mb-4">Escala de Plantões (Grupo VI)</h3>
+                        ${paSchedule}
+                    </div>
+                `;
+            }
+
+            // 4. Combinar tudo
+            return `
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold">Detalhes</h3>
+                    <div class="space-y-2">${detailsHtml}</div>
+                </div>
+                
+                ${specificPAScheduleHtml}
+
+                <div class="pt-4 border-t border-light-border dark:border-dark-border">
+                    <h3 class="text-xl font-semibold mb-4">Atividades Padrão da Semana</h3>
+                    <div class="space-y-4">${genericScheduleHtml}</div>
+                </div>
+            `;
+        }
+
+
+        /**
+         * [NOVO] Abre o modal de rodízio com os dados corretos.
+         */
+        function openRotationModal(rotationId, periodStart, periodEnd, periodLabel) {
+            const rotationData = rotationsSchedule[rotationId];
+            if (!rotationData) return;
+
+            // Define o título
+            rotationModalTitle.textContent = `Rodízio ${rotationId}: ${rotationData.title} (${periodLabel})`;
+            
+            // Constrói e injeta o conteúdo
+            const contentHtml = buildModalContent(rotationId, periodStart, periodEnd, periodLabel);
+            rotationModalContent.innerHTML = contentHtml;
+            rotationModalContent.scrollTop = 0; // Garante que o scroll comece do topo
+
+            // Mostra o modal
+            rotationModal.classList.remove('hidden');
+            
+            // Re-renderiza os ícones
+            feather.replace();
+        }
+
+        /**
+         * [NOVO] Fecha o modal de rodízio.
+         */
+        function closeRotationModal() {
+            rotationModal.classList.add('hidden');
         }
 
         // --- Funções do Menu e Navegação ---
@@ -1116,6 +1332,25 @@
             // [OTIMIZAÇÃO] Delegação de Eventos para os temas
             // O 'true' usa "capture phase" para garantir que o evento toggle seja pego
             generalThemesContainer.addEventListener('toggle', handleThemeToggle, true);
+
+            // [NOVO] Modal de Rodízio
+            rotationModalClose.addEventListener('click', closeRotationModal);
+            rotationModal.addEventListener('click', (event) => {
+                // Fecha se clicar no overlay (fundo)
+                if (event.target === rotationModal) {
+                    closeRotationModal();
+                }
+            });
+
+            roadmapTableBody.addEventListener('click', (event) => {
+                // Procura a linha clicada que tenha o data-attribute
+                const row = event.target.closest('tr[data-rotation-id]');
+                if (row) {
+                    const { rotationId, periodStart, periodEnd, periodLabel } = row.dataset;
+                    openRotationModal(rotationId, periodStart, periodEnd, periodLabel);
+                }
+            });
+
 
             // Re-aplicar ícones
             feather.replace();
