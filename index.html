@@ -1,658 +1,554 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="">
+<html lang="pt-br" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronograma Pediatria UFPR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cronograma Pediatria UFPR | 2025</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans (Mais moderna que Inter para dashboards) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- [NOVO] Ícone do Site (Favicon) e Ícone da Tela Inicial (iOS) -->
-    <!-- [MUDANÇA] Alterado para usar a imagem do mascote -->
-    <link rel="icon" href="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg">
-    <link rel="apple-touch-icon" href="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg">
+    <!-- Ícones (Lucide - Mais nítidos que Feather) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Ícones (Feather Icons) -->
-    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Configuração Tailwind -->
     <script>
-        // --- CONFIGURAÇÃO DA NOVA PALETA DE CORES (LIQUID GLASS / NEUTRA) ---
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
                     colors: {
-                        // Paleta de Cores Neutras
-                        'light-bg': '#F9F9F9',         // Fundo principal claro
-                        'dark-bg': '#121212',          // Fundo principal escuro
-                        'light-card': '#FFFFFF',       // Fundo dos cards claros
-                        'dark-card': '#1E1E1E',        // Fundo dos cards escuros
-                        'light-text': '#1A1A1A',       // Texto principal claro
-                        'dark-text': '#E5E5E5',        // Texto principal escuro
-                        'neutral-text': '#888888',     // Texto secundário/neutro
-                        'light-border': '#E0E0E0',     // Borda sutil clara
-                        'dark-border': '#2D2D2D',      // Borda sutil escura
-                        
-                        // Acentos (usar com moderação)
-                        'accent-green': '#61BB46',
-                        'accent-yellow': '#FDB827',
-                        'accent-blue': '#009DDC',      // Mantido, mas removido dos títulos
-                        'accent-red': '#E03A3E',
-                        'accent-purple': '#963D97',
-                        
-                        // Cores antigas (para referência, se necessário)
-                        'black-pure': '#000000',
-                        'white-pure': '#FFFFFF',
-                        'gunmetal': '#141414',
-                        'midnight': '#28283C',
-                        'neutral': '#555555',
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        dark: {
+                            bg: '#09090b',
+                            card: '#18181b',
+                            border: '#27272a'
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
                     }
                 }
             }
         }
     </script>
     <style>
+        /* Hide Scrollbar but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Smooth transitions for theme switch */
         body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Estilo para o menu modal */
-        #menu-modal {
-            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-        }
-        #menu-modal.hidden {
-            opacity: 0;
-            transform: translateX(100%);
-        }
-        
-        /* --- Estilo de Barra de Scroll (Glassmorphism) --- */
-        
-        /* Firefox */
-        html {
-            scrollbar-width: thin;
-            scrollbar-color: #888888 #121212; /* (thumb) (track) */
-        }
-        html.light {
-             scrollbar-color: #AAAAAA #F9F9F9;
-        }
-
-        /* Chrome, Edge, e Safari */
-        ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
-        }
-        
-        html.light ::-webkit-scrollbar-track {
-            background: #F9F9F9; /* light-bg */
-        }
-        html.dark ::-webkit-scrollbar-track {
-            background: #121212; /* dark-bg */
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: #AAAAAA; /* Cor neutra clara */
-            border-radius: 20px;
-            border: 3px solid #F9F9F9; /* light-bg */
-        }
-        html.dark ::-webkit-scrollbar-thumb {
-            background-color: #888888; /* neutral-text */
-            border-radius: 20px;
-            border: 3px solid #121212; /* dark-bg */
-        }
-
-        /* Classe de Destaque para o dia atual */
-        .today-highlight {
-            /* padding-left: 1rem; */ /* Opcional: Adicionado via JS */
-        }
-
-        /* [NOVO] Estilos do Modal de Rodízio */
-        #rotation-modal {
-            transition: opacity 0.3s ease-in-out;
-        }
-        #rotation-modal #rotation-modal-box {
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-        }
-        #rotation-modal.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        #rotation-modal.hidden #rotation-modal-box {
-            transform: scale(0.95);
-            opacity: 0;
-        }
-        #rotation-modal {
-            opacity: 1;
-        }
-        #rotation-modal #rotation-modal-box {
-            transform: scale(1);
-            opacity: 1;
+            transition: background-color 0.3s, color 0.3s;
         }
     </style>
 </head>
-<body class="bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text min-h-screen transition-colors duration-300">
+<body class="bg-gray-50 text-gray-900 dark:bg-dark-bg dark:text-gray-100 min-h-screen pb-20 md:pb-0">
 
-    <!-- Container Principal -->
-    <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-
-        <!-- Cabeçalho -->
-        <header class="flex justify-between items-center mb-6">
-            <!-- [MUDANÇA] Adicionado flex container para imagem + título -->
-            <div class="flex items-center gap-4">
-                <!-- [NOVO] Imagem do mascote -->
-                <img 
-                    src="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg" 
-                    alt="Mascote Pediatria" 
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-accent-blue/50 shadow-md"
-                    onerror="this.onerror=null; this.src='https://placehold.co/80x80/009DDC/FFFFFF?text=P';">
-                
-                <div>
-                    <!-- Título agora usa cor de texto neutra -->
-                    <h1 class="text-3xl sm:text-4xl font-bold text-light-text dark:text-dark-text">Cronograma de Pediatria</h1>
-                    <p class="text-xl text-neutral-text">Estágio Obrigatório UFPR - Turma B 2025</p>
-                </div>
+    <!-- === LAYOUT DESKTOP: SIDEBAR === -->
+    <aside class="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 border-r border-gray-200 dark:border-dark-border bg-white dark:bg-dark-card z-50">
+        <div class="p-6 flex items-center gap-3">
+            <img src="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg" 
+                 class="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm" alt="Logo">
+            <div>
+                <h1 class="font-bold text-lg leading-tight">Pediatria</h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Turma B 2025</p>
             </div>
-            <button id="menu-button" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-card transition-colors">
-                <i data-feather="menu" class="h-6 w-6"></i>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <button onclick="switchTab('dashboard')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-primary-50 text-primary-700 dark:bg-primary-500/10 dark:text-primary-400" data-target="dashboard">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                Dashboard
+            </button>
+            <button onclick="switchTab('calendar')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-all" data-target="calendar">
+                <i data-lucide="calendar" class="w-5 h-5"></i>
+                Calendário
+            </button>
+            <button onclick="switchTab('rotations')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-all" data-target="rotations">
+                <i data-lucide="list" class="w-5 h-5"></i>
+                Rodízios
+            </button>
+            <button onclick="switchTab('themes')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-all" data-target="themes">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                Temas
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-gray-200 dark:border-dark-border">
+            <button id="theme-toggle-desktop" class="flex items-center justify-between w-full px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-all">
+                <span class="flex items-center gap-2"><i data-lucide="moon" class="w-4 h-4"></i> Tema Escuro</span>
+                <div class="w-8 h-4 bg-gray-300 dark:bg-primary-600 rounded-full relative transition-colors">
+                    <div class="w-2 h-2 bg-white rounded-full absolute top-1 left-1 dark:left-5 transition-all"></div>
+                </div>
+            </button>
+        </div>
+    </aside>
+
+    <!-- === MAIN CONTENT === -->
+    <main class="md:pl-64 min-h-screen">
+        
+        <!-- Mobile Header -->
+        <header class="md:hidden flex items-center justify-between p-4 bg-white/80 dark:bg-dark-card/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-200 dark:border-dark-border">
+            <div class="flex items-center gap-3">
+                <img src="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg" class="w-8 h-8 rounded-full" alt="Logo">
+                <span class="font-bold text-gray-900 dark:text-white">Pediatria UFPR</span>
+            </div>
+            <button id="theme-toggle-mobile" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+                <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-yellow-400"></i>
             </button>
         </header>
 
-        <!-- Menu Modal (Navegação) - Efeito Liquid Glass Aprimorado -->
-        <div id="menu-modal" class="fixed top-0 right-0 h-full w-72 sm:w-80 bg-light-card/70 dark:bg-dark-card/70 backdrop-blur-xl border-l border-light-border/50 dark:border-dark-border/50 shadow-xl z-50 p-6 transform translate-x-full transition-transform duration-300 ease-in-out hidden">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-xl font-semibold">Menu</h2>
-                <button id="close-menu-button" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border">
-                    <i data-feather="x" class="h-6 w-6"></i>
-                </button>
-            </div>
-            <nav class="flex flex-col space-y-4">
-                <button id="show-main-content-btn" data-view="main-content" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors flex items-center space-x-3">
-                    <i data-feather="calendar" class="h-5 w-5 text-accent-blue"></i>
-                    <span>Meu Rodízio</span>
-                </button>
-                <button id="show-all-rotations-btn" data-view="all-rotations-view" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors flex items-center space-x-3">
-                    <i data-feather="grid" class="h-5 w-5 text-accent-green"></i>
-                    <span>Todos os Rodízios</span>
-                </button>
-                <button id="show-general-themes-btn" data-view="general-themes-view" class="nav-button text-left w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors flex items-center space-x-3">
-                    <i data-feather="book-open" class="h-5 w-5 text-accent-purple"></i>
-                    <span>Temas Gerais</span>
-                </button>
-                
-                <div class="border-t border-light-border dark:border-dark-border pt-4">
-                    <label for="dark-mode-toggle" class="flex items-center justify-between cursor-pointer px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border">
-                        <span class="flex items-center space-x-3">
-                            <i data-feather="moon" class="h-5 w-5 text-accent-purple"></i>
-                            <span>Modo Escuro</span>
-                        </span>
-                        <div class="relative">
-                            <input type="checkbox" id="dark-mode-toggle" class="sr-only">
-                            <!-- Trilho agora muda para verde no modo escuro -->
-                            <div class="block bg-gray-300 dark:bg-accent-green w-12 h-7 rounded-full transition-colors"></div>
-                            <!-- O slider agora é controlado apenas pelo Tailwind (JS não mexe mais no transform) -->
-                            <div id="dark-mode-slider" class="dot absolute left-1 top-1 bg-white-pure w-5 h-5 rounded-full transition-transform transform translate-x-0 dark:translate-x-5"></div>
-                        </div>
-                    </label>
+        <div class="p-4 max-w-7xl mx-auto space-y-6">
+
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="view-section animate-fade-in block">
+                <!-- Header Section -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white" id="greeting-text">Olá, Doutor(a)</h2>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Aqui está o resumo do seu dia.</p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white dark:bg-dark-card px-3 py-1.5 rounded-full border border-gray-200 dark:border-dark-border shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-xs font-medium text-gray-600 dark:text-gray-300" id="current-full-date">Carregando...</span>
+                    </div>
                 </div>
-            </nav>
+
+                <!-- Bento Grid Layout -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <!-- Card: Rodízio Atual (Principal) -->
+                    <div class="md:col-span-2 bg-white dark:bg-dark-card rounded-2xl p-6 border border-gray-200 dark:border-dark-border shadow-sm relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <i data-lucide="activity" class="w-32 h-32 text-primary-500"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <span class="inline-block px-2 py-1 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-xs font-bold mb-3">RODÍZIO ATUAL</span>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1" id="dash-rotation-title">Carregando...</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-6" id="dash-rotation-period">...</p>
+                            
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button onclick="openModalDetails()" class="flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-xl font-medium transition-colors">
+                                    <i data-lucide="info" class="w-4 h-4"></i> Ver Detalhes
+                                </button>
+                                <button onclick="switchTab('calendar')" class="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 rounded-xl font-medium transition-colors">
+                                    <i data-lucide="calendar" class="w-4 h-4"></i> Ver Escala
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card: Hoje -->
+                    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-20">
+                            <i data-lucide="clock" class="w-24 h-24"></i>
+                        </div>
+                        <div class="relative z-10 h-full flex flex-col justify-between">
+                            <div>
+                                <h4 class="text-indigo-100 font-medium text-sm">ATIVIDADE DE HOJE</h4>
+                                <h3 class="text-2xl font-bold mt-1" id="dash-today-title">Folga</h3>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-white/20">
+                                <p class="text-sm text-indigo-50 font-medium flex items-center gap-2" id="dash-today-time">
+                                    <i data-lucide="smile" class="w-4 h-4"></i> Aproveite o dia
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card: Próximos Plantões (Específico) -->
+                    <div class="md:col-span-3 bg-white dark:bg-dark-card rounded-2xl p-6 border border-gray-200 dark:border-dark-border shadow-sm">
+                        <h3 class="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <i data-lucide="clipboard-list" class="w-5 h-5 text-green-500"></i>
+                            Escala da Semana (Grupo VI)
+                        </h3>
+                        <div id="dash-week-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            <!-- Injetado via JS -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- VIEW: CALENDAR -->
+            <div id="view-calendar" class="view-section hidden animate-fade-in">
+                <div class="bg-white dark:bg-dark-card rounded-2xl border border-gray-200 dark:border-dark-border shadow-sm overflow-hidden">
+                    <!-- Calendar Header -->
+                    <div class="p-4 border-b border-gray-200 dark:border-dark-border flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="calendar-month-year">Novembro 2025</h2>
+                        <div class="flex items-center gap-1">
+                            <button onclick="changeMonth(-1)" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="resetCalendar()" class="text-sm font-medium px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                Hoje
+                            </button>
+                            <button onclick="changeMonth(1)" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Weekday Headers -->
+                    <div class="grid grid-cols-7 bg-gray-50 dark:bg-dark-bg/50 border-b border-gray-200 dark:border-dark-border">
+                        <div class="py-3 text-center text-xs font-semibold text-gray-400 uppercase">Dom</div>
+                        <div class="py-3 text-center text-xs font-semibold text-gray-400 uppercase">Seg</div>
+                        <div class="py-3 text-center text-xs font-semibold text-gray-400 uppercase">Ter</div>
+                        <div class="py-3 text-center text-xs font-semibold text-gray-400 uppercase">Qua</div>
+                        <div class="py-3 text-center text-xs font-semibold text-gray-400 uppercase">Qui</div>
+                        <div class="py-3 text-center text-xs font-semibold text-gray-400 uppercase">Sex</div>
+                        <div class="py-3 text-center text-xs font-semibold text-gray-400 uppercase">Sáb</div>
+                    </div>
+
+                    <!-- Calendar Grid -->
+                    <div id="calendar-grid" class="grid grid-cols-7 auto-rows-fr bg-gray-200 dark:bg-dark-border gap-px">
+                        <!-- Days injected via JS -->
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30 flex items-start gap-3">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5"></i>
+                    <p class="text-sm text-blue-700 dark:text-blue-300">
+                        Clique em um dia para ver os detalhes completos da escala e atividades.
+                    </p>
+                </div>
+            </div>
+
+            <!-- VIEW: ROTATIONS LIST -->
+            <div id="view-rotations" class="view-section hidden animate-fade-in">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Todos os Rodízios</h2>
+                <div id="rotations-list-container" class="grid grid-cols-1 gap-4">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <!-- VIEW: THEMES -->
+            <div id="view-themes" class="view-section hidden animate-fade-in">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Temas de Estudo</h2>
+                    <div class="relative">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <input type="text" id="theme-search" placeholder="Buscar tema..." class="w-full pl-10 pr-4 py-3 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all">
+                    </div>
+                </div>
+                <div id="themes-container" class="space-y-3">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
         </div>
-        <!-- Overlay do Menu -->
-        <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
+    </main>
 
+    <!-- === BOTTOM NAVIGATION (MOBILE) === -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-card border-t border-gray-200 dark:border-dark-border flex justify-around p-2 z-50 pb-safe">
+        <button onclick="switchTab('dashboard')" class="nav-item-mobile flex flex-col items-center justify-center p-2 rounded-xl text-primary-600 dark:text-primary-400" data-target="dashboard">
+            <i data-lucide="layout-dashboard" class="w-6 h-6 mb-1"></i>
+            <span class="text-[10px] font-medium">Início</span>
+        </button>
+        <button onclick="switchTab('calendar')" class="nav-item-mobile flex flex-col items-center justify-center p-2 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" data-target="calendar">
+            <i data-lucide="calendar" class="w-6 h-6 mb-1"></i>
+            <span class="text-[10px] font-medium">Calendário</span>
+        </button>
+        <button onclick="switchTab('rotations')" class="nav-item-mobile flex flex-col items-center justify-center p-2 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" data-target="rotations">
+            <i data-lucide="list" class="w-6 h-6 mb-1"></i>
+            <span class="text-[10px] font-medium">Rodízios</span>
+        </button>
+        <button onclick="switchTab('themes')" class="nav-item-mobile flex flex-col items-center justify-center p-2 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" data-target="themes">
+            <i data-lucide="book" class="w-6 h-6 mb-1"></i>
+            <span class="text-[10px] font-medium">Temas</span>
+        </button>
+    </nav>
 
-        <!-- === SEÇÃO PRINCIPAL (Meu Rodízio) === -->
-        <main id="main-content" class="view-content">
-            <!-- Visualização do Cronograma -->
-            <div id="schedule-view" class="">
-
-                <!-- [MUDANÇA] Layout de Colunas para Desktop -->
-                <div class="lg:flex lg:gap-8">
-
-                    <!-- Coluna da Esquerda (Conteúdo Principal) -->
-                    <div class="lg:w-2/3 flex-shrink-0 space-y-6">
-                        <!-- Informações Atuais -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <!-- Card "Data de Hoje" (Glassmorphism) -->
-                            <div class="bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg p-4 border border-light-border/50 dark:border-dark-border/50">
-                                <p class="text-sm font-medium text-neutral-text">Data de Hoje</p>
-                                <p id="current-date" class="text-lg font-semibold text-light-text dark:text-dark-text"></p>
-                            </div>
-                            <!-- Card "Seu Grupo" (Mantido como acento verde) -->
-                            <div class="bg-accent-green/80 backdrop-blur-lg shadow-lg rounded-lg p-4 border border-accent-green/20">
-                                <p class="text-sm font-medium text-white-pure/80">Seu Grupo</p>
-                                <p id="selected-group-name" class="text-lg font-semibold text-white-pure">Grupo VI</p>
-                            </div>
-                            <!-- Card "Período Atual" (Glassmorphism - Neutro) -->
-                            <div class="bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg p-4 border border-light-border/50 dark:border-dark-border/50">
-                                <p class="text-sm font-medium text-neutral-text">Período Atual</p>
-                                <p id="current-period-text" class="text-lg font-semibold text-light-text dark:text-dark-text">-</p>
-                            </div>
-                        </div>
-
-                        <!-- [NOVO] Bloco de Plantões da Semana (Aparece para G e H) -->
-                        <div id="student-schedule-week-view" class="hidden bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg p-6 border border-light-border/50 dark:border-dark-border/50 space-y-4 mb-6">
-                            <h3 class="text-2xl font-bold">Plantões da Semana</h3>
-                            <div id="student-schedule-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                                <!-- Conteúdo será injetado pelo JS -->
-                            </div>
-                        </div>
-
-                        <!-- Rodízio Atual (Glassmorphism) -->
-                        <div class="bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg p-6 border border-light-border/50 dark:border-dark-border/50">
-                            <!-- Título do rodízio agora neutro -->
-                            <h3 class="text-2xl font-bold mb-1">Rodízio Atual:</h3>
-                            <p id="current-rotation-name" class="text-xl font-semibold text-light-text dark:text-dark-text mb-4">-</p>
-                            
-                            <!-- [NOVO] Local para os detalhes -->
-                            <div id="current-rotation-details" class="space-y-3 mb-4 pb-4 border-b border-light-border dark:border-dark-border">
-                                <!-- Conteúdo (locais, profs) será injetado aqui -->
-                            </div>
-                            
-                            <h4 class="text-xl font-semibold mb-4 pb-2">Atividades da Semana</h4>
-                            <div id="current-week-schedule-content" class="space-y-4">
-                                <!-- Conteúdo será injetado aqui -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Coluna da Direita (Roteiro) -->
-                    <div class="lg:w-1/3 flex-grow mt-8 lg:mt-0">
-                        <!-- [MUDANÇA] Roteiro do Estágio agora é uma Tabela -->
-                        <div id="roadmap-view">
-                            <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-light-border dark:border-dark-border">Roteiro (Grupo VI)</h2>
-                            
-                            <!-- [MUDANÇA] Tabela para o Roteiro -->
-                            <div class="bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg border border-light-border/50 dark:border-dark-border/50 overflow-hidden">
-                                <table class="w-full text-left">
-                                    <thead class="border-b border-light-border dark:border-dark-border bg-light-card/90 dark:bg-dark-card/90">
-                                        <tr>
-                                            <th class="p-3 text-sm font-semibold">Período</th>
-                                            <th class="p-3 text-sm font-semibold">Rodízio</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="roadmap-table-body">
-                                        <!-- Conteúdo será injetado aqui pelo JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div> <!-- Fim do layout de colunas -->
-
-            </div>
-
-            <!-- Mensagem de "Fora do Período" (Acento amarelo mantido) -->
-            <div id="out-of-period-message" class="hidden text-center p-10 bg-accent-yellow/20 backdrop-blur-lg text-yellow-800 dark:text-accent-yellow shadow-md rounded-lg">
-                <i data-feather="coffee" class="h-12 w-12 mx-auto mb-4"></i>
-                <h2 class="text-2xl font-semibold mb-2" id="out-of-period-title">Fora do Período</h2>
-                <p class="text-lg" id="out-of-period-text">Não há atividades programadas para a data de hoje.</p>
-            </div>
-        </main>
-
-        <!-- === SEÇÃO DE TODOS OS RODÍZIOS === -->
-        <section id="all-rotations-view" class="view-content hidden">
-            <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-light-border dark:border-dark-border">Todos os Rodízios</h2>
-            <div id="all-rotations-content" class="space-y-6">
-                <!-- Conteúdo será injetado pelo JavaScript -->
-            </div>
-        </section>
-
-        <!-- === SEÇÃO DE TEMAS GERAIS === -->
-        <section id="general-themes-view" class="view-content hidden">
-            <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-light-border dark:border-dark-border">Temas Gerais</h2>
-            <p class="mb-6 text-lg text-neutral-text">Lista de temas de estudo categorizados por área de conhecimento.</p>
+    <!-- === MODAL DETALHES DO DIA === -->
+    <div id="day-modal" class="fixed inset-0 z-[60] hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeDayModal()"></div>
+        <!-- Content -->
+        <div class="absolute bottom-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-full md:w-[500px] bg-white dark:bg-dark-card rounded-t-2xl md:rounded-2xl shadow-2xl transform transition-transform duration-300 translate-y-full md:translate-y-0 p-6 max-h-[85vh] overflow-y-auto">
+            <div class="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-6 md:hidden"></div>
             
-            <!-- Campo de Busca para Temas -->
-            <div class="mb-6 relative">
-                <input type="text" id="theme-search-input" placeholder="Buscar tema..." class="w-full px-4 py-3 pl-10 bg-light-card dark:bg-dark-card border border-light-border dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue transition-colors">
-                <i data-feather="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-text"></i>
-            </div>
-
-            <div id="general-themes-content" class="space-y-4">
-                <!-- Conteúdo será injetado pelo JavaScript -->
-            </div>
-        </section>
-
-    </div>
-
-    <!-- [NOVO] Modal de Detalhes do Rodízio -->
-    <div id="rotation-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden">
-        <div id="rotation-modal-box" class="bg-light-card/90 dark:bg-dark-card/90 backdrop-blur-xl border border-light-border/50 dark:border-dark-border/50 rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
-            <!-- Cabeçalho do Modal -->
-            <div class="flex justify-between items-center p-4 border-b border-light-border dark:border-dark-border flex-shrink-0">
-                <h2 id="rotation-modal-title" class="text-xl font-bold">Detalhes do Rodízio</h2>
-                <button id="rotation-modal-close" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border">
-                    <i data-feather="x" class="h-6 w-6"></i>
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h3 id="modal-date-title" class="text-2xl font-bold text-gray-900 dark:text-white">Data</h3>
+                    <p id="modal-rotation-subtitle" class="text-primary-600 dark:text-primary-400 font-medium">Rodízio</p>
+                </div>
+                <button onclick="closeDayModal()" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <!-- Conteúdo Rolável -->
-            <div id="rotation-modal-content" class="p-6 overflow-y-auto space-y-6">
-                <!-- O conteúdo será injetado aqui -->
+
+            <!-- Seção de Plantão Específico -->
+            <div id="modal-shift-section" class="hidden mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30 rounded-xl">
+                <h4 class="text-sm font-bold text-yellow-800 dark:text-yellow-200 uppercase mb-2 flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4"></i> Escala de Plantão
+                </h4>
+                <div id="modal-shift-content" class="space-y-1 text-gray-800 dark:text-gray-200"></div>
+            </div>
+
+            <!-- Atividades do Dia -->
+            <div class="space-y-4">
+                <div class="flex gap-4">
+                    <div class="flex flex-col items-center">
+                        <div class="w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div>
+                    </div>
+                    <div class="pb-6">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Manhã</span>
+                        <p id="modal-morning-activity" class="text-gray-900 dark:text-white font-medium mt-1">Activity</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex flex-col items-center">
+                        <div class="w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div>
+                    </div>
+                    <div class="pb-6">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tarde</span>
+                        <p id="modal-afternoon-activity" class="text-gray-900 dark:text-white font-medium mt-1">Activity</p>
+                    </div>
+                </div>
+                 <div id="modal-night-container" class="flex gap-4 hidden">
+                    <div class="flex flex-col items-center">
+                        <div class="w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Noite</span>
+                        <p id="modal-night-activity" class="text-gray-900 dark:text-white font-medium mt-1">Activity</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-dark-border">
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">Detalhes do Rodízio</h4>
+                <div id="modal-details-list" class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                    <!-- Locais e Profs -->
+                </div>
             </div>
         </div>
     </div>
-    <!-- Fim do Modal -->
 
-
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- INICIALIZAÇÃO DOS ÍCONES ---
-        feather.replace();
+        // --- DATA & CONFIG ---
+        // Inicializa ícones
+        lucide.createIcons();
 
-        // --- BANCO DE DADOS (JSON) ---
+        // Configurações
+        const SELECTED_GROUP = "GRUPO VI";
+        let currentDate = new Date(); // Data base para o calendário (mês visível)
+        const TODAY = new Date(); // Data real de hoje
+        // const TODAY = new Date("2025-11-25T10:00:00"); // DEBUG: Teste em data específica
 
-        // Dados dos Rodízios (A-I)
+        // Dados de Escala Específica (Atualizado com a imagem)
+        const specificStudentSchedules = {
+            // SEMANA 3 - PA DIA (17-21 Nov)
+            "2025-11-17": { type: "DIA", students: ["Luis Gustavo", "Lyan Ortega", "Paulo César"] },
+            "2025-11-18": { type: "DIA", students: ["Gustavo Oliveira", "Gustavo Cardoso", "Lucas Siqueira"] },
+            "2025-11-19": { type: "DIA", students: ["Luis Gustavo", "Gustavo Cardoso", "Lucas Siqueira"] },
+            "2025-11-20": { type: "DIA", students: ["-"] }, // Vazio na imagem
+            "2025-11-21": { type: "DIA", students: ["-"] }, // Vazio na imagem
+
+            // SEMANA 4 - PA DIA (24-28 Nov)
+            "2025-11-24": { type: "DIA", students: ["Gustavo Oliveira", "Lyan Ortega", "Paulo César"] },
+            "2025-11-25": { type: "DIA", students: ["Gustavo Cardoso", "Paulo Cesar", "Lucas Siqueira"] },
+            "2025-11-26": { type: "DIA", students: ["Gustavo Oliveira", "Paulo César", "Lyan Ortega"] },
+            "2025-11-27": { type: "DIA", students: ["Luis Gustavo", "Lucas Siqueira", "Gustavo Cardoso"] },
+            "2025-11-28": { type: "DIA", students: ["Lyan Ortega", "Gustavo Oliveira", "Luis Gustavo"] },
+
+            // SEMANA 5 - PA NOITE (01-05 Dez)
+            "2025-12-01": { type: "NOITE", students: ["Luis Marcondes", "Paulo"] },
+            "2025-12-02": { type: "NOITE", students: ["Gustavo Oliveira", "Lyan"] },
+            "2025-12-03": { type: "NOITE", students: ["Luis Marcondes", "Paulo"] },
+            "2025-12-04": { type: "NOITE", students: ["Gustavo Oliveira", "Lyan"] },
+            "2025-12-05": { type: "NOITE", students: ["Lucas", "Gustavo Cardoso"] },
+        };
+
+        // Rodízios Detalhados (A-I)
         const rotationsSchedule = {
             "A": {
-                "title": "INFECTOPEDIATRIA / REUMATO / U&E 1 / PUERI-PRESCRIÇÃO MÉDICA",
+                "title": "INFECTO / REUMATO / U&E 1",
+                "color": "bg-red-500",
                 "details": [
-                    { "type": "local", "title": "INFECTOLOGIA", "text": "Ambulatório Prédio Central: SAM 2 (3ª, 5ª e 6ª feiras), SAM 30 (4ª feira de manhã)" },
-                    { "type": "prof", "title": "Professores", "text": "Profª Cristina de Oliveira Rodrigues, Drª Andréa Maciel O. Rossoni, Prof. Tony Tannous Tahan" }
+                    { "icon": "map-pin", "text": "Infecto: SAM 2 (3ª, 5ª, 6ª) / SAM 30 (4ª manhã)" },
+                    { "icon": "users", "text": "Profs: Cristina, Andréa Rossoni, Tony Tahan" }
                 ],
                 "schedule": [
-                    { "day": "2ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "3ª FEIRA", "morning": "Infecto (08:00-10:30 h)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "4ª FEIRA", "morning": "Infecto (08:00-12:00 h)", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "5ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "Infecto (13:00-17:00 h)" },
-                    { "day": "6ª FEIRA", "morning": "Infecto (08:00-10:00 h)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "Infecto (13:00-17:00 h)" }
+                    { "day": "2ª", "morning": "Estudo", "afternoon": "Estudo" },
+                    { "day": "3ª", "morning": "Infecto + Aula Teórica", "afternoon": "Estudo" },
+                    { "day": "4ª", "morning": "Infecto", "afternoon": "Estudo" },
+                    { "day": "5ª", "morning": "Estudo", "afternoon": "Infecto" },
+                    { "day": "6ª", "morning": "Infecto + Casos", "afternoon": "Infecto" }
                 ]
             },
             "B": {
-                "title": "IMUNOALERGOLOGIA / PNEUMOLOGIA / SEC / REUMATO",
+                "title": "IMUNO / PNEUMO / SEC",
+                "color": "bg-blue-500",
                 "details": [
-                    { "type": "local", "title": "PNEUMOLOGIA", "text": "Serviço Medicina Respiratória Pediátrica do CHC/EBSERH - R. Pe. Camargo, 453 (SAM 32)." },
-                    { "type": "local", "title": "SEC/REUMATO", "text": "SEC/PA pediatria - CHC Prédio Central" },
-                    { "type": "prof", "title": "Professores", "text": "Prof Débora Carla Chong e Silva, Prof Herberto José Chong Neto, Profª Laura Araújo, Profª Thais Cugler Meneghetti" }
+                    { "icon": "map-pin", "text": "Pneumo: SAM 32 (R. Pe Camargo 453)" },
+                    { "icon": "map-pin", "text": "SEC: CHC Prédio Central" }
                 ],
                 "schedule": [
-                    { "day": "2ª FEIRA", "morning": "SEC (08:00-10:00 h, prof Thais)", "afternoon": "Pneumologia (profª Débora)" },
-                    { "day": "3ª FEIRA", "morning": "SEC (08:00-10:00 h, profª Thais)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Imuno-alergo (Profº Chong)" },
-                    { "day": "4ª FEIRA", "morning": "HORÁrio ESTUDO", "afternoon": "Imuno-alergo (Profº Chong)" },
-                    { "day": "5ª FEIRA", "morning": "Reumato (08:30-12:00 h, profª Thais)", "afternoon": "Pneumologia (profª Laura)" },
-                    { "day": "6ª FEIRA", "morning": "Pneumo (08:00 h, profª Débora)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                    { "day": "2ª", "morning": "SEC", "afternoon": "Pneumologia" },
+                    { "day": "3ª", "morning": "SEC + Aula", "afternoon": "Imuno-alergo" },
+                    { "day": "4ª", "morning": "Estudo", "afternoon": "Imuno-alergo" },
+                    { "day": "5ª", "morning": "Reumato", "afternoon": "Pneumologia" },
+                    { "day": "6ª", "morning": "Pneumo + Casos", "afternoon": "Estudo" }
                 ]
             },
             "C": {
-                "title": "SEC/ENDOCRINO/CLÍNICA PEDITRICA I",
+                "title": "ENDÓCRINO / CLÍNICA I",
+                "color": "bg-pink-500",
                 "details": [
-                    { "type": "local", "title": "ENDOCRINOLOGIA", "text": "UEP Rua Pe Camargo, 250" },
-                    { "type": "local", "title": "CLÍNICA PED I", "text": "Sala Pós Graduação no 14º andar" },
-                    { "type": "prof", "title": "Professores", "text": "Profª Suzana Nesi França, Prof Rosana Marques Pereira, Prof Julienne Angela Ramires de Carvalho, Prof Geraldo Miranda Graça Filho" }
+                    { "icon": "map-pin", "text": "Endócrino: UEP R. Pe Camargo 250" },
+                    { "icon": "map-pin", "text": "Clínica: 14º Andar" }
                 ],
                 "schedule": [
-                    { "day": "2ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "Endócrino (13:00-16:30 h, profª Suzana)" },
-                    { "day": "3ª FEIRA", "morning": "Clínica Ped I (08:30-10:00 h, profº Geraldo)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Endócrino (13:00-16:30 h, profª Rosana)" },
-                    { "day": "4ª FEIRA", "morning": "Endócrino (07:30-12:00 h, profª Julienne)", "afternoon": "Endócrino (13:00-16:30 h, profª Rosana)" },
-                    { "day": "5ª FEIRA", "morning": "Clínica Ped I (07:30-10:00 h, profº Geraldo)", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "6ª FEIRA", "morning": "Endócrino (07:30-10:00 h, profª Suzana)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                    { "day": "2ª", "morning": "Estudo", "afternoon": "Endócrino" },
+                    { "day": "3ª", "morning": "Clínica I + Aula", "afternoon": "Endócrino" },
+                    { "day": "4ª", "morning": "Endócrino", "afternoon": "Endócrino" },
+                    { "day": "5ª", "morning": "Clínica I", "afternoon": "Estudo" },
+                    { "day": "6ª", "morning": "Endócrino + Casos", "afternoon": "Estudo" }
                 ]
             },
             "D": {
-                "title": "ALOJA. CONJUNTO / CENTRO CIRURGICO OBSTÉTRICO / SIMULAÇÃO II / GRUPO S.A.C.I.",
+                "title": "AL. CONJUNTO / CCO / SIMULAÇÃO",
+                "color": "bg-purple-500",
                 "details": [
-                    { "type": "local", "title": "ALOJA. CONJUNTO", "text": "Ponto de encontro no hall 3º andar prédio da Maternidade" },
-                    { "type": "local", "title": "CCO", "text": "Centro Cirúrgico Obstétrico 1º andar (Maternidade)" },
-                    { "type": "local", "title": "SIMULAÇÃO I", "text": "Centro de Simulação CHC Profª Leide Parolin 5º andar Prédio do Laboratório" },
-                    { "type": "local", "title": "GRUPO S.A.C.I", "text": "14º andar Prédio Central HC/EBSERH" },
-                    { "type": "prof", "title": "Professores", "text": "Prof Paulyne Stadler Venzon, Profª Regina Paula G.V.C. da Silva, Prof Daniela Hespanha Marinho, Prof Fabiano Steil da Silva, Prof Carlos Alberto Fernandes Baltar, dr André Luis" }
+                    { "icon": "map-pin", "text": "Maternidade 3º andar / CCO 1º andar" },
+                    { "icon": "map-pin", "text": "Simulação: Leide Parolin 5º andar" }
                 ],
                 "schedule": [
-                    { "day": "2ª FEIRA", "morning": "AC (08:00-11:00 h, profª Regina)", "afternoon": "CCO (13:30-16:30 h, profº Fabiano)" },
-                    { "day": "3ª FEIRA", "morning": "Grupo S.A.C.I. (08:00-09:30 h, drs André e Baltar)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "4ª FEIRA", "morning": "AC (08:00-11:00 h, profª Paulyne)", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "5ª FEIRA", "morning": "AC (08:00-11:00 h, profª Regina)", "afternoon": "Simulação I (13:00-17:00h, profº Baltar)" },
-                    { "day": "6ª FEIRA", "morning": "CCO (08:00-10:30 h, profº Fabiano)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "CCO (12:30-15:30 h, profº Daniela)" }
+                    { "day": "2ª", "morning": "AC (Maternidade)", "afternoon": "CCO" },
+                    { "day": "3ª", "morning": "Grupo SACI + Aula", "afternoon": "Estudo" },
+                    { "day": "4ª", "morning": "AC", "afternoon": "Estudo" },
+                    { "day": "5ª", "morning": "AC", "afternoon": "Simulação I" },
+                    { "day": "6ª", "morning": "CCO + Casos", "afternoon": "CCO" }
                 ]
             },
             "E": {
-                "title": "NEUROLOGIA PEDIÁTRICA + PUERICULTURA ALTO RISCO",
+                "title": "NEUROLOGIA / PUERI ALTO RISCO",
+                "color": "bg-indigo-500",
                 "details": [
-                    { "type": "local", "title": "NEUROLOGIA", "text": "CENEP R. Floriano Essenfelder, 81." },
-                    { "type": "prof", "title": "Professores", "text": "Profª Ana Chrystina de Souza Crippa, Prof Sérgio Antonio Antoniuk, Dra. Fernanda Wagner Fredo dos Santos, Dr. Gustavo Manoel Scher Dória, Dra. Daniela Bufara, Dr. Eduardo Mister, Dra. Nathália Vargas" }
+                    { "icon": "map-pin", "text": "CENEP: R. Floriano Essenfelder, 81" }
                 ],
                 "schedule": [
-                    { "day": "2ª FEIRA", "morning": "Neuro Autismo (07:30-11:30 h, profº Sérgio/dra. Fernanda)", "afternoon": "Neuro Geral (13:00-16:00 h, Drª Nathália)" },
-                    { "day": "3ª FEIRA", "morning": "Neuro Complexos (07:30-10:30 h, profª Ana Crippa)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Neuro Bate papo (13:30-15:30 h, profª Ana Crippa)" },
-                    { "day": "4ª FEIRA", "morning": "Neuro Dificuldade aprendizado (07:30-11:30 h, dr. Eduardo/prof Ana Crippa)", "afternoon": "Neuro Geral (13:00-16:00 h, dr. Eduardo)" },
-                    { "day": "5ª FEIRA", "morning": "Neuro Epilepsia 1ª crise (07:30-11:30 h, profº Sérgio/profª Ana Crippa/dr. Eduardo)", "afternoon": "Neuro Geral (13:00-16:00 h, Drª Fernanda)" },
-                    { "day": "6ª FEIRA", "morning": "Friday Meeting Neurologia (07:30-10:00 h, prof Ana Crippa)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "Neuro Geral (13:00-16:00 h, Dr. Eduardo)" }
+                    { "day": "2ª", "morning": "Neuro Autismo", "afternoon": "Neuro Geral" },
+                    { "day": "3ª", "morning": "Neuro Complexos + Aula", "afternoon": "Neuro Bate-papo" },
+                    { "day": "4ª", "morning": "Neuro Aprendizado", "afternoon": "Neuro Geral" },
+                    { "day": "5ª", "morning": "Neuro Epilepsia", "afternoon": "Neuro Geral" },
+                    { "day": "6ª", "morning": "Friday Meeting + Casos", "afternoon": "Neuro Geral" }
                 ]
             },
             "F": {
-                "title": "PUERICULTURA / ONCOHEMATOLOGIA",
+                "title": "PUERICULTURA / ONCOHEMATO",
+                "color": "bg-orange-500",
                 "details": [
-                    { "type": "local", "title": "ONCOHEMATOLOGIA", "text": "Ambulatório 9º andar // Enfermaria 14º andar, Prédio Central CHC/EBSERH" },
-                    { "type": "local", "title": "PUERICULTURA", "text": "SAM 11 Casa da Puericultura ao lado do CHC/EBSERH" },
-                    { "type": "local", "title": "UBS", "text": "UBS Vila Diana. R, Renê Descartes, 537, Abranches." },
-                    { "type": "prof", "title": "Professores", "text": "Prof Tiago Hessel Tormen, Profª Leniza Costa Lima Lichtvan, Dra Melina Sayuri Takata, Profª Cristine Secco Rosário" }
+                    { "icon": "map-pin", "text": "Onco: Amb 9º andar / Enf 14º andar" },
+                    { "icon": "map-pin", "text": "Pueri: SAM 11 (Casa da Pueri)" },
+                    { "icon": "map-pin", "text": "UBS: Vila Diana" }
                 ],
                 "schedule": [
-                    { "day": "2ª FEIRA", "morning": "PUERICULTURA (Dra. Melina, 08-12 h)", "afternoon": "UBS (14:00-16:00 h, Profª Cristine)" },
-                    { "day": "3ª FEIRA", "morning": "PUERICULTURA (Dra. Melina, 08-10:30 h)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Hematologia Ambulatório (13:30-17:30 h, profº Tiago)" },
-                    { "day": "4ª FEIRA", "morning": "PUERICULTURA (Dra. Melina, 08-12 h)", "afternoon": "UBS (14:00-16:00 h, Profª Cristine)" },
-                    { "day": "5ª FEIRA", "morning": "PUERICULTURA (Dra. Melina, 08-12 h)", "afternoon": "Hematologia Ambulatório (14:00-18:00 h, profª Leniza)" },
-                    { "day": "6ª FEIRA", "morning": "HORÁRIO ESTUDO<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                    { "day": "2ª", "morning": "Puericultura", "afternoon": "UBS Vila Diana" },
+                    { "day": "3ª", "morning": "Puericultura + Aula", "afternoon": "Hemato Amb" },
+                    { "day": "4ª", "morning": "Puericultura", "afternoon": "UBS Vila Diana" },
+                    { "day": "5ª", "morning": "Puericultura", "afternoon": "Hemato Amb" },
+                    { "day": "6ª", "morning": "Estudo + Casos", "afternoon": "Estudo" }
                 ]
             },
             "G": {
                 "title": "PA PEDIATRIA (DIURNO)",
+                "color": "bg-green-600",
                 "details": [
-                    { "type": "local", "title": "PA PEDIATRIA", "text": "PA Pediatria 1º andar Prédio Central CHC/EBSERH" },
-                    { "type": "prof", "title": "Preceptores", "text": "Drs Eduardo Mister, Luis Fernando Matoso Mendes" },
-                    { "type": "prof", "title": "Professor", "text": "Profº Carlos A Baltar (semidireta)" },
-                    { "type": "info", "title": "Observação", "text": "PLANTÕES 12 HORAS (07:30 a 19:30 h). 03 alunos por turno. Alunos não escalados estão liberados. Alunos neste rodízio estão liberados das atividades teóricas de 3ª e 6ª." }
+                    { "icon": "map-pin", "text": "PA Pediatria 1º andar CHC" },
+                    { "icon": "clock", "text": "Plantão 12h: 07:30 - 19:30" },
+                    { "icon": "alert-circle", "text": "Liberado de aulas 3ª e 6ª" }
                 ],
                 "schedule": [
-                    // [INFO] O cronograma de alunos para os dias específicos será injetado pelo JS
-                    { "day": "2ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
-                    { "day": "3ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
-                    { "day": "4ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
-                    { "day": "5ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" },
-                    { "day": "6ª FEIRA", "morning": "PA (07:30-12:00 h)", "afternoon": "PA (13:00-19:30 h)" }
+                    { "day": "2ª", "morning": "PLANTÃO (Se escalado)", "afternoon": "PLANTÃO (Se escalado)" },
+                    { "day": "3ª", "morning": "PLANTÃO (Se escalado)", "afternoon": "PLANTÃO (Se escalado)" },
+                    { "day": "4ª", "morning": "PLANTÃO (Se escalado)", "afternoon": "PLANTÃO (Se escalado)" },
+                    { "day": "5ª", "morning": "PLANTÃO (Se escalado)", "afternoon": "PLANTÃO (Se escalado)" },
+                    { "day": "6ª", "morning": "PLANTÃO (Se escalado)", "afternoon": "PLANTÃO (Se escalado)" }
                 ]
             },
             "H": {
-                "title": "SEMPR / DERMATOPEDIATRIA / PRONTO ATENDIMENTO PEDIATRIA (NOTURNO)",
+                "title": "SEMPR / DERMATO / PA NOTURNO",
+                "color": "bg-yellow-600",
                 "details": [
-                    { "type": "local", "title": "DERMATOLOGIA", "text": "Prédio Central CHC/EBSERH, SAM 2." },
-                    { "type": "local", "title": "SEMPR", "text": "Auditório do SEMPR - Av. Agostinho Leão Junior, 285" },
-                    { "type": "local", "title": "PA PEDIATRIA", "text": "PA Pediatria 1º andar Prédio Central CHC/EBSERH" },
-                    { "type": "prof", "title": "Professores", "text": "Profª Vânia de Oliveira Carvalho, Profª Bruna Guerrer, Profª Margaret C. S. Boguszewski" },
-                    { "type": "prof", "title": "Preceptores PA", "text": "Drs Eduardo Mister, Luis Fernando Matoso Mendes" },
-                    { "type": "info", "title": "Plantões PA", "text": "02 plantões noturnos (19:30-07:30 h) / aluno na semana. 02 alunos por plantão." }
+                    { "icon": "map-pin", "text": "SEMPR: Av. Agostinho Leão Jr, 285" },
+                    { "icon": "map-pin", "text": "Dermato: SAM 2" },
+                    { "icon": "moon", "text": "PA NOITE: 19:30 - 07:30" }
                 ],
                 "schedule": [
-                    // [INFO] O cronograma de alunos para os plantões será injetado pelo JS
-                    { "day": "2ª FEIRA", "morning": "HORÁRIO ESTUDO", "afternoon": "Dermato (13:00-15:00 h, profª Vânia)", "night": "PA PLANTÃO (19:30-07:30 h)" },
-                    { "day": "3ª FEIRA", "morning": "SEMPR (08:00-10:00 h, profª Margareth)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" },
-                    { "day": "4ª FEIRA", "morning": "Dermato (08:00-10:00 h, profª Vânia)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" },
-                    { "day": "5ª FEIRA", "morning": "Dermato (08:00-10:00 h, profª Vânia)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" },
-                    { "day": "6ª FEIRA", "morning": "HORÁRIO ESTUDO<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO", "night": "PA PLANTÃO (19:30-07:30 h)" }
+                    { "day": "2ª", "morning": "Estudo", "afternoon": "Dermato", "night": "PA (Se escalado)" },
+                    { "day": "3ª", "morning": "SEMPR + Aula", "afternoon": "Estudo", "night": "PA (Se escalado)" },
+                    { "day": "4ª", "morning": "Dermato", "afternoon": "Estudo", "night": "PA (Se escalado)" },
+                    { "day": "5ª", "morning": "Dermato", "afternoon": "Estudo", "night": "PA (Se escalado)" },
+                    { "day": "6ª", "morning": "Estudo + Casos", "afternoon": "Estudo", "night": "PA (Se escalado)" }
                 ]
             },
             "I": {
-                "title": "ENFERMARIA PEDIATRIA / GASTRO / U&E 2",
+                "title": "ENFERMARIA / GASTRO",
+                "color": "bg-teal-500",
                 "details": [
-                    { "type": "local", "title": "ENFERMARIA", "text": "14º andar do prédio central do CHC" },
-                    { "type": "local", "title": "PUERICULTURA/PRESCRIÇÃO", "text": "Sala 14º andar / ambulatório" },
-                    { "type": "local", "title": "PUERICULTURA (Prematuro)", "text": "Casa de Especialidades Pediátricas - SAM 11" },
-                    { "type": "prof", "title": "Professores", "text": "Prof. André Luis do Carmo, Dr. Luciano Massuda, Profª Gislayne Nieto, Profª Ana Lúcia Figueredo Sarquis" }
+                    { "icon": "map-pin", "text": "Enfermaria: 14º andar" }
                 ],
                 "schedule": [
-                    { "day": "2ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "3ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>AULA TEÓRICA D. PEDIATRIA (10:15-11:30 h)", "afternoon": "Pueri/P.médica (13:00-15:00 h, profª Gislayne)" },
-                    { "day": "4ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)", "afternoon": "Puericultura (Prematuro) SAM 11 (13:00-16:30 h, profª Ana Lúcia)" },
-                    { "day": "5ª FEIRA", "morning": "Pueri/P.médica (07:30-10:30 h, profª Gislayne)", "afternoon": "HORÁRIO ESTUDO" },
-                    { "day": "6ª FEIRA", "morning": "Enfermaria (07:30-10:30 h)<br>CASOS CLÍNICOS D. Pediatria (10:15-11:30 h)", "afternoon": "HORÁRIO ESTUDO" }
+                    { "day": "2ª", "morning": "Enfermaria", "afternoon": "Estudo" },
+                    { "day": "3ª", "morning": "Enfermaria + Aula", "afternoon": "Pueri/Prescrição" },
+                    { "day": "4ª", "morning": "Enfermaria", "afternoon": "Pueri (Prematuro)" },
+                    { "day": "5ª", "morning": "Pueri/Prescrição", "afternoon": "Estudo" },
+                    { "day": "6ª", "morning": "Enfermaria + Casos", "afternoon": "Estudo" }
                 ]
             }
         };
 
-        // Cronograma Mestre (Grupo x Rodízio x Data)
+        // Cronograma Mestre (Datas x Rodízios)
         const masterSchedule = [
-            // [CORREÇÃO] Datas de início movidas para o Domingo e Rótulos atualizados
-            { "start": "2025-11-02T00:00:00", "end": "2025-11-07T23:59:59", "label": "02/11 a 07/11", "assignments": { "GRUPO I": "A", "GRUPO II": "I", "GRUPO III": "H", "GRUPO IV": "G", "GRUPO V": "F", "GRUPO VI": "E", "GRUPO VII": "D", "GRUPO VIII": "C", "GRUPO IX": "B" } },
-            { "start": "2025-11-09T00:00:00", "end": "2025-11-14T23:59:59", "label": "09/11 a 14/11", "assignments": { "GRUPO I": "B", "GRUPO II": "A", "GRUPO III": "I", "GRUPO IV": "H", "GRUPO V": "G", "GRUPO VI": "F", "GRUPO VII": "E", "GRUPO VIII": "D", "GRUPO IX": "C" } },
-            { "start": "2025-11-16T00:00:00", "end": "2025-11-28T23:59:59", "label": "16/11 a 28/11", "assignments": { "GRUPO I": "C", "GRUPO II": "B", "GRUPO III": "A", "GRUPO IV": "I", "GRUPO V": "H", "GRUPO VI": "G", "GRUPO VII": "F", "GRUPO VIII": "E", "GRUPO IX": "D" } },
-            { "start": "2025-11-30T00:00:00", "end": "2025-12-05T23:59:59", "label": "30/11 a 05/12", "assignments": { "GRUPO I": "D", "GRUPO II": "C", "GRUPO III": "B", "GRUPO IV": "A", "GRUPO V": "I", "GRUPO VI": "H", "GRUPO VII": "G", "GRUPO VIII": "F", "GRUPO IX": "E" } },
-            { "start": "2025-12-07T00:00:00", "end": "2025-12-12T23:59:59", "label": "07/12 a 12/12", "assignments": { "GRUPO I": "E", "GRUPO II": "D", "GRUPO III": "C", "GRUPO IV": "B", "GRUPO V": "A", "GRUPO VI": "I", "GRUPO VII": "H", "GRUPO VIII": "G", "GRUPO IX": "F" } },
-            { "start": "2025-12-14T00:00:00", "end": "2025-12-19T23:59:59", "label": "14/12 a 19/12", "assignments": { "GRUPO I": "F", "GRUPO II": "E", "GRUPO III": "D", "GRUPO IV": "C", "GRUPO V": "B", "GRUPO VI": "A", "GRUPO VII": "I", "GRUPO VIII": "H", "GRUPO IX": "G" } },
-            // [CORREÇÃO] Recesso ajustado para terminar no Sábado
-            { "start": "2025-12-20T00:00:00", "end": "2026-01-03T23:59:59", "label": "20/12 a 03/01", "assignments": "Recesso" },
-            { "start": "2026-01-04T00:00:00", "end": "2026-01-09T23:59:59", "label": "04/01 a 09/01", "assignments": { "GRUPO I": "G", "GRUPO II": "F", "GRUPO III": "E", "GRUPO IV": "D", "GRUPO V": "C", "GRUPO VI": "B", "GRUPO VII": "A", "GRUPO VIII": "I", "GRUPO IX": "H" } },
-            { "start": "2026-01-11T00:00:00", "end": "2026-01-16T23:59:59", "label": "11/01 a 16/01", "assignments": { "GRUPO I": "H", "GRUPO II": "G", "GRUPO III": "F", "GRUPO IV": "E", "GRUPO V": "D", "GRUPO VI": "C", "GRUPO VII": "B", "GRUPO VIII": "A", "GRUPO IX": "I" } },
-            { "start": "2026-01-18T00:00:00", "end": "2026-01-23T23:59:59", "label": "18/01 a 23/01", "assignments": { "GRUPO I": "I", "GRUPO II": "H", "GRUPO III": "G", "GRUPO IV": "F", "GRUPO V": "E", "GRUPO VI": "D", "GRUPO VII": "C", "GRUPO VIII": "B", "GRUPO IX": "A" } }
+            { "start": "2025-11-02", "end": "2025-11-07", "assignments": { "GRUPO VI": "E" }, "label": "02/11 a 07/11" },
+            { "start": "2025-11-09", "end": "2025-11-14", "assignments": { "GRUPO VI": "F" }, "label": "09/11 a 14/11" },
+            { "start": "2025-11-16", "end": "2025-11-28", "assignments": { "GRUPO VI": "G" }, "label": "16/11 a 28/11 (PA DIA)" },
+            { "start": "2025-11-30", "end": "2025-12-05", "assignments": { "GRUPO VI": "H" }, "label": "30/11 a 05/12 (PA NOITE)" },
+            { "start": "2025-12-07", "end": "2025-12-12", "assignments": { "GRUPO VI": "I" }, "label": "07/12 a 12/12" },
+            { "start": "2025-12-14", "end": "2025-12-19", "assignments": { "GRUPO VI": "A" }, "label": "14/12 a 19/12" },
+            { "start": "2025-12-20", "end": "2026-01-03", "assignments": "Recesso", "label": "RECESSO" },
+            { "start": "2026-01-04", "end": "2026-01-09", "assignments": { "GRUPO VI": "B" }, "label": "04/01 a 09/01" },
+            { "start": "2026-01-11", "end": "2026-01-16", "assignments": { "GRUPO VI": "C" }, "label": "11/01 a 16/01" },
+            { "start": "2026-01-18", "end": "2026-01-23", "assignments": { "GRUPO VI": "D" }, "label": "18/01 a 23/01" }
         ];
 
-        // Temas Gerais Categorizados
-        const generalThemes = {
-            "Neonatologia e Puericultura": [
-                "Aleitamento materno", "Assistência ao Rn no Alojamento conjunto", "Atendimento ao Rn na sala de parto",
-                "Circulação Transicional", "Icterícia neonatal", "Prematuridade", "Protocolos de alojamento conjunto",
-                "Protocolos de TORCHES", "Testes de triagem neonatal", "Triagem neonatal", "Calendário vacinal"
-            ],
-            "Crescimento e Nutrição": [
-                "Crescimento e Desenvolvimento", "Alta estatura", "Baixa Estatura", "Cardápio no Primeiro Ano de Vida",
-                "Anorexia", "Desnutrição", "Obesidade", "Fórmulas Infantis", "Hipovitaminoses", "Anemias Carenciais"
-            ],
-            "Imunologia e Alergia": [
-                "Alergia a Proteína do Leite de Vaca", "Asma e crise de asma", "Dermatite atópica", "Renite alérgica",
-                "Síndrome do Bebê Chiador"
-            ],
-            "Infectologia": [
-                "Dengue", "IVAS (Infecções de Vias Aéreas Superiores)", "Meningites e outras infecções sistema nervoso",
-                "Síndrome de imunodeficiência adquirida (HIV)", "Tuberculose", "Viroses exantemáticas", "Choque Séptico"
-            ],
-            "Endocrinologia": [
-                "Cetoacidose Diabética", "Diabetes Melllitus", "Hipertireoidismo", "Hipotireoidismo congênito",
-                "Puberdade Prececoe Tardia" // Corrigido typo
-            ],
-            "Neurologia": [
-                "Autismo", "Cefaleia na Infância", "Crises Convulsivas", "Desenvolvimento Neuropsicomotor",
-                "Epilepsias", "Paralisia cerebral", "Retardo Mental", "TDAH e transtornos e dificuldade de aprendizado",
-                "Tumores do Sistema Nervoso Central"
-            ],
-            "Gastroenterologia": [
-                "Constipação Intestinal", "Diarreia Crônica", "Doenças Inflamatórias Intestinais", "Dor abdominal",
-                "Hemorragias Digestivas"
-            ],
-            "Hematologia e Oncologia": [
-                "Anemia Falciforme", "Anemias Carenciais", "Leucemias e Linfomas", "Linfonodomegalia"
-            ],
-            "Pneumologia": [
-                "Asma e crise de asma", "Fibrose Cística", "Síndrome do Bebê Chiador"
-            ],
-            "Dermatologia": [
-                "Dermatite atópica", "Dermatopatia da infância", "Doenças cutâneas parasitárias"
-            ],
-            "Reumatologia": [
-                "Doenças inflamatórias e reumatológicas na infância"
-            ],
-            "Nefrologia e Metabolismo": [
-                "Distúrbio Hidroeletrolíticos", "Erros Inatos do Metabolismo"
-            ],
-            "Cardiologia": [
-                "Hipertensão Arterial Sistêmica"
-            ],
-            "Urgência e Terapia Intensiva": [
-                "Choque Séptico", "Parada Cardiorespiratória"
-            ],
-            "Farmacologia e Geral": [
-                "Corticoterapia", "Prescrição médica em pediatria", "Ética"
-            ]
-        };
+        // --- CORE FUNCTIONS ---
 
-        // [NOVO] Banco de dados para escalas específicas de alunos
-        // As chaves devem estar no formato YYYY-MM-DD
-        const specificStudentSchedules = {
-            // PA DIURNO (Rotation G) - Alunos do GRUPO VI
-            "2025-11-17": { rotation: "G", students: "Marcondes, Lyan, Jerso" },
-            "2025-11-18": { rotation: "G", students: "Paulo, Big, Negão" },
-            "2025-11-19": { rotation: "G", students: "Marcondes, Big, Negão" },
-            "2025-11-24": { rotation: "G", students: "Jerso, Lyan, Marcondes" },
-            "2025-11-25": { rotation: "G", students: "Big, Paulo, Negão" },
-            "2025-11-26": { rotation: "G", students: "Jerso, Paulo, Lyan" },
-            "2025-11-27": { rotation: "G", students: "Marcondes, Negão, Big" },
-            "2025-11-28": { rotation: "G", students: "Lyan, Jerso, Paulo" },
-            
-            // PA NOTURNO (Rotation H) - Alunos do GRUPO VI
-            "2025-12-01": { rotation: "H", students: "Marcondes, Paulo" },
-            "2025-12-02": { rotation: "H", students: "Jerso, Lyan" },
-            "2025-12-03": { rotation: "H", students: "Marcondes, Paulo" },
-            "2025-12-04": { rotation: "H", students: "Jerso, Lyan" },
-            "2025-12-05": { rotation: "H", students: "Negão, Big" }
-        };
-
-
-        // --- CONSTANTES DA APLICAÇÃO ---
-        // [OTIMIZAÇÃO] Constantes globais para evitar repetição e facilitar manutenção
-        const SELECTED_GROUP = "GRUPO VI";
-        const TODAY = new Date();
-        // const TODAY = new Date("2025-11-17T10:00:00"); // DEBUG: Testar PA Diurno (Rodízio G)
-        // const TODAY = new Date("2025-12-01T10:00:00"); // DEBUG: Testar PA Noturno (Rodízio H)
-        // const TODAY = new Date("2025-11-10T10:00:00"); // DEBUG: Testar Rodízio F (Sem PA)
-
-        // --- DOM ELEMENTS ---
-        const scheduleView = document.getElementById('schedule-view');
-        const outOfPeriodMessage = document.getElementById('out-of-period-message');
-        const outOfPeriodTitle = document.getElementById('out-of-period-title');
-        const outOfPeriodText = document.getElementById('out-of-period-text');
-        
-        const currentDateElem = document.getElementById('current-date');
-        const currentPeriodElem = document.getElementById('current-period-text');
-        const currentRotationElem = document.getElementById('current-rotation-name');
-        const currentScheduleContentElem = document.getElementById('current-week-schedule-content');
-        const currentRotationDetailsElem = document.getElementById('current-rotation-details'); 
-
-        // [NOVO] DOM Elements para o bloco de plantões
-        const studentScheduleWeekView = document.getElementById('student-schedule-week-view');
-        const studentScheduleGrid = document.getElementById('student-schedule-grid');
-
-        // Menu Elements
-        const menuButton = document.getElementById('menu-button');
-        const closeMenuButton = document.getElementById('close-menu-button');
-        const menuModal = document.getElementById('menu-modal');
-        const menuOverlay = document.getElementById('menu-overlay');
-        const navButtons = document.querySelectorAll('.nav-button');
-
-        // View Content Elements
-        const views = document.querySelectorAll('.view-content');
-        const allRotationsContainer = document.getElementById('all-rotations-content');
-        const generalThemesContainer = document.getElementById('general-themes-content');
-        const themeSearchInput = document.getElementById('theme-search-input'); 
-        const roadmapTableBody = document.getElementById('roadmap-table-body'); 
-
-        // [NOVO] Modal de Rodízio
-        const rotationModal = document.getElementById('rotation-modal');
-        const rotationModalBox = document.getElementById('rotation-modal-box');
-        const rotationModalTitle = document.getElementById('rotation-modal-title');
-        const rotationModalContent = document.getElementById('rotation-modal-content');
-        const rotationModalClose = document.getElementById('rotation-modal-close');
-
-
-        // Dark Mode Elements
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const darkModeSlider = document.getElementById('dark-mode-slider');
-        const htmlElement = document.documentElement;
-
-        // --- FUNÇÕES ---
-
-        /**
-         * Retorna o período de estágio atual com base na data de hoje.
-         */
-        function getCurrentPeriodInfo() {
-            // [OTIMIZAÇÃO] Usa a constante global TODAY
-            let dateToCompare = new Date(TODAY); // Clona a data
-
-            return masterSchedule.find(period => {
-                const startDate = new Date(period.start);
-                const endDate = new Date(period.end);
-                return dateToCompare >= startDate && dateToCompare <= endDate;
-            });
-        }
-
-        /**
-         * [NOVO] Formata uma data para o formato YYYY-MM-DD (para ser compatível com as chaves do objeto)
-         */
         function getFormattedDate(date) {
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -660,713 +556,396 @@
             return `${year}-${month}-${day}`;
         }
 
-        /**
-         * Gera o HTML para um único rodízio.
-         */
-        function createRotationHTML(rotationId, rotationData) {
-            // [OTIMIZAÇÃO] Convertido para template literals e .map().join() para melhor legibilidade
-            const scheduleHtml = rotationData.schedule.map(day => `
-                <div class="weekly-schedule-day border-b border-light-border dark:border-dark-border pb-3 mb-3 transition-all" data-day-name="${day.day.toUpperCase()}">
-                    <h5 class="text-md font-semibold text-accent-green">${day.day}</h5>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
-                        <div>
-                            <strong class="text-neutral-text">Manhã:</strong>
-                            <div class="pl-2">${day.morning || '-'}</div>
-                        </div>
-                        <div>
-                            <strong class="text-neutral-text">Tarde:</strong>
-                            <div class="pl-2">${day.afternoon || '-'}</div>
-                        </div>
-                        ${day.night ? `
-                        <div class="sm:col-span-2">
-                            <strong class="text-neutral-text">Noite:</strong>
-                            <div class="pl-2">${day.night}</div>
-                        </div>` : ''}
-                    </div>
-                </div>
-            `).join('');
+        function getRotationForDate(date) {
+            const formattedDate = getFormattedDate(date);
+            const period = masterSchedule.find(p => formattedDate >= p.start && formattedDate <= p.end);
+            
+            if (!period) return null;
+            if (period.assignments === "Recesso") return { id: "RECESSO", periodLabel: period.label };
+            
+            const rotationId = period.assignments[SELECTED_GROUP];
+            return { id: rotationId, ...rotationsSchedule[rotationId], periodLabel: period.label };
+        }
 
-            const detailsHtml = rotationData.details.map(detail => {
-                let icon = 'map-pin';
-                if (detail.type === 'prof') icon = 'users';
-                if (detail.type === 'info') icon = 'alert-circle';
+        function getDayActivity(date, rotationId) {
+            const dayOfWeek = date.getDay(); // 0=Dom, 6=Sab
+            if (dayOfWeek === 0 || dayOfWeek === 6) return null; // Fim de semana padrão (exceto plantões específicos)
+
+            // Ajuste para pegar index do array de schedule (0=Segunda)
+            const scheduleIndex = dayOfWeek - 1;
+            if (!rotationsSchedule[rotationId]) return null;
+            return rotationsSchedule[rotationId].schedule[scheduleIndex];
+        }
+
+        // --- DASHBOARD UI ---
+
+        function updateDashboard() {
+            // Data e Saudação
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-full-date').textContent = TODAY.toLocaleDateString('pt-BR', options);
+            
+            const hour = TODAY.getHours();
+            let greeting = "Olá, Doutor(a)";
+            if (hour < 12) greeting = "Bom dia, Doutor(a)";
+            else if (hour < 18) greeting = "Boa tarde, Doutor(a)";
+            else greeting = "Boa noite, Doutor(a)";
+            document.getElementById('greeting-text').textContent = greeting;
+
+            // Rodízio Atual
+            const rotation = getRotationForDate(TODAY);
+            
+            if (rotation && rotation.id !== "RECESSO") {
+                document.getElementById('dash-rotation-title').textContent = `${rotation.id} - ${rotation.title}`;
+                document.getElementById('dash-rotation-period').textContent = rotation.periodLabel;
                 
-                return `
-                    <div class="flex items-start space-x-2 text-sm">
-                        <i data-feather="${icon}" class="w-4 h-4 flex-shrink-0 mt-1 text-neutral-text"></i>
-                        <div>
-                            <strong class="text-light-text dark:text-dark-text">${detail.title}:</strong>
-                            <span class="text-neutral-text">${detail.text}</span>
-                        </div>
+                // Atividade de Hoje
+                const activity = getDayActivity(TODAY, rotation.id);
+                const todayTitleElem = document.getElementById('dash-today-title');
+                const todayTimeElem = document.getElementById('dash-today-time');
+
+                // Verifica se tem plantão específico HOJE
+                const todayKey = getFormattedDate(TODAY);
+                const specificShift = specificStudentSchedules[todayKey];
+
+                if (specificShift) {
+                    todayTitleElem.textContent = `Plantão ${specificShift.type}`;
+                    todayTitleElem.className = "text-2xl font-bold mt-1 text-yellow-200";
+                    todayTimeElem.innerHTML = `<i data-lucide="users" class="w-4 h-4"></i> Equipe: ${specificShift.students.join(', ')}`;
+                } else if (activity) {
+                    const currentHour = TODAY.getHours();
+                    let currentActivityText = "Dia Livre";
+                    
+                    if (currentHour < 12) currentActivityText = activity.morning;
+                    else if (currentHour < 18) currentActivityText = activity.afternoon;
+                    else if (activity.night) currentActivityText = activity.night;
+                    else currentActivityText = "Descanso";
+
+                    todayTitleElem.textContent = currentActivityText;
+                    todayTimeElem.innerHTML = `<i data-lucide="clock" class="w-4 h-4"></i> Atividade Padrão`;
+                } else {
+                    todayTitleElem.textContent = "Fim de Semana";
+                    todayTimeElem.innerHTML = `<i data-lucide="coffee" class="w-4 h-4"></i> Descanso`;
+                }
+            } else {
+                document.getElementById('dash-rotation-title').textContent = rotation ? "Recesso" : "Fora do Período";
+                document.getElementById('dash-rotation-period').textContent = "-";
+            }
+
+            // Escala da Semana (Grid)
+            updateWeeklyGrid();
+        }
+
+        function updateWeeklyGrid() {
+            const grid = document.getElementById('dash-week-grid');
+            grid.innerHTML = '';
+
+            // Encontrar segunda-feira da semana atual
+            const curr = new Date(TODAY);
+            const first = curr.getDate() - curr.getDay() + 1; // Segunda
+            
+            for (let i = 0; i < 5; i++) { // Seg a Sex
+                const d = new Date(curr.setDate(first + i));
+                const dateKey = getFormattedDate(d);
+                const specificShift = specificStudentSchedules[dateKey];
+                const dayName = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
+                const dayNum = d.getDate();
+
+                let contentHtml = `<span class="text-xs text-gray-400 italic">Padrão</span>`;
+                let bgClass = "bg-gray-50 dark:bg-dark-bg border-gray-100 dark:border-dark-border";
+                
+                if (specificShift) {
+                    bgClass = "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-900/30";
+                    const names = specificShift.students[0].split(' ')[0]; // Primeiro nome apenas para caber
+                    const count = specificShift.students.length > 1 ? `+${specificShift.students.length - 1}` : '';
+                    contentHtml = `<span class="text-xs font-bold text-green-700 dark:text-green-400 truncate">${names} ${count}</span>`;
+                }
+
+                const cardHtml = `
+                    <div class="${bgClass} border rounded-xl p-3 flex flex-col items-center text-center transition-all hover:scale-105 cursor-pointer" onclick="openDayModal('${dateKey}')">
+                        <span class="text-[10px] uppercase font-bold text-gray-500">${dayName}</span>
+                        <span class="text-lg font-bold text-gray-800 dark:text-gray-200 leading-none mb-1">${dayNum}</span>
+                        ${contentHtml}
                     </div>
                 `;
-            }).join('');
-
-            return `
-                <div class="bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden border border-light-border/50 dark:border-dark-border/50">
-                    <div class="bg-light-card/90 dark:bg-dark-card/90 p-4 border-b border-light-border dark:border-dark-border">
-                        <h3 class="text-xl font-bold text-light-text dark:text-dark-text">Rodízio ${rotationId}: ${rotationData.title}</h3>
-                    </div>
-                    <div class="p-4 space-y-4">
-                        <div class="rotation-details-content space-y-2">${detailsHtml}</div>
-                        <h4 class="text-lg font-semibold pt-2 border-t border-light-border dark:border-dark-border">Cronograma</h4>
-                        <div class="rotation-week-schedule">${scheduleHtml}</div>
-                    </div>
-                </div>
-            `;
-        }
-
-
-        /**
-         * Atualiza a visualização do cronograma com base no grupo selecionado.
-         */
-        function updateScheduleView() {
-            // [OTIMIZAÇÃO] Usa a constante global
-            const periodInfo = getCurrentPeriodInfo(); 
-
-            if (!periodInfo) {
-                scheduleView.classList.add('hidden');
-                outOfPeriodTitle.textContent = "Fora do Período";
-                outOfPeriodText.textContent = "O estágio obrigatório (Turma B 2025) não parece estar em andamento na data de hoje.";
-                outOfPeriodMessage.classList.remove('hidden');
-                return;
-            }
-
-            const periodCardText = document.querySelector('#current-period-text');
-            periodCardText.textContent = periodInfo.label;
-
-
-            if (periodInfo.assignments === "Recesso") {
-                scheduleView.classList.add('hidden');
-                outOfPeriodTitle.textContent = "Recesso";
-                outOfPeriodText.textContent = "Período de recesso (Natal e Ano Novo). Não há atividades programadas.";
-                outOfPeriodMessage.classList.remove('hidden');
-                return;
-            }
-
-            outOfPeriodMessage.classList.add('hidden');
-            
-            // [OTIMIZAÇÃO] Usa a constante global
-            const rotationId = periodInfo.assignments[SELECTED_GROUP];
-            // [NOVO] Faz uma cópia profunda para evitar modificar o objeto original
-            const rotationData = JSON.parse(JSON.stringify(rotationsSchedule[rotationId]));
-
-            if (rotationData) {
-                currentRotationElem.textContent = `${rotationId}: ${rotationData.title}`;
-                
-                const rotationHTML = createRotationHTML(rotationId, rotationData);
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = rotationHTML;
-                
-                // Extrai e injeta os detalhes e o cronograma
-                const detailsContent = tempDiv.querySelector('.rotation-details-content');
-                if (detailsContent) {
-                    currentRotationDetailsElem.innerHTML = detailsContent.innerHTML;
-                } else {
-                    currentRotationDetailsElem.innerHTML = "";
-                }
-                
-                const scheduleContent = tempDiv.querySelector('.rotation-week-schedule');
-                if (scheduleContent) {
-                    currentScheduleContentElem.innerHTML = scheduleContent.innerHTML;
-                } else {
-                    currentScheduleContentElem.innerHTML = "<p>Não foi possível carregar o cronograma detalhado.</p>";
-                }
-                
-                // [NOVO] Popula o bloco de plantões se for G ou H
-                // A função interna cuida de mostrar/esconder
-                populateStudentWeekSchedule(rotationId); 
-
-                scheduleView.classList.remove('hidden');
-
-                // Destacar o dia atual
-                highlightCurrentDay();
-
-                // [MODIFICADO] Injetar datas nos cards (lógica de alunos removida daqui)
-                addDatesToWeekScheduleCards();
-
-            } else {
-                scheduleView.classList.add('hidden');
-                outOfPeriodTitle.textContent = "Erro";
-                outOfPeriodText.textContent = "Não foi possível encontrar dados para seu rodízio atual.";
-                outOfPeriodMessage.classList.remove('hidden');
-            }
-            
-            feather.replace();
-        }
-
-        /**
-         * Destaca o card do dia da semana atual
-         */
-        function highlightCurrentDay() {
-            const dayMap = [
-                "DOMINGO", // 0
-                "2ª FEIRA", // 1
-                "3ª FEIRA", // 2
-                "4ª FEIRA", // 3
-                "5ª FEIRA", // 4
-                "6ª FEIRA", // 5
-                "SÁBADO"  // 6
-            ];
-            
-            // [OTIMIZAÇÃO] Usa a constante global TODAY
-            const todayDayName = dayMap[TODAY.getDay()];
-
-            if (todayDayName) {
-                currentScheduleContentElem.querySelectorAll('.today-highlight').forEach(el => {
-                    el.classList.remove('today-highlight', 'border-accent-blue', 'dark:border-accent-blue', 'bg-accent-blue/10', 'dark:bg-accent-blue/20', 'border-l-4');
-                    el.style.paddingLeft = "";
-                });
-
-                // [CORREÇÃO] O seletor deve buscar pelo início do 'data-day-name'
-                // Isso corrige o problema quando o 'data-day-name' é "2ª FEIRA (17/11)"
-                const todayElem = currentScheduleContentElem.querySelector(`[data-day-name^="${todayDayName}"]`);
-                if (todayElem) {
-                    todayElem.classList.add('today-highlight', 'border-accent-blue', 'dark:border-accent-blue', 'bg-accent-blue/10', 'dark:bg-accent-blue/20', 'border-l-4');
-                    todayElem.style.paddingLeft = "1rem";
-                }
+                grid.innerHTML += cardHtml;
             }
         }
 
-        /**
-         * [REMOVIDO] A função 'injectSpecificStudentSchedulesForWeek' foi removida.
-         * A lógica agora está em 'populateStudentWeekSchedule' e 'addDatesToWeekScheduleCards'.
-         */
+        // --- CALENDAR LOGIC ---
 
-        /**
-         * [NOVO] Adiciona as datas (ex: 17/11) aos cards da semana.
-         */
-        function addDatesToWeekScheduleCards() {
-            // [OTIMIZAÇÃO] Usa a constante global TODAY
-            const todayDayOfWeek = TODAY.getDay(); // 0=Dom, 1=Seg, ..., 6=Sab
-            
-            // Mapeia o data-attribute 'data-day-name' para o número 'getDay()'
-            const dayMap = {
-                "2ª FEIRA": 1,
-                "3ª FEIRA": 2,
-                "4ª FEIRA": 3,
-                "5ª FEIRA": 4,
-                "6ª FEIRA": 5
-            };
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const monthYearTitle = document.getElementById('calendar-month-year');
+            grid.innerHTML = '';
 
-            // Pega todos os cards de dia da semana visíveis
-            const dayCards = currentScheduleContentElem.querySelectorAll('.weekly-schedule-day');
+            monthYearTitle.textContent = currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            monthYearTitle.className = "text-xl font-bold capitalize text-gray-900 dark:text-white";
 
-            dayCards.forEach(card => {
-                // Extrai apenas o dia da semana, ex: "2ª FEIRA" de "2ª FEIRA (17/11)"
-                const dayName = card.dataset.dayName.split(' ')[0].toUpperCase(); 
-                
-                if (dayMap.hasOwnProperty(dayName)) {
-                    const cardDayOfWeek = dayMap[dayName]; // e.g., 1
-                    
-                    // Calcula a data para este card
-                    // ex: Hoje é Quarta (3). Card é Segunda (1). diff = 1 - 3 = -2.
-                    const dateDiff = cardDayOfWeek - todayDayOfWeek; 
-                    const cardDate = new Date(TODAY);
-                    cardDate.setDate(TODAY.getDate() + dateDiff);
-                    
-                    // Atualiza o título do dia com a data
-                    const dayTitle = card.querySelector('h5');
-                    if (dayTitle && !dayTitle.textContent.includes('/')) {
-                         const dateString = cardDate.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
-                         dayTitle.textContent = `${dayTitle.textContent} (${dateString})`;
-                         // Atualiza o dataset para o seletor de highlight
-                         card.dataset.dayName = dayTitle.textContent; 
-                    }
-                }
-            });
-        }
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
 
+            const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0-6
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        /**
-         * [NOVO] Popula o bloco "Plantões da Semana" se o rodízio for G ou H.
-         */
-        function populateStudentWeekSchedule(rotationId) {
-            // 1. Esconde o bloco por padrão
-            studentScheduleWeekView.classList.add('hidden');
-
-            // 2. Sai se não for o rodízio G ou H
-            if (rotationId !== 'G' && rotationId !== 'H') {
-                return;
+            // Empty slots for previous month
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                grid.innerHTML += `<div class="h-24 md:h-32 bg-gray-50 dark:bg-dark-card/50"></div>`;
             }
 
-            studentScheduleGrid.innerHTML = ''; // Limpa o conteúdo
-            
-            const todayDayOfWeek = TODAY.getDay(); // 0=Dom, 1=Seg, ..., 6=Sab
-            const weekDays = [
-                { name: "2ª FEIRA", day: 1 },
-                { name: "3ª FEIRA", day: 2 },
-                { name: "4ª FEIRA", day: 3 },
-                { name: "5ª FEIRA", day: 4 },
-                { name: "6ª FEIRA", day: 5 }
-            ];
+            // Days
+            for (let i = 1; i <= daysInMonth; i++) {
+                const date = new Date(year, month, i);
+                const dateKey = getFormattedDate(date);
+                const rotation = getRotationForDate(date);
+                const specificShift = specificStudentSchedules[dateKey];
+                
+                let shiftIndicator = '';
+                let rotationIndicator = '';
+                let isTodayClass = (dateKey === getFormattedDate(TODAY)) ? "bg-blue-50 dark:bg-blue-900/20 ring-1 ring-inset ring-blue-500" : "bg-white dark:bg-dark-card hover:bg-gray-50 dark:hover:bg-dark-border/50";
 
-            let hasAnyScheduleThisWeek = false;
-
-            // 3. Itera pelos 5 dias da semana
-            weekDays.forEach(dayInfo => {
-                const cardDayOfWeek = dayInfo.day;
-                const dateDiff = cardDayOfWeek - todayDayOfWeek;
-                const cardDate = new Date(TODAY);
-                cardDate.setDate(TODAY.getDate() + dateDiff);
-
-                const formattedCardDate = getFormattedDate(cardDate);
-                const dateString = cardDate.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
-
-                // 4. Verifica se há escala para esse dia e esse rodízio
-                const specificSchedule = specificStudentSchedules[formattedCardDate];
-                let studentsHtml = '';
-
-                if (specificSchedule && specificSchedule.rotation === rotationId) {
-                    // Encontrou escala
-                    studentsHtml = `<p class="text-sm mt-2 font-medium text-light-text dark:text-dark-text">${specificSchedule.students}</p>`;
-                    hasAnyScheduleThisWeek = true;
-                } else {
-                    // Sem escala para este dia
-                    studentsHtml = `<p class="text-sm mt-2 text-neutral-text italic">-</p>`;
+                if (specificShift) {
+                    shiftIndicator = `
+                        <div class="mt-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 truncate">
+                            ★ ${specificShift.type}
+                        </div>
+                    `;
                 }
 
-                // 5. Monta o HTML para o card do dia
+                if (rotation && rotation.id !== "RECESSO") {
+                    rotationIndicator = `
+                        <div class="mt-auto flex justify-end">
+                            <span class="text-[10px] font-bold px-1.5 rounded-sm ${rotation.color} text-white opacity-80">${rotation.id}</span>
+                        </div>
+                    `;
+                } else if (rotation && rotation.id === "RECESSO") {
+                     rotationIndicator = `
+                        <div class="mt-auto flex justify-end">
+                            <span class="text-[10px] font-bold px-1.5 rounded-sm bg-gray-400 text-white opacity-80">R</span>
+                        </div>
+                    `;
+                }
+
                 const dayHtml = `
-                    <div class="bg-light-bg dark:bg-dark-bg p-3 rounded-lg border border-light-border dark:border-dark-border">
-                        <h4 class="font-semibold text-accent-green">${dayInfo.name}</h4>
-                        <p class="text-sm text-neutral-text">${dateString}</p>
-                        ${studentsHtml}
+                    <div onclick="openDayModal('${dateKey}')" class="h-24 md:h-32 p-2 flex flex-col cursor-pointer transition-colors ${isTodayClass}">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">${i}</span>
+                        ${shiftIndicator}
+                        ${rotationIndicator}
                     </div>
                 `;
-                studentScheduleGrid.innerHTML += dayHtml;
-            });
-
-            // 6. Mostra o bloco APENAS se houver alguma escala encontrada para a semana
-            if (hasAnyScheduleThisWeek) {
-                 studentScheduleWeekView.classList.remove('hidden');
+                grid.innerHTML += dayHtml;
             }
         }
 
-
-        /**
-         * Popula a seção "Todos os Rodízios".
-         */
-        function populateAllRotations() {
-            let allHtml = '';
-            for (const rotationId in rotationsSchedule) {
-                allHtml += createRotationHTML(rotationId, rotationsSchedule[rotationId]) + '<br>';
-            }
-            allRotationsContainer.innerHTML = allHtml;
-            feather.replace();
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
         }
 
-        /**
-         * [OTIMIZAÇÃO] Nova função handler para o toggle dos temas (Delegação de Eventos)
-         */
-        function handleThemeToggle(event) {
-            // Garante que o evento é de um <details> e que está dentro do container
-            if (event.target.tagName === 'DETAILS' && event.currentTarget.contains(event.target)) {
-                const chevron = event.target.querySelector('.chevron-icon');
-                if (!chevron) return;
-                
-                // O evento 'toggle' dispara *depois* da mudança de estado
-                if (event.target.open) {
-                    chevron.style.transform = 'rotate(180deg)';
-                } else {
-                    chevron.style.transform = 'rotate(0deg)';
-                }
-            }
+        function resetCalendar() {
+            currentDate = new Date();
+            renderCalendar();
         }
 
-        /**
-         * Popula a seção "Temas Gerais".
-         */
-        function populateGeneralThemes() {
-            // [OTIMIZAÇÃO] Convertido para .map().join() para clareza
-            const themesHtml = Object.keys(generalThemes).map(category => {
-                const items = generalThemes[category];
-                const itemsHtml = items.map(item => 
-                    `<li class="ml-4 p-1 theme-item" data-theme-name="${item.toLowerCase()}">${item}</li>`
-                ).join('');
-                
-                return `
-                    <details class="theme-category bg-light-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-lg rounded-lg overflow-hidden border border-light-border/50 dark:border-dark-border/50">
-                        <summary class="cursor-pointer font-semibold p-4 flex justify-between items-center hover:bg-gray-100 dark:hover:bg-dark-border">
-                            ${category}
-                            <i data-feather="chevron-down" class="chevron-icon transition-transform duration-200"></i>
-                        </summary>
-                        <ul class="list-disc list-inside p-4 border-t border-light-border dark:border-dark-border text-neutral-text">
-                            ${itemsHtml}
-                        </ul>
-                    </details>
-                `;
-            }).join(''); // Junta todas as categorias
+        // --- DETAILS MODAL ---
+
+        function openDayModal(dateStr) { // dateStr YYYY-MM-DD opt
+            const date = dateStr ? new Date(dateStr + "T00:00:00") : TODAY;
+            // Fix timezone offset for display
+            // Simple way: create date object and adjust label
             
-            generalThemesContainer.innerHTML = themesHtml;
-            feather.replace();
-        }
-        
-        /**
-         * Filtra os temas gerais com base no input de busca.
-         */
-        function filterGeneralThemes() {
-            const searchTerm = themeSearchInput.value.toLowerCase();
-            const categories = generalThemesContainer.querySelectorAll('.theme-category');
+            const dateKey = getFormattedDate(date);
+            const rotation = getRotationForDate(date);
+            const specificShift = specificStudentSchedules[dateKey];
+            const activity = rotation && rotation.id !== "RECESSO" ? getDayActivity(date, rotation.id) : null;
 
-            categories.forEach(category => {
-                const items = category.querySelectorAll('.theme-item');
-                let categoryHasVisibleItem = false;
-
-                items.forEach(item => {
-                    const themeName = item.dataset.themeName;
-                    if (themeName.includes(searchTerm)) {
-                        item.classList.remove('hidden');
-                        categoryHasVisibleItem = true;
-                    } else {
-                        item.classList.add('hidden');
-                    }
-                });
-
-                if (categoryHasVisibleItem) {
-                    category.classList.remove('hidden');
-                    if(searchTerm.length > 0) {
-                         category.open = true;
-                    }
-                } else {
-                    category.classList.add('hidden');
-                }
-            });
-        }
-
-        /**
-         * Popula o roteiro do estágio na página principal como uma TABELA.
-         */
-        function populateInternshipRoadmap() {
-            // [OTIMIZAÇÃO] Usa a constante global
-            const periodInfo = getCurrentPeriodInfo(); 
-            if (!roadmapTableBody) return; 
-
-            // [OTIMIZAÇÃO] Convertido para .map().join()
-            const tableRowsHtml = masterSchedule.map(period => {
-                let rotationId = '';
-                let rotationTitle = '';
-                let isCurrentPeriod = periodInfo && period.label === periodInfo.label;
-
-                if (period.assignments === "Recesso") {
-                    rotationTitle = "Recesso";
-                } else {
-                    // [OTIMIZAÇÃO] Usa a constante global
-                    rotationId = period.assignments[SELECTED_GROUP];
-                    rotationTitle = rotationsSchedule[rotationId] ? `<strong>${rotationId}:</strong> ${rotationsSchedule[rotationId].title}` : 'Rodízio não encontrado';
-                }
-
-                const highlightClasses = isCurrentPeriod 
-                    ? 'bg-accent-green/10 dark:bg-accent-green/20' 
-                    : 'hover:bg-gray-100/50 dark:hover:bg-dark-border/50';
-                
-                const periodClass = isCurrentPeriod ? 'text-accent-green' : 'text-neutral-text';
-
-                // [NOVO] Adicionar atributos de dados e cursor para o modal
-                let clickableClass = 'transition-colors';
-                let dataAttrs = '';
-
-                if (period.assignments !== "Recesso") {
-                    clickableClass += ' cursor-pointer';
-                    dataAttrs = `
-                        data-rotation-id="${rotationId}"
-                        data-period-start="${period.start}"
-                        data-period-end="${period.end}"
-                        data-period-label="${period.label}"
-                    `;
-                }
-
-                return `
-                    <tr class="border-b border-light-border dark:border-dark-border ${highlightClasses} ${clickableClass} last:border-b-0" ${dataAttrs}>
-                        <td class="p-3 text-sm font-medium ${periodClass}">${period.label}</td>
-                        <td class="p-3 text-sm text-light-text dark:text-dark-text">${rotationTitle}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            roadmapTableBody.innerHTML = tableRowsHtml;
-        }
-
-        // --- [NOVO] Funções do Modal de Rodízio ---
-
-        /**
-         * [NOVO] Gera o HTML da escala de plantões (G e H) para um período específico.
-         */
-        function generatePAScheduleForPeriod(rotationId, periodStartStr, periodEndStr) {
-            const startDate = new Date(periodStartStr);
-            const endDate = new Date(periodEndStr);
+            document.getElementById('modal-date-title').textContent = date.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
             
-            let scheduleHtml = '';
-            let hasSchedule = false;
-
-            // Mapeia getDay() para o nome do dia
-            const dayMap = ["DOM", "2ª FEIRA", "3ª FEIRA", "4ª FEIRA", "5ª FEIRA", "6ª FEIRA", "SÁB"];
-
-            // Itera dia a dia, incluindo o último dia
-            for (let d = new Date(startDate.getTime()); d <= endDate; d.setDate(d.getDate() + 1)) {
-                const dayOfWeek = d.getDay();
-
-                // Pula fins de semana (Domingo = 0, Sábado = 6)
-                if (dayOfWeek === 0 || dayOfWeek === 6) {
-                    continue;
-                }
-
-                const formattedDateKey = getFormattedDate(d); // YYYY-MM-DD
-                const specificSchedule = specificStudentSchedules[formattedDateKey];
-
-                // Verifica se há escala para ESTE dia E ESTE rodízio
-                if (specificSchedule && specificSchedule.rotation === rotationId) {
-                    hasSchedule = true;
-                    const dateString = d.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
-                    
-                    scheduleHtml += `
-                        <div class="bg-light-bg dark:bg-dark-bg p-3 rounded-lg border border-light-border dark:border-dark-border">
-                            <h4 class="font-semibold text-accent-green">${dayMap[dayOfWeek]} (${dateString})</h4>
-                            <p class="text-sm mt-1 font-medium text-light-text dark:text-dark-text">${specificSchedule.students}</p>
-                        </div>
-                    `;
-                }
-            }
-
-            if (!hasSchedule) {
-                return '<p class="text-neutral-text italic">Nenhuma escala de plantão específica (Grupo VI) encontrada para este período.</p>';
-            }
-
-            return `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">${scheduleHtml}</div>`;
-        }
-
-        /**
-         * [NOVO] Monta o HTML completo para o conteúdo do modal de rodízio.
-         */
-        function buildModalContent(rotationId, periodStartStr, periodEndStr, periodLabel) {
-            const rotationData = rotationsSchedule[rotationId];
-            if (!rotationData) return "<p>Erro: Dados do rodízio não encontrados.</p>";
-
-            // 1. Gerar Detalhes (Locais, Profs)
-            const detailsHtml = rotationData.details.map(detail => {
-                let icon = 'map-pin';
-                if (detail.type === 'prof') icon = 'users';
-                if (detail.type === 'info') icon = 'alert-circle';
+            // Info do Rodízio
+            if (rotation) {
+                document.getElementById('modal-rotation-subtitle').textContent = rotation.id === "RECESSO" ? "Recesso" : `${rotation.id} - ${rotation.title}`;
                 
-                return `
-                    <div class="flex items-start space-x-2 text-sm">
-                        <i data-feather="${icon}" class="w-4 h-4 flex-shrink-0 mt-1 text-neutral-text"></i>
-                        <div>
-                            <strong class="text-light-text dark:text-dark-text">${detail.title}:</strong>
-                            <span class="text-neutral-text">${detail.text}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            // 2. Gerar Cronograma Genérico da Semana
-            const genericScheduleHtml = rotationData.schedule.map(day => `
-                <div class="weekly-schedule-day border-b border-light-border dark:border-dark-border pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
-                    <h5 class="text-md font-semibold text-accent-green">${day.day}</h5>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
-                        <div>
-                            <strong class="text-neutral-text">Manhã:</strong>
-                            <div class="pl-2">${day.morning || '-'}</div>
-                        </div>
-                        <div>
-                            <strong class="text-neutral-text">Tarde:</strong>
-                            <div class="pl-2">${day.afternoon || '-'}</div>
-                        </div>
-                        ${day.night ? `
-                        <div class="sm:col-span-2">
-                            <strong class="text-neutral-text">Noite:</strong>
-                            <div class="pl-2">${day.night}</div>
-                        </div>` : ''}
-                    </div>
-                </div>
-            `).join('');
-
-            // 3. Gerar Cronograma Específico de Plantões (se G ou H)
-            let specificPAScheduleHtml = '';
-            if (rotationId === 'G' || rotationId === 'H') {
-                const paSchedule = generatePAScheduleForPeriod(rotationId, periodStartStr, periodEndStr);
-                specificPAScheduleHtml = `
-                    <div class="pt-4 border-t border-light-border dark:border-dark-border">
-                        <h3 class="text-xl font-semibold mb-4">Escala de Plantões (Grupo VI)</h3>
-                        ${paSchedule}
-                    </div>
-                `;
-            }
-
-            // 4. Combinar tudo
-            return `
-                <div class="space-y-4">
-                    <h3 class="text-xl font-semibold">Detalhes</h3>
-                    <div class="space-y-2">${detailsHtml}</div>
-                </div>
-                
-                ${specificPAScheduleHtml}
-
-                <div class="pt-4 border-t border-light-border dark:border-dark-border">
-                    <h3 class="text-xl font-semibold mb-4">Atividades Padrão da Semana</h3>
-                    <div class="space-y-4">${genericScheduleHtml}</div>
-                </div>
-            `;
-        }
-
-
-        /**
-         * [NOVO] Abre o modal de rodízio com os dados corretos.
-         */
-        function openRotationModal(rotationId, periodStart, periodEnd, periodLabel) {
-            const rotationData = rotationsSchedule[rotationId];
-            if (!rotationData) return;
-
-            // Define o título
-            rotationModalTitle.textContent = `Rodízio ${rotationId}: ${rotationData.title} (${periodLabel})`;
-            
-            // Constrói e injeta o conteúdo
-            const contentHtml = buildModalContent(rotationId, periodStart, periodEnd, periodLabel);
-            rotationModalContent.innerHTML = contentHtml;
-            rotationModalContent.scrollTop = 0; // Garante que o scroll comece do topo
-
-            // Mostra o modal
-            rotationModal.classList.remove('hidden');
-            
-            // Re-renderiza os ícones
-            feather.replace();
-        }
-
-        /**
-         * [NOVO] Fecha o modal de rodízio.
-         */
-        function closeRotationModal() {
-            rotationModal.classList.add('hidden');
-        }
-
-        // --- Funções do Menu e Navegação ---
-
-        function toggleMenu(show) {
-            if (show) {
-                menuModal.classList.remove('hidden', 'translate-x-full');
-                menuOverlay.classList.remove('hidden');
-                menuOverlay.style.opacity = '1';
+                // Popula lista de detalhes (profs, locais)
+                const detailsList = document.getElementById('modal-details-list');
+                detailsList.innerHTML = '';
+                if (rotation.details) {
+                    rotation.details.forEach(det => {
+                        detailsList.innerHTML += `<div class="flex items-center gap-2"><i data-lucide="${det.icon}" class="w-4 h-4"></i> ${det.text}</div>`;
+                    });
+                }
             } else {
-                menuModal.classList.add('translate-x-full');
-                menuOverlay.style.opacity = '0';
-                setTimeout(() => {
-                    menuModal.classList.add('hidden');
-                    menuOverlay.classList.add('hidden');
-                }, 300);
+                document.getElementById('modal-rotation-subtitle').textContent = "Fora do Período";
+                document.getElementById('modal-details-list').innerHTML = '-';
             }
+
+            // Info Específica de Plantão
+            const shiftSection = document.getElementById('modal-shift-section');
+            if (specificShift) {
+                shiftSection.classList.remove('hidden');
+                document.getElementById('modal-shift-content').innerHTML = `
+                    <p><strong>Tipo:</strong> PA ${specificShift.type}</p>
+                    <p><strong>Equipe:</strong> ${specificShift.students.join(', ')}</p>
+                `;
+            } else {
+                shiftSection.classList.add('hidden');
+            }
+
+            // Atividades Padrão
+            document.getElementById('modal-morning-activity').textContent = activity ? activity.morning : "Livre/Descanso";
+            document.getElementById('modal-afternoon-activity').textContent = activity ? activity.afternoon : "Livre/Descanso";
+            
+            const nightContainer = document.getElementById('modal-night-container');
+            if(activity && activity.night) {
+                nightContainer.classList.remove('hidden');
+                document.getElementById('modal-night-activity').textContent = activity.night;
+            } else {
+                nightContainer.classList.add('hidden');
+            }
+
+            // Show Modal
+            const modal = document.getElementById('day-modal');
+            modal.classList.remove('hidden');
+            // Animação de entrada
+            setTimeout(() => {
+                modal.querySelector('div.transform').classList.remove('translate-y-full');
+            }, 10);
+            
+            lucide.createIcons();
         }
 
-        function showView(viewId) {
-            views.forEach(view => {
-                if (view.id === viewId) {
-                    view.classList.remove('hidden');
+        function closeDayModal() {
+            const modal = document.getElementById('day-modal');
+            const content = modal.querySelector('div.transform');
+            content.classList.add('translate-y-full');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function openModalDetails() {
+            openDayModal(getFormattedDate(TODAY));
+        }
+
+        // --- NAVIGATION & TABS ---
+
+        function switchTab(targetId) {
+            // Update UI State
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            document.getElementById(`view-${targetId}`).classList.remove('hidden');
+            document.getElementById(`view-${targetId}`).classList.add('block');
+
+            // Update Desktop Nav
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                if (btn.dataset.target === targetId) {
+                    btn.classList.remove('bg-transparent', 'text-gray-600', 'dark:text-gray-400');
+                    btn.classList.add('bg-primary-50', 'text-primary-700', 'dark:bg-primary-500/10', 'dark:text-primary-400');
                 } else {
-                    view.classList.add('hidden');
+                    btn.classList.add('bg-transparent', 'text-gray-600', 'dark:text-gray-400');
+                    btn.classList.remove('bg-primary-50', 'text-primary-700', 'dark:bg-primary-500/10', 'dark:text-primary-400');
                 }
             });
-            toggleMenu(false);
+
+            // Update Mobile Nav
+            document.querySelectorAll('.nav-item-mobile').forEach(btn => {
+                if (btn.dataset.target === targetId) {
+                    btn.classList.remove('text-gray-400');
+                    btn.classList.add('text-primary-600', 'dark:text-primary-400');
+                } else {
+                    btn.classList.add('text-gray-400');
+                    btn.classList.remove('text-primary-600', 'dark:text-primary-400');
+                }
+            });
+
+            // Trigger specific renders
+            if (targetId === 'calendar') renderCalendar();
+            if (targetId === 'rotations') renderRotationsList();
+            if (targetId === 'themes') renderThemesList();
+
             window.scrollTo(0, 0);
         }
 
-        // --- Funções do Modo Escuro ---
+        // --- THEMES & ROTATIONS LISTS ---
+        
+        function renderRotationsList() {
+            const container = document.getElementById('rotations-list-container');
+            if (container.children.length > 0) return; // Already rendered
 
-        function setDarkMode(isDark) {
-            if (isDark) {
-                htmlElement.classList.add('dark');
-                darkModeToggle.checked = true;
-            } else {
-                htmlElement.classList.remove('dark');
-                darkModeToggle.checked = false;
+            let html = '';
+            for (const [key, rot] of Object.entries(rotationsSchedule)) {
+                html += `
+                    <div class="bg-white dark:bg-dark-card rounded-xl p-4 border border-gray-200 dark:border-dark-border shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="w-8 h-8 rounded-lg ${rot.color} text-white flex items-center justify-center font-bold">${key}</span>
+                            <h3 class="font-bold text-gray-900 dark:text-white">${rot.title}</h3>
+                        </div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400 ml-11">
+                             ${rot.details.map(d => `<div class="flex items-center gap-2 mb-1"><i data-lucide="${d.icon}" class="w-3 h-3"></i> ${d.text}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
             }
+            container.innerHTML = html;
+            lucide.createIcons();
         }
 
+        const themesData = [
+            "Aleitamento materno", "Icterícia neonatal", "Prematuridade", "Calendário vacinal",
+            "Crescimento e Desenvolvimento", "Desnutrição", "Obesidade", "Anemias Carenciais",
+            "Asma e crise de asma", "Dermatite atópica", "IVAS", "Meningites", "Pneumonias",
+            "Tuberculose", "Dengue", "Diabetes Mellitus", "Cetoacidose Diabética", "Hipotireoidismo",
+            "Crises Convulsivas", "Epilepsias", "TDAH", "Autismo", "Diarreia Aguda e Crônica",
+            "Constipação Intestinal", "Infecção Urinária", "Síndrome Nefrítica/Nefrótica", "Choque Séptico"
+        ];
+
+        function renderThemesList() {
+            const container = document.getElementById('themes-container');
+            if(container.children.length > 0) return;
+
+            themesData.sort().forEach(theme => {
+                container.innerHTML += `
+                    <div class="theme-item p-3 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer">
+                        <span class="font-medium text-gray-700 dark:text-gray-200">${theme}</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // Search Themes
+        document.getElementById('theme-search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.theme-item').forEach(el => {
+                const text = el.textContent.toLowerCase();
+                el.style.display = text.includes(term) ? 'flex' : 'none';
+            });
+        });
+
+        // --- DARK MODE ---
         function toggleDarkMode() {
-            const isDark = darkModeToggle.checked;
-            setDarkMode(isDark);
-            localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
 
-        function loadInitialDarkMode() {
-            const savedDarkMode = localStorage.getItem('darkMode');
-            if (savedDarkMode === null) {
-                setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
-            } else {
-                setDarkMode(savedDarkMode === 'true');
-            }
+        document.getElementById('theme-toggle-desktop').addEventListener('click', toggleDarkMode);
+        document.getElementById('theme-toggle-mobile').addEventListener('click', toggleDarkMode);
+
+        // Init Theme
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
         }
 
-        // --- INICIALIZAÇÃO ---
-        function init() {
-            // [OTIMIZAÇÃO] Usa a constante global TODAY
-            currentDateElem.textContent = TODAY.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            // [OTIMIZAÇÃO] Atualiza o nome do grupo no card
-            document.getElementById('selected-group-name').textContent = SELECTED_GROUP;
-
-            // Modo Escuro
-            loadInitialDarkMode();
-            
-            // Popular seções
-            populateAllRotations();
-            populateGeneralThemes();
-            populateInternshipRoadmap(); 
-
-            // Atualizar a view principal
-            updateScheduleView(); 
-
-            // Adicionar Event Listeners
-            
-            // Menu
-            menuButton.addEventListener('click', () => toggleMenu(true));
-            closeMenuButton.addEventListener('click', () => toggleMenu(false));
-            menuOverlay.addEventListener('click', () => toggleMenu(false));
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => showView(button.dataset.view));
-            });
-            
-            // Modo Escuro
-            darkModeToggle.addEventListener('change', toggleDarkMode);
-
-            // Busca de Temas
-            themeSearchInput.addEventListener('input', filterGeneralThemes);
-            
-            // [OTIMIZAÇÃO] Delegação de Eventos para os temas
-            // O 'true' usa "capture phase" para garantir que o evento toggle seja pego
-            generalThemesContainer.addEventListener('toggle', handleThemeToggle, true);
-
-            // [NOVO] Modal de Rodízio
-            rotationModalClose.addEventListener('click', closeRotationModal);
-            rotationModal.addEventListener('click', (event) => {
-                // Fecha se clicar no overlay (fundo)
-                if (event.target === rotationModal) {
-                    closeRotationModal();
-                }
-            });
-
-            roadmapTableBody.addEventListener('click', (event) => {
-                // Procura a linha clicada que tenha o data-attribute
-                const row = event.target.closest('tr[data-rotation-id]');
-                if (row) {
-                    const { rotationId, periodStart, periodEnd, periodLabel } = row.dataset;
-                    openRotationModal(rotationId, periodStart, periodEnd, periodLabel);
-                }
-            });
-
-
-            // Re-aplicar ícones
-            feather.replace();
-        }
-
-        // Corrigir bug no masterSchedule
-        const lastPeriod = masterSchedule.find(p => p.label === "18/01 a 23/01");
-        if (lastPeriod && lastPeriod.start.startsWith("2G26")) { // Bug de digitação original
-            lastPeriod.start = "2026-01-18T00:00:00";
-        } else if (lastPeriod && lastPeriod.start.startsWith("2026-01-19")) { // Correção de data de início (deve ser domingo)
-             lastPeriod.start = "2026-01-18T00:00:00";
-        }
-
-
-        // Rodar a aplicação
-        document.addEventListener('DOMContentLoaded', init);
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDashboard();
+            lucide.createIcons();
+        });
 
     </script>
 </body>
