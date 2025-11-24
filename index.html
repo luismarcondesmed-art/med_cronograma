@@ -2,9 +2,17 @@
 <html lang="pt-br" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Cronograma Pediatria UFPR | 2025</title>
     
+    <!-- PWA / iOS Configuration -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pediatria">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#18181b" media="(prefers-color-scheme: dark)">
+    <link rel="apple-touch-icon" href="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -39,6 +47,10 @@
                             border: '#27272a'
                         }
                     },
+                    padding: {
+                        'safe': 'env(safe-area-inset-bottom)',
+                        'safe-top': 'env(safe-area-inset-top)',
+                    },
                     animation: {
                         'fade-in': 'fadeIn 0.3s ease-out',
                         'slide-up': 'slideUp 0.3s ease-out',
@@ -67,10 +79,15 @@
         }
         body {
             transition: background-color 0.3s, color 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Ajuste para PWA no topo */
+        .safe-top-padding {
+            padding-top: env(safe-area-inset-top);
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-dark-bg dark:text-gray-100 min-h-screen pb-20 md:pb-0">
+<body class="bg-gray-50 text-gray-900 dark:bg-dark-bg dark:text-gray-100 min-h-screen pb-24 md:pb-0">
 
     <!-- === LAYOUT DESKTOP: SIDEBAR === -->
     <aside class="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 border-r border-gray-200 dark:border-dark-border bg-white dark:bg-dark-card z-50">
@@ -115,8 +132,8 @@
     <!-- === MAIN CONTENT === -->
     <main class="md:pl-64 min-h-screen">
         
-        <!-- Mobile Header -->
-        <header class="md:hidden flex items-center justify-between p-4 bg-white/80 dark:bg-dark-card/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-200 dark:border-dark-border">
+        <!-- Mobile Header (PWA Safe Area) -->
+        <header class="md:hidden flex items-center justify-between p-4 bg-white/80 dark:bg-dark-card/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-200 dark:border-dark-border safe-top-padding">
             <div class="flex items-center gap-3">
                 <img src="https://img.freepik.com/vetores-premium/um-inteligente-medico-rato-estilo-desenho-animado_714091-16271.jpg" class="w-8 h-8 rounded-full" alt="Logo">
                 <span class="font-bold text-gray-900 dark:text-white">Pediatria UFPR</span>
@@ -127,7 +144,7 @@
             </button>
         </header>
 
-        <div class="p-4 max-w-7xl mx-auto space-y-6">
+        <div class="p-4 max-w-7xl mx-auto space-y-6 safe-top-padding">
 
             <!-- VIEW: DASHBOARD -->
             <div id="view-dashboard" class="view-section animate-fade-in block">
@@ -245,7 +262,10 @@
 
             <!-- VIEW: ROTATIONS LIST -->
             <div id="view-rotations" class="view-section hidden animate-fade-in">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Todos os Rodízios</h2>
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Todos os Rodízios</h2>
+                    <span class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-gray-500">Clique para ver rotina</span>
+                </div>
                 <div id="rotations-list-container" class="grid grid-cols-1 gap-4">
                     <!-- Injected via JS -->
                 </div>
@@ -260,7 +280,8 @@
                         <input type="text" id="theme-search" placeholder="Buscar tema..." class="w-full pl-10 pr-4 py-3 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all">
                     </div>
                 </div>
-                <div id="themes-container" class="space-y-3">
+                <!-- Temas agora organizados por categoria -->
+                <div id="themes-container" class="space-y-6">
                     <!-- Injected via JS -->
                 </div>
             </div>
@@ -269,7 +290,7 @@
     </main>
 
     <!-- === BOTTOM NAVIGATION (MOBILE) === -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-card border-t border-gray-200 dark:border-dark-border flex justify-around p-2 z-50 pb-safe">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-card border-t border-gray-200 dark:border-dark-border flex justify-around p-2 z-50 pb-safe shadow-[0_-5px_10px_rgba(0,0,0,0.02)]">
         <button onclick="switchTab('dashboard')" class="nav-item-mobile flex flex-col items-center justify-center p-2 rounded-xl text-primary-600 dark:text-primary-400" data-target="dashboard">
             <i data-lucide="layout-dashboard" class="w-6 h-6 mb-1"></i>
             <span class="text-[10px] font-medium">Início</span>
@@ -288,14 +309,12 @@
         </button>
     </nav>
 
-    <!-- === MODAL DETALHES DO DIA === -->
-    <!-- [CORREÇÃO] Adicionado 'flex items-end md:items-center justify-center' para centralização correta -->
+    <!-- === MODAL DETALHES GERAL === -->
     <div id="day-modal" class="fixed inset-0 z-[60] hidden flex items-end md:items-center justify-center">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeDayModal()"></div>
         <!-- Content -->
-        <!-- [CORREÇÃO] Removido posicionamento absoluto e adicionado 'w-full md:w-[500px]' e 'm-4 md:m-0' -->
-        <div class="relative w-full md:w-[500px] bg-white dark:bg-dark-card rounded-t-2xl md:rounded-2xl shadow-2xl transform transition-transform duration-300 translate-y-full p-6 max-h-[85vh] overflow-y-auto">
+        <div class="relative w-full md:w-[500px] bg-white dark:bg-dark-card rounded-t-2xl md:rounded-2xl shadow-2xl transform transition-transform duration-300 translate-y-full p-6 max-h-[85vh] overflow-y-auto m-0 md:m-4">
             <div class="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-6 md:hidden"></div>
             
             <div class="flex justify-between items-start mb-6">
@@ -308,7 +327,7 @@
                 </button>
             </div>
 
-            <!-- Seção de Plantão Específico -->
+            <!-- Seção de Plantão Específico (Só aparece se for data específica) -->
             <div id="modal-shift-section" class="hidden mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30 rounded-xl">
                 <h4 class="text-sm font-bold text-yellow-800 dark:text-yellow-200 uppercase mb-2 flex items-center gap-2">
                     <i data-lucide="alert-circle" class="w-4 h-4"></i> Escala de Plantão
@@ -316,39 +335,13 @@
                 <div id="modal-shift-content" class="space-y-1 text-gray-800 dark:text-gray-200"></div>
             </div>
 
-            <!-- Atividades do Dia -->
-            <div class="space-y-4">
-                <div class="flex gap-4">
-                    <div class="flex flex-col items-center">
-                        <div class="w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div>
-                    </div>
-                    <div class="pb-6">
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Manhã</span>
-                        <p id="modal-morning-activity" class="text-gray-900 dark:text-white font-medium mt-1">Activity</p>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <div class="flex flex-col items-center">
-                        <div class="w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div>
-                    </div>
-                    <div class="pb-6">
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tarde</span>
-                        <p id="modal-afternoon-activity" class="text-gray-900 dark:text-white font-medium mt-1">Activity</p>
-                    </div>
-                </div>
-                 <div id="modal-night-container" class="flex gap-4 hidden">
-                    <div class="flex flex-col items-center">
-                        <div class="w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div>
-                    </div>
-                    <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Noite</span>
-                        <p id="modal-night-activity" class="text-gray-900 dark:text-white font-medium mt-1">Activity</p>
-                    </div>
-                </div>
+            <!-- Container Dinâmico: Pode ser Single Day ou Week Schedule -->
+            <div id="modal-dynamic-content" class="space-y-4">
+                 <!-- Conteúdo injetado via JS -->
             </div>
 
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-dark-border">
-                <h4 class="font-bold text-gray-900 dark:text-white mb-2">Detalhes do Rodízio</h4>
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">Locais e Contatos</h4>
                 <div id="modal-details-list" class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <!-- Locais e Profs -->
                 </div>
@@ -359,32 +352,25 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // --- DATA & CONFIG ---
-        // Inicializa ícones
         lucide.createIcons();
 
         // Configurações
         const SELECTED_GROUP = "GRUPO VI";
-        let currentDate = new Date(); // Data base para o calendário (mês visível)
-        const TODAY = new Date(); // Data real de hoje
-        // const TODAY = new Date("2025-11-25T10:00:00"); // DEBUG: Teste em data específica
+        let currentDate = new Date(); 
+        const TODAY = new Date(); 
 
-        // Dados de Escala Específica (Atualizado com a imagem)
+        // Dados de Escala Específica
         const specificStudentSchedules = {
-            // SEMANA 3 - PA DIA (17-21 Nov)
             "2025-11-17": { type: "DIA", students: ["Luis Gustavo", "Lyan Ortega", "Paulo César"] },
             "2025-11-18": { type: "DIA", students: ["Gustavo Oliveira", "Gustavo Cardoso", "Lucas Siqueira"] },
             "2025-11-19": { type: "DIA", students: ["Luis Gustavo", "Gustavo Cardoso", "Lucas Siqueira"] },
-            "2025-11-20": { type: "DIA", students: ["-"] }, // Vazio na imagem
-            "2025-11-21": { type: "DIA", students: ["-"] }, // Vazio na imagem
-
-            // SEMANA 4 - PA DIA (24-28 Nov)
+            "2025-11-20": { type: "DIA", students: ["-"] },
+            "2025-11-21": { type: "DIA", students: ["-"] },
             "2025-11-24": { type: "DIA", students: ["Gustavo Oliveira", "Lyan Ortega", "Paulo César"] },
             "2025-11-25": { type: "DIA", students: ["Gustavo Cardoso", "Paulo Cesar", "Lucas Siqueira"] },
             "2025-11-26": { type: "DIA", students: ["Gustavo Oliveira", "Paulo César", "Lyan Ortega"] },
             "2025-11-27": { type: "DIA", students: ["Luis Gustavo", "Lucas Siqueira", "Gustavo Cardoso"] },
             "2025-11-28": { type: "DIA", students: ["Lyan Ortega", "Gustavo Oliveira", "Luis Gustavo"] },
-
-            // SEMANA 5 - PA NOITE (01-05 Dez)
             "2025-12-01": { type: "NOITE", students: ["Luis Marcondes", "Paulo"] },
             "2025-12-02": { type: "NOITE", students: ["Gustavo Oliveira", "Lyan"] },
             "2025-12-03": { type: "NOITE", students: ["Luis Marcondes", "Paulo"] },
@@ -392,7 +378,7 @@
             "2025-12-05": { type: "NOITE", students: ["Lucas", "Gustavo Cardoso"] },
         };
 
-        // Rodízios Detalhados (A-I)
+        // Rodízios Detalhados
         const rotationsSchedule = {
             "A": {
                 "title": "INFECTO / REUMATO / U&E 1",
@@ -532,7 +518,6 @@
             }
         };
 
-        // Cronograma Mestre (Datas x Rodízios)
         const masterSchedule = [
             { "start": "2025-11-02", "end": "2025-11-07", "assignments": { "GRUPO VI": "E" }, "label": "02/11 a 07/11" },
             { "start": "2025-11-09", "end": "2025-11-14", "assignments": { "GRUPO VI": "F" }, "label": "09/11 a 14/11" },
@@ -568,9 +553,7 @@
 
         function getDayActivity(date, rotationId) {
             const dayOfWeek = date.getDay(); // 0=Dom, 6=Sab
-            if (dayOfWeek === 0 || dayOfWeek === 6) return null; // Fim de semana padrão (exceto plantões específicos)
-
-            // Ajuste para pegar index do array de schedule (0=Segunda)
+            if (dayOfWeek === 0 || dayOfWeek === 6) return null; 
             const scheduleIndex = dayOfWeek - 1;
             if (!rotationsSchedule[rotationId]) return null;
             return rotationsSchedule[rotationId].schedule[scheduleIndex];
@@ -579,7 +562,6 @@
         // --- DASHBOARD UI ---
 
         function updateDashboard() {
-            // Data e Saudação
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('current-full-date').textContent = TODAY.toLocaleDateString('pt-BR', options);
             
@@ -590,19 +572,16 @@
             else greeting = "Boa noite, Doutor(a)";
             document.getElementById('greeting-text').textContent = greeting;
 
-            // Rodízio Atual
             const rotation = getRotationForDate(TODAY);
             
             if (rotation && rotation.id !== "RECESSO") {
                 document.getElementById('dash-rotation-title').textContent = `${rotation.id} - ${rotation.title}`;
                 document.getElementById('dash-rotation-period').textContent = rotation.periodLabel;
                 
-                // Atividade de Hoje
                 const activity = getDayActivity(TODAY, rotation.id);
                 const todayTitleElem = document.getElementById('dash-today-title');
                 const todayTimeElem = document.getElementById('dash-today-time');
 
-                // Verifica se tem plantão específico HOJE
                 const todayKey = getFormattedDate(TODAY);
                 const specificShift = specificStudentSchedules[todayKey];
 
@@ -630,7 +609,6 @@
                 document.getElementById('dash-rotation-period').textContent = "-";
             }
 
-            // Escala da Semana (Grid)
             updateWeeklyGrid();
         }
 
@@ -638,11 +616,10 @@
             const grid = document.getElementById('dash-week-grid');
             grid.innerHTML = '';
 
-            // Encontrar segunda-feira da semana atual
             const curr = new Date(TODAY);
-            const first = curr.getDate() - curr.getDay() + 1; // Segunda
+            const first = curr.getDate() - curr.getDay() + 1; 
             
-            for (let i = 0; i < 5; i++) { // Seg a Sex
+            for (let i = 0; i < 5; i++) { 
                 const d = new Date(curr.setDate(first + i));
                 const dateKey = getFormattedDate(d);
                 const specificShift = specificStudentSchedules[dateKey];
@@ -654,13 +631,18 @@
                 
                 if (specificShift) {
                     bgClass = "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-900/30";
-                    const names = specificShift.students[0].split(' ')[0]; // Primeiro nome apenas para caber
-                    const count = specificShift.students.length > 1 ? `+${specificShift.students.length - 1}` : '';
-                    contentHtml = `<span class="text-xs font-bold text-green-700 dark:text-green-400 truncate">${names} ${count}</span>`;
+                    // Listar todos os alunos verticalmente
+                    contentHtml = `<div class="flex flex-col gap-0.5 mt-1 w-full">`;
+                    specificShift.students.forEach(student => {
+                        // Tentar pegar primeiro e último nome se for muito longo, ou só primeiro
+                        const shortName = student.split(' ').slice(0, 2).join(' ');
+                        contentHtml += `<span class="text-[10px] font-bold text-green-700 dark:text-green-400 truncate leading-tight text-center">${shortName}</span>`;
+                    });
+                    contentHtml += `</div>`;
                 }
 
                 const cardHtml = `
-                    <div class="${bgClass} border rounded-xl p-3 flex flex-col items-center text-center transition-all hover:scale-105 cursor-pointer" onclick="openDayModal('${dateKey}')">
+                    <div class="${bgClass} border rounded-xl p-2 flex flex-col items-center text-center transition-all hover:scale-105 cursor-pointer h-full" onclick="openDayModal('${dateKey}')">
                         <span class="text-[10px] uppercase font-bold text-gray-500">${dayName}</span>
                         <span class="text-lg font-bold text-gray-800 dark:text-gray-200 leading-none mb-1">${dayNum}</span>
                         ${contentHtml}
@@ -683,15 +665,13 @@
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
 
-            const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0-6
+            const firstDayOfMonth = new Date(year, month, 1).getDay(); 
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            // Empty slots for previous month
             for (let i = 0; i < firstDayOfMonth; i++) {
                 grid.innerHTML += `<div class="h-24 md:h-32 bg-gray-50 dark:bg-dark-card/50"></div>`;
             }
 
-            // Days
             for (let i = 1; i <= daysInMonth; i++) {
                 const date = new Date(year, month, i);
                 const dateKey = getFormattedDate(date);
@@ -747,11 +727,8 @@
 
         // --- DETAILS MODAL ---
 
-        function openDayModal(dateStr) { // dateStr YYYY-MM-DD opt
+        function openDayModal(dateStr) { 
             const date = dateStr ? new Date(dateStr + "T00:00:00") : TODAY;
-            // Fix timezone offset for display
-            // Simple way: create date object and adjust label
-            
             const dateKey = getFormattedDate(date);
             const rotation = getRotationForDate(date);
             const specificShift = specificStudentSchedules[dateKey];
@@ -759,16 +736,14 @@
 
             document.getElementById('modal-date-title').textContent = date.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
             
-            // Info do Rodízio
+            // Populate Modal
             if (rotation) {
                 document.getElementById('modal-rotation-subtitle').textContent = rotation.id === "RECESSO" ? "Recesso" : `${rotation.id} - ${rotation.title}`;
-                
-                // Popula lista de detalhes (profs, locais)
                 const detailsList = document.getElementById('modal-details-list');
                 detailsList.innerHTML = '';
                 if (rotation.details) {
                     rotation.details.forEach(det => {
-                        detailsList.innerHTML += `<div class="flex items-center gap-2"><i data-lucide="${det.icon}" class="w-4 h-4"></i> ${det.text}</div>`;
+                        detailsList.innerHTML += `<div class="flex items-center gap-2"><i data-lucide="${det.icon}" class="w-4 h-4 text-primary-500"></i> ${det.text}</div>`;
                     });
                 }
             } else {
@@ -776,7 +751,6 @@
                 document.getElementById('modal-details-list').innerHTML = '-';
             }
 
-            // Info Específica de Plantão
             const shiftSection = document.getElementById('modal-shift-section');
             if (specificShift) {
                 shiftSection.classList.remove('hidden');
@@ -788,26 +762,84 @@
                 shiftSection.classList.add('hidden');
             }
 
-            // Atividades Padrão
-            document.getElementById('modal-morning-activity').textContent = activity ? activity.morning : "Livre/Descanso";
-            document.getElementById('modal-afternoon-activity').textContent = activity ? activity.afternoon : "Livre/Descanso";
+            // Render Single Day View
+            const dynamicContent = document.getElementById('modal-dynamic-content');
             
-            const nightContainer = document.getElementById('modal-night-container');
+            let nightHtml = '';
             if(activity && activity.night) {
-                nightContainer.classList.remove('hidden');
-                document.getElementById('modal-night-activity').textContent = activity.night;
-            } else {
-                nightContainer.classList.add('hidden');
+                nightHtml = `
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center"><div class="w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div></div>
+                        <div>
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Noite</span>
+                            <p class="text-gray-900 dark:text-white font-medium mt-1">${activity.night}</p>
+                        </div>
+                    </div>
+                `;
             }
 
-            // Show Modal
+            dynamicContent.innerHTML = `
+                <div class="flex gap-4">
+                    <div class="flex flex-col items-center"><div class="w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div></div>
+                    <div class="pb-6">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Manhã</span>
+                        <p class="text-gray-900 dark:text-white font-medium mt-1">${activity ? activity.morning : "Livre/Descanso"}</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex flex-col items-center"><div class="w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div></div>
+                    <div class="pb-6">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tarde</span>
+                        <p class="text-gray-900 dark:text-white font-medium mt-1">${activity ? activity.afternoon : "Livre/Descanso"}</p>
+                    </div>
+                </div>
+                ${nightHtml}
+            `;
+
+            showModal();
+        }
+
+        // Função para abrir detalhes genéricos de uma semana de rodízio
+        function openRotationGenericDetails(rotationId) {
+            const rot = rotationsSchedule[rotationId];
+            if (!rot) return;
+
+            document.getElementById('modal-date-title').textContent = "Rotina Semanal";
+            document.getElementById('modal-rotation-subtitle').textContent = `${rotationId} - ${rot.title}`;
+            document.getElementById('modal-shift-section').classList.add('hidden');
+
+            const detailsList = document.getElementById('modal-details-list');
+            detailsList.innerHTML = '';
+            rot.details.forEach(det => {
+                detailsList.innerHTML += `<div class="flex items-center gap-2"><i data-lucide="${det.icon}" class="w-4 h-4 text-primary-500"></i> ${det.text}</div>`;
+            });
+
+            const dynamicContent = document.getElementById('modal-dynamic-content');
+            let html = '';
+            
+            rot.schedule.forEach(day => {
+                html += `
+                    <div class="border-b border-gray-100 dark:border-dark-border pb-3 last:border-0">
+                        <h5 class="text-sm font-bold text-primary-600 dark:text-primary-400 mb-1">${day.day}</h5>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div><span class="text-xs text-gray-400">M:</span> ${day.morning}</div>
+                            <div><span class="text-xs text-gray-400">T:</span> ${day.afternoon}</div>
+                            ${day.night ? `<div class="col-span-2"><span class="text-xs text-gray-400">N:</span> ${day.night}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            dynamicContent.innerHTML = html;
+
+            showModal();
+        }
+
+        function showModal() {
             const modal = document.getElementById('day-modal');
             modal.classList.remove('hidden');
-            // Animação de entrada
             setTimeout(() => {
                 modal.querySelector('div.transform').classList.remove('translate-y-full');
             }, 10);
-            
             lucide.createIcons();
         }
 
@@ -827,7 +859,6 @@
         // --- NAVIGATION & TABS ---
 
         function switchTab(targetId) {
-            // Update UI State
             document.querySelectorAll('.view-section').forEach(el => {
                 el.classList.add('hidden');
                 el.classList.remove('block');
@@ -835,7 +866,7 @@
             document.getElementById(`view-${targetId}`).classList.remove('hidden');
             document.getElementById(`view-${targetId}`).classList.add('block');
 
-            // Update Desktop Nav
+            // Desktop Nav
             document.querySelectorAll('.nav-item').forEach(btn => {
                 if (btn.dataset.target === targetId) {
                     btn.classList.remove('bg-transparent', 'text-gray-600', 'dark:text-gray-400');
@@ -846,7 +877,7 @@
                 }
             });
 
-            // Update Mobile Nav
+            // Mobile Nav
             document.querySelectorAll('.nav-item-mobile').forEach(btn => {
                 if (btn.dataset.target === targetId) {
                     btn.classList.remove('text-gray-400');
@@ -857,7 +888,6 @@
                 }
             });
 
-            // Trigger specific renders
             if (targetId === 'calendar') renderCalendar();
             if (targetId === 'rotations') renderRotationsList();
             if (targetId === 'themes') renderThemesList();
@@ -869,15 +899,17 @@
         
         function renderRotationsList() {
             const container = document.getElementById('rotations-list-container');
-            if (container.children.length > 0) return; // Already rendered
+            if (container.children.length > 0) return; 
 
             let html = '';
             for (const [key, rot] of Object.entries(rotationsSchedule)) {
+                // Adicionado onclick para abrir detalhes
                 html += `
-                    <div class="bg-white dark:bg-dark-card rounded-xl p-4 border border-gray-200 dark:border-dark-border shadow-sm">
+                    <div onclick="openRotationGenericDetails('${key}')" class="bg-white dark:bg-dark-card rounded-xl p-4 border border-gray-200 dark:border-dark-border shadow-sm active:scale-95 transition-transform cursor-pointer">
                         <div class="flex items-center gap-3 mb-2">
                             <span class="w-8 h-8 rounded-lg ${rot.color} text-white flex items-center justify-center font-bold">${key}</span>
                             <h3 class="font-bold text-gray-900 dark:text-white">${rot.title}</h3>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto"></i>
                         </div>
                         <div class="text-sm text-gray-600 dark:text-gray-400 ml-11">
                              ${rot.details.map(d => `<div class="flex items-center gap-2 mb-1"><i data-lucide="${d.icon}" class="w-3 h-3"></i> ${d.text}</div>`).join('')}
@@ -889,28 +921,62 @@
             lucide.createIcons();
         }
 
-        const themesData = [
-            "Aleitamento materno", "Icterícia neonatal", "Prematuridade", "Calendário vacinal",
-            "Crescimento e Desenvolvimento", "Desnutrição", "Obesidade", "Anemias Carenciais",
-            "Asma e crise de asma", "Dermatite atópica", "IVAS", "Meningites", "Pneumonias",
-            "Tuberculose", "Dengue", "Diabetes Mellitus", "Cetoacidose Diabética", "Hipotireoidismo",
-            "Crises Convulsivas", "Epilepsias", "TDAH", "Autismo", "Diarreia Aguda e Crônica",
-            "Constipação Intestinal", "Infecção Urinária", "Síndrome Nefrítica/Nefrótica", "Choque Séptico"
-        ];
+        // Novos Dados de Temas Organizados
+        const themesData = {
+            "Neonatologia": [
+                "Aleitamento materno", "Icterícia neonatal", "Prematuridade", "Triagem Neonatal"
+            ],
+            "Crescimento e Nutrição": [
+                "Crescimento e Desenvolvimento", "Desnutrição", "Obesidade", "Anemias Carenciais", "Introdução Alimentar"
+            ],
+            "Pneumologia e Alergia": [
+                "Asma e crise de asma", "Dermatite atópica", "IVAS", "Pneumonias"
+            ],
+            "Infectologia": [
+                "Meningites", "Tuberculose", "Dengue", "Calendário vacinal", "Sepse"
+            ],
+            "Endocrinologia": [
+                "Diabetes Mellitus", "Cetoacidose Diabética", "Hipotireoidismo"
+            ],
+            "Neurologia": [
+                "Crises Convulsivas", "Epilepsias", "TDAH", "Autismo"
+            ],
+            "Gastroenterologia": [
+                "Diarreia Aguda e Crônica", "Constipação Intestinal"
+            ],
+            "Nefrologia": [
+                "Infecção Urinária", "Síndrome Nefrítica/Nefrótica"
+            ],
+            "Emergência": [
+                "Choque Séptico", "PCR"
+            ]
+        };
 
         function renderThemesList() {
             const container = document.getElementById('themes-container');
             if(container.children.length > 0) return;
 
-            themesData.sort().forEach(theme => {
+            for (const [category, items] of Object.entries(themesData)) {
+                // Ordenar itens dentro da categoria
+                const sortedItems = items.sort();
+                
+                let itemsHtml = sortedItems.map(item => `
+                    <div class="theme-item pl-4 py-2 border-l-2 border-gray-100 dark:border-dark-border hover:border-primary-500 dark:hover:border-primary-500 cursor-pointer transition-colors text-gray-600 dark:text-gray-300">
+                        ${item}
+                    </div>
+                `).join('');
+
                 container.innerHTML += `
-                    <div class="theme-item p-3 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer">
-                        <span class="font-medium text-gray-700 dark:text-gray-200">${theme}</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                    <div class="bg-white dark:bg-dark-card rounded-xl overflow-hidden border border-gray-200 dark:border-dark-border">
+                        <div class="bg-gray-50 dark:bg-dark-bg/50 px-4 py-3 font-bold text-gray-800 dark:text-white border-b border-gray-200 dark:border-dark-border">
+                            ${category}
+                        </div>
+                        <div class="p-2 space-y-1">
+                            ${itemsHtml}
+                        </div>
                     </div>
                 `;
-            });
-            lucide.createIcons();
+            }
         }
 
         // Search Themes
@@ -918,7 +984,24 @@
             const term = e.target.value.toLowerCase();
             document.querySelectorAll('.theme-item').forEach(el => {
                 const text = el.textContent.toLowerCase();
-                el.style.display = text.includes(term) ? 'flex' : 'none';
+                const parent = el.closest('.bg-white'); // O card inteiro da categoria
+                
+                if (text.includes(term)) {
+                    el.style.display = 'block';
+                    parent.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+
+            // Esconder categorias vazias
+            document.querySelectorAll('#themes-container > div').forEach(card => {
+                const visibleItems = Array.from(card.querySelectorAll('.theme-item')).filter(i => i.style.display !== 'none');
+                if (visibleItems.length === 0 && term.length > 0) {
+                    card.style.display = 'none';
+                } else {
+                    card.style.display = 'block';
+                }
             });
         });
 
@@ -928,6 +1011,12 @@
             html.classList.toggle('dark');
             const isDark = html.classList.contains('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            
+            // Atualizar meta tag theme-color para iOS
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if(metaThemeColor) {
+                metaThemeColor.setAttribute('content', isDark ? '#18181b' : '#ffffff');
+            }
         }
 
         document.getElementById('theme-toggle-desktop').addEventListener('click', toggleDarkMode);
