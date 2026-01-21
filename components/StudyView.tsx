@@ -137,6 +137,7 @@ export const StudyView: React.FC = () => {
           {selectedLesson ? (
             <div className="h-full rounded-[2rem] overflow-hidden shadow-soft border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
               <StudyLessonModal 
+                key={selectedLesson} // <--- CHAVE IMPORTANTE: Reseta o modal ao trocar de aula
                 lessonTitle={selectedLesson} 
                 isOpen={true} 
                 onClose={() => setSelectedLesson(null)}
@@ -160,6 +161,7 @@ export const StudyView: React.FC = () => {
       <div className="md:hidden">
         {selectedLesson && (
           <StudyLessonModal 
+            key={selectedLesson}
             lessonTitle={selectedLesson} 
             isOpen={!!selectedLesson} 
             onClose={() => setSelectedLesson(null)}
