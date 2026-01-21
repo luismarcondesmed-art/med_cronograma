@@ -4,10 +4,12 @@ import { AILessonContent, QuizItem } from "../types";
 const apiKey = process.env.API_KEY;
 let ai: GoogleGenAI | null = null;
 
+console.log("[DEBUG] Inicializando Gemini Service. API Key presente:", !!apiKey);
+
 if (apiKey && apiKey.length > 0) {
   ai = new GoogleGenAI({ apiKey: apiKey });
 } else {
-  console.warn("Gemini API Key is missing or empty. AI features will be disabled.");
+  console.error("[CRITICAL] Gemini API Key is missing or empty.");
 }
 
 const BASE_SYSTEM_PROMPT = `
@@ -15,16 +17,14 @@ const BASE_SYSTEM_PROMPT = `
   Seu objetivo é ensinar estudantes de medicina e residentes com precisão técnica.
   
   REGRAS DE OURO:
-  1. FOCO TOTAL NO TÓPICO: O conteúdo gerado deve ser EXCLUSIVAMENTE sobre o tópico solicitado. Se o tópico for "Aleitamento Materno", NÃO gere questões sobre pneumonia, mesmo que o PDF contenha outros assuntos.
+  1. FOCO TOTAL NO TÓPICO: O conteúdo gerado deve ser EXCLUSIVAMENTE sobre o tópico solicitado.
   2. Baseie-se em evidências (SBP, UpToDate, Nelson, Ministério da Saúde).
-  3. Retorne APENAS JSON válido. O JSON deve ser puro, sem blocos de markdown (\`\`\`json).
+  3. Retorne APENAS JSON válido. O JSON deve ser puro, sem blocos de markdown.
 `;
 
 // Helper para limpar a resposta do Gemini
 function cleanJsonResponse(text: string): string {
-  // Remove blocos de código markdown se existirem (```json ... ```)
   let clean = text.replace(/```json/g, "").replace(/```/g, "");
-  // Remove qualquer texto antes do primeiro '{' ou '[' (caso o modelo explique algo antes)
   const firstBrace = clean.indexOf('{');
   const firstBracket = clean.indexOf('[');
   
@@ -40,31 +40,23 @@ function cleanJsonResponse(text: string): string {
   return clean.substring(startIndex).trim();
 }
 
-export async function generateStudyContent(topic: string, pdfBase64?: string): Promise<AILessonContent | null> {
+export async function generateStudyContent(topic: string): Promise<AILessonContent | null> {
   if (!ai) {
-    console.error("AI Service not initialized");
+    console.error("[Gemini Error] Serviço AI não inicializado.");
     return null;
   }
 
+  console.log(`[Gemini Request] Iniciando geração de RESUMO para: ${topic}`);
+
   try {
-    const parts: any[] = [];
-    
-    let promptText = `
+    const promptText = `
       TÓPICO DA AULA: "${topic}".
-      
       Gere um RESUMO estruturado e didático para estudo sobre este tópico.
     `;
 
-    if (pdfBase64) {
-      parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-      promptText += "\n\nO usuário anexou um PDF. Priorize as informações deste arquivo SE elas forem pertinentes ao TÓPICO DA AULA. Caso contrário, priorize a literatura médica padrão.";
-    }
-
-    parts.push({ text: promptText });
-
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
-      contents: { parts: parts },
+      contents: { parts: [{ text: promptText }] },
       config: {
         systemInstruction: BASE_SYSTEM_PROMPT,
         responseMimeType: "application/json",
@@ -89,47 +81,39 @@ export async function generateStudyContent(topic: string, pdfBase64?: string): P
     if (response.text) {
       try {
         const cleanText = cleanJsonResponse(response.text);
-        return JSON.parse(cleanText) as AILessonContent;
+        const data = JSON.parse(cleanText) as AILessonContent;
+        console.log(`[Gemini Success] Resumo gerado com sucesso.`);
+        return data;
       } catch (parseError) {
-        console.error("Failed to parse Gemini JSON:", parseError, response.text);
+        console.error("[Gemini JSON Parse Error]", parseError, "Response Text:", response.text);
         return null;
       }
+    } else {
+      console.warn("[Gemini Warning] Resposta vazia recebida.");
     }
     return null;
 
-  } catch (error) {
-    console.error("Gemini Content Error:", error);
+  } catch (error: any) {
+    console.error("[Gemini API Error - Content]", error.message, error);
     return null;
   }
 }
 
-export async function generateResidencyQuiz(topic: string, pdfBase64?: string): Promise<QuizItem[] | null> {
+export async function generateResidencyQuiz(topic: string): Promise<QuizItem[] | null> {
   if (!ai) return null;
 
+  console.log(`[Gemini Request] Iniciando geração de QUIZ para: ${topic}`);
+
   try {
-    const parts: any[] = [];
-
-    let promptText = `
+    const promptText = `
       TÓPICO: "${topic}".
-      
       Crie 5 questões de múltipla escolha estilo PROVA DE RESIDÊNCIA (R1 ou R3) EXCLUSIVAMENTE sobre "${topic}".
-      
-      REQUISITOS:
-      1. As questões devem ser difíceis, com cenários clínicos ou cobrança de protocolos específicos.
-      2. NUNCA gere questões sobre outros temas. Se o tópico é "${topic}", todas as 5 questões devem ser sobre isso.
-      3. As alternativas devem ser claras.
+      REQUISITOS: Dificuldade alta, cenários clínicos, alternativas claras.
     `;
-
-    if (pdfBase64) {
-       parts.push({ inlineData: { mimeType: "application/pdf", data: pdfBase64 } });
-       promptText += " Utilize o conteúdo do PDF anexo APENAS se estiver relacionado ao tópico.";
-    }
-
-    parts.push({ text: promptText });
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
-      contents: { parts: parts },
+      contents: { parts: [{ text: promptText }] },
       config: {
         systemInstruction: BASE_SYSTEM_PROMPT,
         responseMimeType: "application/json",
@@ -156,15 +140,17 @@ export async function generateResidencyQuiz(topic: string, pdfBase64?: string): 
     if (response.text) {
       try {
         const cleanText = cleanJsonResponse(response.text);
-        return JSON.parse(cleanText) as QuizItem[];
+        const data = JSON.parse(cleanText) as QuizItem[];
+        console.log(`[Gemini Success] Quiz gerado com sucesso (${data.length} questões).`);
+        return data;
       } catch (parseError) {
-        console.error("Failed to parse Gemini Quiz JSON:", parseError, response.text);
+        console.error("[Gemini Quiz JSON Parse Error]", parseError, response.text);
         return null;
       }
     }
     return null;
-  } catch (error) {
-    console.error("Gemini Quiz Error:", error);
+  } catch (error: any) {
+    console.error("[Gemini API Error - Quiz]", error.message, error);
     return null;
   }
 }

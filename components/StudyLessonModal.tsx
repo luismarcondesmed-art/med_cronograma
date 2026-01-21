@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Upload, FileText, Brain, Sparkles, CheckCircle2, RefreshCw, X, ArrowLeft, Users, ExternalLink, Trash2, AlertTriangle } from 'lucide-react';
+import { ChevronRight, FileText, Brain, Sparkles, CheckCircle2, RefreshCw, X, ArrowLeft, Users, Trash2, AlertTriangle, Bug } from 'lucide-react';
 import { generateStudyContent, generateResidencyQuiz } from '../services/geminiService';
 import { AILessonContent, QuizItem, LessonData } from '../types';
 import ReactMarkdown from 'react-markdown';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../services/firebase';
+import { db } from '../services/firebase';
 
 interface Props {
   lessonTitle: string;
@@ -22,7 +21,6 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
     residencyQuiz: null,
     progress: { isCompleted: false, lastUpdated: '' }
   });
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [tab, setTab] = useState<'content' | 'quiz'>('content');
   const [saving, setSaving] = useState(false);
 
@@ -31,21 +29,22 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
 
   useEffect(() => {
     if (isOpen) {
+      console.log(`[Modal Open] Carregando dados para: ${docId}`);
       setLoading(true);
       setError(null);
-      setPdfFile(null); // Reset file input
       
       const unsubscribe = onSnapshot(doc(db, "lessons", docId), (docSnapshot) => {
         setLoading(false);
         if (docSnapshot.exists()) {
           const fetchedData = docSnapshot.data() as LessonData;
+          console.log("[Firestore] Dados encontrados.", fetchedData);
           setData({
             content: fetchedData.content || null,
             residencyQuiz: fetchedData.residencyQuiz || null,
-            pdfUrl: fetchedData.pdfUrl,
             progress: fetchedData.progress || { isCompleted: false, lastUpdated: '' }
           });
         } else {
+          console.log("[Firestore] Nenhum dado prévio encontrado para esta aula.");
           setData({ 
             content: null, 
             residencyQuiz: null, 
@@ -53,8 +52,8 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
           });
         }
       }, (err) => {
-        console.error("Error fetching lesson data:", err);
-        setError("Erro ao carregar dados. Verifique a conexão.");
+        console.error("[Firestore Error]", err);
+        setError(`Erro de conexão: ${err.message}`);
         setLoading(false);
       });
 
@@ -69,9 +68,10 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
     
     try {
       await setDoc(doc(db, "lessons", docId), newData, { merge: true });
-    } catch (err) {
-      console.error("Error saving to Firestore:", err);
-      setError("Falha ao salvar. Verifique se você está conectado.");
+      console.log("[Firestore] Dados salvos com sucesso.");
+    } catch (err: any) {
+      console.error("[Firestore Save Error]", err);
+      setError("Falha ao salvar no banco de dados.");
     } finally {
       setTimeout(() => setSaving(false), 800);
     }
@@ -89,61 +89,27 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
     saveData(newData);
   };
 
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        const base64 = result.split(',')[1];
-        resolve(base64);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleFileUpload = async (file: File): Promise<string | null> => {
-     if (!file) return null;
-     try {
-        const storageRef = ref(storage, `pdfs/${docId}/${Date.now()}_${file.name}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadUrl = await getDownloadURL(snapshot.ref);
-        return downloadUrl;
-     } catch (err) {
-        console.error("Error uploading PDF:", err);
-        return null;
-     }
-  };
-
   const handleGenerateContent = async () => {
     setLoading(true);
     setError(null);
-    let base64Pdf = undefined;
-    let uploadedPdfUrl = data.pdfUrl;
 
     try {
-      if (pdfFile) {
-         base64Pdf = await fileToBase64(pdfFile);
-         const url = await handleFileUpload(pdfFile);
-         if (url) uploadedPdfUrl = url;
-      }
-
-      const result = await generateStudyContent(lessonTitle, base64Pdf);
+      console.log("[Action] Solicitando geração de resumo...");
+      const result = await generateStudyContent(lessonTitle);
       
       if (result) {
         const newData: LessonData = { 
           ...data, 
           content: result, 
-          pdfUrl: uploadedPdfUrl,
           progress: { ...data.progress, lastUpdated: new Date().toISOString() } 
         };
         await saveData(newData);
       } else {
-        setError("Não foi possível gerar o conteúdo. Tente novamente.");
+        throw new Error("A IA retornou um resultado vazio. Verifique a chave de API.");
       }
-    } catch (err) {
-      console.error(err);
-      setError("Erro durante a geração. Verifique o arquivo.");
+    } catch (err: any) {
+      console.error("[Generation Error]", err);
+      setError(`Erro na IA: ${err.message || 'Falha desconhecida'}. Veja o console.`);
     } finally {
       setLoading(false);
     }
@@ -152,24 +118,20 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
   const handleGenerateQuiz = async () => {
     setLoading(true);
     setError(null);
-    let base64Pdf = undefined;
 
     try {
-      if (pdfFile) {
-          base64Pdf = await fileToBase64(pdfFile);
-      }
-
-      const quiz = await generateResidencyQuiz(lessonTitle, base64Pdf);
+      console.log("[Action] Solicitando geração de quiz...");
+      const quiz = await generateResidencyQuiz(lessonTitle);
       
-      if (quiz) {
+      if (quiz && quiz.length > 0) {
         const newData = { ...data, residencyQuiz: quiz };
         await saveData(newData);
       } else {
-        setError("Não foi possível gerar o quiz.");
+        throw new Error("A IA não conseguiu gerar questões válidas.");
       }
-    } catch (err) {
-      console.error(err);
-      setError("Erro ao gerar questões.");
+    } catch (err: any) {
+      console.error("[Quiz Generation Error]", err);
+      setError(`Erro no Quiz: ${err.message}. Veja o console.`);
     } finally {
       setLoading(false);
     }
@@ -179,36 +141,24 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
 
   const renderContentTab = () => {
     if (!data.content) {
-      // EMPTY STATE - UPLOAD SCREEN
+      // EMPTY STATE
       return (
         <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 max-w-md mx-auto min-h-[50vh]">
           <div className="w-24 h-24 bg-gray-100 dark:bg-gray-900 rounded-[2rem] flex items-center justify-center text-gray-400 shadow-sm border border-gray-200 dark:border-gray-800">
              <FileText className="w-10 h-10" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Material de Estudo IA</h3>
-            <p className="text-gray-500">Anexe um PDF (opcional) para gerar resumo.</p>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Resumo Inteligente</h3>
+            <p className="text-gray-500">Gere um resumo estruturado e baseado em evidências sobre este tópico.</p>
           </div>
           
-          <label className="w-full group cursor-pointer">
-             <div className={`flex items-center justify-center w-full p-6 border-2 border-dashed rounded-2xl transition-all ${pdfFile ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-500' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600'}`}>
-                <div className="flex flex-col items-center gap-2 text-gray-500">
-                   <Upload className={`w-6 h-6 transition-transform ${pdfFile ? 'text-emerald-500' : 'group-hover:scale-110'}`} />
-                   <span className={`text-sm font-bold ${pdfFile ? 'text-emerald-600 dark:text-emerald-400' : ''}`}>
-                      {pdfFile ? pdfFile.name : "Anexar PDF da Aula"}
-                   </span>
-                </div>
-             </div>
-             <input type="file" className="hidden" accept="application/pdf" onChange={(e) => setPdfFile(e.target.files?.[0] || null)} />
-          </label>
-
           <button 
             onClick={handleGenerateContent} 
             disabled={loading}
             className="w-full bg-gray-900 dark:bg-white text-white dark:text-black py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
           >
             {loading ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />} 
-            {loading ? "Processando..." : "Gerar Resumo"}
+            {loading ? "Gerando Resumo..." : "Gerar Resumo Agora"}
           </button>
         </div>
       );
@@ -216,23 +166,6 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
 
     return (
       <div className="space-y-8 pb-20 max-w-3xl mx-auto">
-         {/* PDF Link Display */}
-         {data.pdfUrl && (
-           <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl">
-              <div className="flex items-center gap-3">
-                 <div className="p-2 bg-white dark:bg-blue-900 rounded-lg">
-                    <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                 </div>
-                 <div>
-                    <p className="text-sm font-bold text-blue-900 dark:text-blue-100">Material de Referência</p>
-                    <a href={data.pdfUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
-                       Abrir PDF Original <ExternalLink className="w-3 h-3" />
-                    </a>
-                 </div>
-              </div>
-           </div>
-         )}
-
          <div className="bg-gray-900 dark:bg-gray-800 text-gray-50 p-8 rounded-[2rem] shadow-xl">
             <div className="flex justify-between items-start mb-4">
               <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2">
@@ -255,13 +188,13 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
          <div className="flex justify-center pt-8 border-t border-gray-200 dark:border-gray-800">
             <button 
               onClick={() => {
-                if (window.confirm("Deseja gerar um novo resumo?")) {
-                  setData(prev => ({...prev, content: null}));
+                if (window.confirm("Gerar um novo resumo apagará o atual. Continuar?")) {
+                  handleGenerateContent();
                 }
               }}
-              className="text-red-500 text-sm font-medium flex items-center gap-2 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-lg transition-colors"
+              className="text-gray-500 text-sm font-medium flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 px-4 py-2 rounded-lg transition-colors"
             >
-               <Trash2 className="w-4 h-4" /> Resetar Conteúdo
+               <RefreshCw className="w-4 h-4" /> Regenerar Conteúdo
             </button>
          </div>
       </div>
@@ -281,28 +214,13 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
                <p className="text-gray-500">Questões focadas em "{lessonTitle}".</p>
             </div>
             
-            <label className="w-full max-w-sm group cursor-pointer block mx-auto">
-                <div className={`flex items-center justify-center w-full p-4 border-2 border-dashed rounded-xl transition-colors ${pdfFile ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-200 dark:border-gray-800 hover:border-emerald-500'}`}>
-                    <span className={`text-xs font-bold flex items-center gap-2 ${pdfFile ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400'}`}>
-                        {pdfFile ? (
-                            <>
-                                <CheckCircle2 className="w-4 h-4" />
-                                {pdfFile.name}
-                            </>
-                        ) : (
-                            "+ Anexar PDF para Questões Específicas"
-                        )}
-                    </span>
-                </div>
-                <input type="file" className="hidden" accept="application/pdf" onChange={(e) => setPdfFile(e.target.files?.[0] || null)} />
-            </label>
-
             <button 
               onClick={handleGenerateQuiz} 
               disabled={loading}
-              className="px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-black rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all active:scale-95 disabled:opacity-50"
+              className="px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-black rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
             >
-               {loading ? "Criando..." : "Criar Simulado"}
+               {loading ? <RefreshCw className="w-5 h-5 animate-spin" /> : null}
+               {loading ? "Criando Questões..." : "Criar Simulado"}
             </button>
          </div>
        );
@@ -347,6 +265,7 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
                  ) : (
                    <span className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium"><Users className="w-3 h-3" /> Compartilhado</span>
                  )}
+                 <span className="text-[10px] text-gray-300 dark:text-gray-700 font-mono ml-2 border border-gray-200 dark:border-gray-800 px-1 rounded">v1.5.0-debug</span>
                </div>
              </div>
           </div>
@@ -390,8 +309,8 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
         {/* --- ERROR MESSAGE --- */}
         {error && (
           <div className="m-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl flex items-center gap-2 text-sm font-medium">
-             <AlertTriangle className="w-5 h-5" />
-             {error}
+             <AlertTriangle className="w-5 h-5 shrink-0" />
+             <span>{error}</span>
           </div>
         )}
 

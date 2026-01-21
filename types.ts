@@ -67,7 +67,7 @@ export interface AILessonContent {
 export interface LessonData {
   content: AILessonContent | null;
   residencyQuiz: QuizItem[] | null;
-  pdfUrl?: string; // Link para o PDF no Firebase Storage
+  // pdfUrl removido
   progress: {
     isCompleted: boolean;
     lastUpdated: string;
