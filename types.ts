@@ -46,7 +46,9 @@ export interface StudentShift {
 
 export interface QuizItem {
   question: string;
-  answer: string;
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
 }
 
 export interface AILessonContent {
@@ -59,12 +61,13 @@ export interface AILessonContent {
   prognosis: string;
   recentEvidence: string;
   summary: string;
-  quiz: QuizItem[]; // Basic validation quiz
+  // O quiz pode vir junto com o conteúdo ou gerado separadamente, mantendo flexibilidade
 }
 
 export interface LessonData {
   content: AILessonContent | null;
   residencyQuiz: QuizItem[] | null;
+  pdfUrl?: string; // Link para o PDF no Firebase Storage
   progress: {
     isCompleted: boolean;
     lastUpdated: string;
