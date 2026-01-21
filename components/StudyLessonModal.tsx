@@ -53,7 +53,7 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
         }
       }, (err) => {
         console.error("Error fetching lesson data:", err);
-        setError("Erro ao carregar dados. Verifique sua conexão.");
+        setError("Erro ao carregar dados. Verifique a conexão.");
         setLoading(false);
       });
 
@@ -71,7 +71,7 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
       await setDoc(doc(db, "lessons", docId), newData, { merge: true });
     } catch (err) {
       console.error("Error saving to Firestore:", err);
-      setError("Falha ao salvar os dados.");
+      setError("Falha ao salvar. Verifique se você está conectado.");
     } finally {
       setTimeout(() => setSaving(false), 800);
     }
@@ -143,7 +143,7 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
       }
     } catch (err) {
       console.error(err);
-      setError("Erro durante a geração. Verifique o arquivo ou a conexão.");
+      setError("Erro durante a geração. Verifique o arquivo.");
     } finally {
       setLoading(false);
     }
@@ -357,7 +357,6 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
                            <p className="text-gray-500">Questões focadas em "{lessonTitle}".</p>
                         </div>
                         
-                        {/* INPUT DE ARQUIVO SIMPLIFICADO E CORRIGIDO */}
                         <label className="w-full max-w-sm group cursor-pointer block mx-auto">
                             <div className={`flex items-center justify-center w-full p-4 border-2 border-dashed rounded-xl transition-colors ${pdfFile ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' : 'border-gray-200 dark:border-gray-800 hover:border-emerald-500'}`}>
                                 <span className={`text-xs font-bold flex items-center gap-2 ${pdfFile ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400'}`}>
@@ -425,16 +424,15 @@ const Section: React.FC<{ title: string; content: string; highlight?: boolean }>
   );
 };
 
+// Componente QuizCard Atualizado com Visual de Separado
 const QuizCard: React.FC<{ index: number, item: QuizItem }> = ({ index, item }) => {
    return (
       <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
          <div className="flex gap-4 mb-6">
             <span className="flex-shrink-0 w-8 h-8 bg-gray-900 dark:bg-white text-white dark:text-black rounded-lg flex items-center justify-center font-bold text-sm shadow-md">{index + 1}</span>
-            {/* ENUNCIADO SEPARADO */}
             <p className="font-bold text-gray-900 dark:text-gray-100 pt-1 leading-relaxed text-lg">{item.question}</p>
          </div>
          
-         {/* ALTERNATIVAS EM BLOCOS SEPARADOS */}
          <div className="ml-12 flex flex-col gap-4 mb-6">
             {item.options?.map((opt, i) => (
                <div key={i} className="flex items-start gap-3 p-4 rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">

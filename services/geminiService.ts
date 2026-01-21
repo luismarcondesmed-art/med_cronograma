@@ -15,16 +15,29 @@ const BASE_SYSTEM_PROMPT = `
   Seu objetivo é ensinar estudantes de medicina e residentes com precisão técnica.
   
   REGRAS DE OURO:
-  1. FOCO TOTAL NO TÓPICO: Se o usuário pedir questões sobre "Aleitamento" e o PDF for sobre "Pneumonia", IGNORE o PDF para a criação das questões e use seu conhecimento médico sobre "Aleitamento".
+  1. FOCO TOTAL NO TÓPICO: O conteúdo gerado deve ser EXCLUSIVAMENTE sobre o tópico solicitado. Se o tópico for "Aleitamento Materno", NÃO gere questões sobre pneumonia, mesmo que o PDF contenha outros assuntos.
   2. Baseie-se em evidências (SBP, UpToDate, Nelson, Ministério da Saúde).
-  3. Retorne APENAS JSON válido. Não use markdown blocks (\`\`\`json).
+  3. Retorne APENAS JSON válido. O JSON deve ser puro, sem blocos de markdown (\`\`\`json).
 `;
 
 // Helper para limpar a resposta do Gemini
 function cleanJsonResponse(text: string): string {
-  // Remove blocos de código markdown se existirem
+  // Remove blocos de código markdown se existirem (```json ... ```)
   let clean = text.replace(/```json/g, "").replace(/```/g, "");
-  return clean.trim();
+  // Remove qualquer texto antes do primeiro '{' ou '[' (caso o modelo explique algo antes)
+  const firstBrace = clean.indexOf('{');
+  const firstBracket = clean.indexOf('[');
+  
+  let startIndex = 0;
+  if (firstBrace !== -1 && firstBracket !== -1) {
+    startIndex = Math.min(firstBrace, firstBracket);
+  } else if (firstBrace !== -1) {
+    startIndex = firstBrace;
+  } else if (firstBracket !== -1) {
+    startIndex = firstBracket;
+  }
+  
+  return clean.substring(startIndex).trim();
 }
 
 export async function generateStudyContent(topic: string, pdfBase64?: string): Promise<AILessonContent | null> {
@@ -74,8 +87,13 @@ export async function generateStudyContent(topic: string, pdfBase64?: string): P
     });
 
     if (response.text) {
-      const cleanText = cleanJsonResponse(response.text);
-      return JSON.parse(cleanText) as AILessonContent;
+      try {
+        const cleanText = cleanJsonResponse(response.text);
+        return JSON.parse(cleanText) as AILessonContent;
+      } catch (parseError) {
+        console.error("Failed to parse Gemini JSON:", parseError, response.text);
+        return null;
+      }
     }
     return null;
 
@@ -98,8 +116,8 @@ export async function generateResidencyQuiz(topic: string, pdfBase64?: string): 
       
       REQUISITOS:
       1. As questões devem ser difíceis, com cenários clínicos ou cobrança de protocolos específicos.
-      2. NUNCA gere questões sobre outros temas, mesmo que estejam no PDF. Se o PDF não for sobre "${topic}", ignore-o.
-      3. Formate as opções de resposta claramente.
+      2. NUNCA gere questões sobre outros temas. Se o tópico é "${topic}", todas as 5 questões devem ser sobre isso.
+      3. As alternativas devem ser claras.
     `;
 
     if (pdfBase64) {
@@ -124,7 +142,7 @@ export async function generateResidencyQuiz(topic: string, pdfBase64?: string): 
               options: { 
                 type: Type.ARRAY, 
                 items: { type: Type.STRING },
-                description: "Lista de 4 ou 5 alternativas."
+                description: "Lista de 4 ou 5 alternativas de resposta."
               },
               correctAnswer: { type: Type.STRING, description: "O texto exato da alternativa correta." },
               explanation: { type: Type.STRING, description: "Comentário detalhado sobre o gabarito." }
@@ -136,8 +154,13 @@ export async function generateResidencyQuiz(topic: string, pdfBase64?: string): 
     });
 
     if (response.text) {
-      const cleanText = cleanJsonResponse(response.text);
-      return JSON.parse(cleanText) as QuizItem[];
+      try {
+        const cleanText = cleanJsonResponse(response.text);
+        return JSON.parse(cleanText) as QuizItem[];
+      } catch (parseError) {
+        console.error("Failed to parse Gemini Quiz JSON:", parseError, response.text);
+        return null;
+      }
     }
     return null;
   } catch (error) {
