@@ -1,16 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AILessonContent, QuizItem } from "../types";
 
-const apiKey = process.env.API_KEY;
-let ai: GoogleGenAI | null = null;
-
-console.log("[DEBUG] Inicializando Gemini Service. API Key presente:", !!apiKey);
-
-if (apiKey && apiKey.length > 0) {
-  ai = new GoogleGenAI({ apiKey: apiKey });
-} else {
-  console.error("[CRITICAL] Gemini API Key is missing or empty.");
-}
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const BASE_SYSTEM_PROMPT = `
   Você é um preceptor sênior de residência médica de pediatria.
@@ -41,11 +32,6 @@ function cleanJsonResponse(text: string): string {
 }
 
 export async function generateStudyContent(topic: string): Promise<AILessonContent | null> {
-  if (!ai) {
-    console.error("[Gemini Error] Serviço AI não inicializado.");
-    return null;
-  }
-
   console.log(`[Gemini Request] Iniciando geração de RESUMO para: ${topic}`);
 
   try {
@@ -55,7 +41,7 @@ export async function generateStudyContent(topic: string): Promise<AILessonConte
     `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-3-flash-preview',
       contents: { parts: [{ text: promptText }] },
       config: {
         systemInstruction: BASE_SYSTEM_PROMPT,
@@ -100,8 +86,6 @@ export async function generateStudyContent(topic: string): Promise<AILessonConte
 }
 
 export async function generateResidencyQuiz(topic: string): Promise<QuizItem[] | null> {
-  if (!ai) return null;
-
   console.log(`[Gemini Request] Iniciando geração de QUIZ para: ${topic}`);
 
   try {
@@ -112,7 +96,7 @@ export async function generateResidencyQuiz(topic: string): Promise<QuizItem[] |
     `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-3-flash-preview',
       contents: { parts: [{ text: promptText }] },
       config: {
         systemInstruction: BASE_SYSTEM_PROMPT,

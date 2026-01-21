@@ -1,92 +1,126 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, FileText, Brain, Sparkles, CheckCircle2, RefreshCw, X, ArrowLeft, Users, Trash2, AlertTriangle, Bug } from 'lucide-react';
+import { ChevronRight, FileText, Brain, Sparkles, CheckCircle2, RefreshCw, X, ArrowLeft, Users, AlertTriangle } from 'lucide-react';
 import { generateStudyContent, generateResidencyQuiz } from '../services/geminiService';
 import { AILessonContent, QuizItem, LessonData } from '../types';
 import ReactMarkdown from 'react-markdown';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import { User } from 'firebase/auth';
 
 interface Props {
+  user: User | null;
   lessonTitle: string;
   isOpen: boolean;
   onClose: () => void;
   mode?: 'modal' | 'inline';
 }
 
-export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose, mode = 'modal' }) => {
+export const StudyLessonModal: React.FC<Props> = ({ user, lessonTitle, isOpen, onClose, mode = 'modal' }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<LessonData>({
-    content: null,
-    residencyQuiz: null,
-    progress: { isCompleted: false, lastUpdated: '' }
-  });
+  
+  // Dados do Conteúdo da Aula (Compartilhado)
+  const [contentData, setContentData] = useState<{
+    content: AILessonContent | null;
+    residencyQuiz: QuizItem[] | null;
+  }>({ content: null, residencyQuiz: null });
+
+  // Estado do Progresso do Usuário (Local)
+  const [isCompleted, setIsCompleted] = useState(false);
+  
   const [tab, setTab] = useState<'content' | 'quiz'>('content');
   const [saving, setSaving] = useState(false);
 
-  // Sanitiza o ID do documento
+  // ID sanitizado
   const docId = lessonTitle.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
 
+  // 1. Carregar Conteúdo da Aula (Público/Compartilhado)
   useEffect(() => {
     if (isOpen) {
-      console.log(`[Modal Open] Carregando dados para: ${docId}`);
+      console.log(`[Modal] Carregando conteúdo para: ${docId}`);
       setLoading(true);
       setError(null);
       
-      const unsubscribe = onSnapshot(doc(db, "lessons", docId), (docSnapshot) => {
+      const lessonRef = doc(db, "lessons", docId);
+      
+      const unsubscribeLesson = onSnapshot(lessonRef, (docSnapshot) => {
         setLoading(false);
         if (docSnapshot.exists()) {
           const fetchedData = docSnapshot.data() as LessonData;
-          console.log("[Firestore] Dados encontrados.", fetchedData);
-          setData({
+          setContentData({
             content: fetchedData.content || null,
             residencyQuiz: fetchedData.residencyQuiz || null,
-            progress: fetchedData.progress || { isCompleted: false, lastUpdated: '' }
           });
         } else {
-          console.log("[Firestore] Nenhum dado prévio encontrado para esta aula.");
-          setData({ 
-            content: null, 
-            residencyQuiz: null, 
-            progress: { isCompleted: false, lastUpdated: '' } 
-          });
+          setContentData({ content: null, residencyQuiz: null });
         }
       }, (err) => {
         console.error("[Firestore Error]", err);
-        setError(`Erro de conexão: ${err.message}`);
+        setError(`Erro ao carregar aula: ${err.message}`);
         setLoading(false);
       });
 
-      return () => unsubscribe();
+      return () => unsubscribeLesson();
     }
   }, [isOpen, docId]);
 
-  const saveData = async (newData: LessonData) => {
-    setSaving(true);
-    // Optimistic Update
-    setData(newData);
+  // 2. Carregar Status de Conclusão do Usuário (Privado)
+  useEffect(() => {
+    if (isOpen && user) {
+      const userRef = doc(db, "users", user.uid);
+      getDoc(userRef).then((snap) => {
+        if (snap.exists()) {
+          const userData = snap.data();
+          // Verifica se este docId está marcado como true no mapa studyProgress
+          const done = userData.studyProgress?.[docId] === true;
+          setIsCompleted(done);
+        } else {
+          setIsCompleted(false);
+        }
+      }).catch(err => console.error("Erro ao ler progresso do usuário:", err));
+    }
+  }, [isOpen, user, docId]);
+
+  // Função para alternar conclusão (Checklist)
+  const toggleComplete = async () => {
+    if (!user) {
+      alert("Erro: Usuário não autenticado.");
+      return;
+    }
+
+    // Update Otimista
+    const newState = !isCompleted;
+    setIsCompleted(newState);
     
     try {
-      await setDoc(doc(db, "lessons", docId), newData, { merge: true });
-      console.log("[Firestore] Dados salvos com sucesso.");
-    } catch (err: any) {
-      console.error("[Firestore Save Error]", err);
-      setError("Falha ao salvar no banco de dados.");
-    } finally {
-      setTimeout(() => setSaving(false), 800);
+      const userRef = doc(db, "users", user.uid);
+      // Salva em um mapa: studyProgress: { "aula-id": true/false }
+      await setDoc(userRef, {
+        studyProgress: {
+          [docId]: newState
+        }
+      }, { merge: true });
+      console.log(`[Checklist] ${lessonTitle} marcado como ${newState}`);
+    } catch (err) {
+      console.error("Erro ao salvar progresso:", err);
+      // Reverte se der erro
+      setIsCompleted(!newState);
+      setError("Falha ao salvar progresso. Tente novamente.");
     }
   };
 
-  const markComplete = () => {
-    const newData = { 
-      ...data, 
-      progress: { 
-        ...data.progress, 
-        isCompleted: !data.progress.isCompleted,
-        lastUpdated: new Date().toISOString()
-      } 
-    };
-    saveData(newData);
+  // Salva apenas o CONTEÚDO gerado na coleção 'lessons' (público)
+  const saveContent = async (newContent: Partial<LessonData>) => {
+    setSaving(true);
+    try {
+      await setDoc(doc(db, "lessons", docId), newContent, { merge: true });
+      console.log("[Firestore] Conteúdo salvo com sucesso.");
+    } catch (err: any) {
+      console.error("[Firestore Save Error]", err);
+      setError("Falha ao salvar conteúdo gerado.");
+    } finally {
+      setTimeout(() => setSaving(false), 800);
+    }
   };
 
   const handleGenerateContent = async () => {
@@ -98,18 +132,16 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
       const result = await generateStudyContent(lessonTitle);
       
       if (result) {
-        const newData: LessonData = { 
-          ...data, 
-          content: result, 
-          progress: { ...data.progress, lastUpdated: new Date().toISOString() } 
-        };
-        await saveData(newData);
+        // Atualiza estado local
+        setContentData(prev => ({ ...prev, content: result }));
+        // Salva no banco
+        await saveContent({ content: result });
       } else {
-        throw new Error("A IA retornou um resultado vazio. Verifique a chave de API.");
+        throw new Error("A IA retornou vazio.");
       }
     } catch (err: any) {
       console.error("[Generation Error]", err);
-      setError(`Erro na IA: ${err.message || 'Falha desconhecida'}. Veja o console.`);
+      setError(`Erro na IA: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -124,14 +156,14 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
       const quiz = await generateResidencyQuiz(lessonTitle);
       
       if (quiz && quiz.length > 0) {
-        const newData = { ...data, residencyQuiz: quiz };
-        await saveData(newData);
+        setContentData(prev => ({ ...prev, residencyQuiz: quiz }));
+        await saveContent({ residencyQuiz: quiz });
       } else {
-        throw new Error("A IA não conseguiu gerar questões válidas.");
+        throw new Error("A IA não gerou questões.");
       }
     } catch (err: any) {
-      console.error("[Quiz Generation Error]", err);
-      setError(`Erro no Quiz: ${err.message}. Veja o console.`);
+      console.error("[Quiz Error]", err);
+      setError(`Erro no Quiz: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -140,7 +172,7 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
   if (!isOpen) return null;
 
   const renderContentTab = () => {
-    if (!data.content) {
+    if (!contentData.content) {
       // EMPTY STATE
       return (
         <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 max-w-md mx-auto min-h-[50vh]">
@@ -173,22 +205,22 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
               </h4>
             </div>
             <div className="prose prose-invert prose-sm max-w-none leading-relaxed text-gray-300">
-              <ReactMarkdown>{data.content.summary}</ReactMarkdown>
+              <ReactMarkdown>{contentData.content.summary}</ReactMarkdown>
             </div>
          </div>
           
-         <Section title="Epidemiologia & Risco" content={data.content.epidemiology} />
-         <Section title="Fisiopatologia" content={data.content.pathophysiology} />
-         <Section title="Quadro Clínico" content={data.content.clinicalPicture} />
-         <Section title="Diagnóstico" content={data.content.diagnosis} />
-         <Section title="Conduta & Tratamento" content={data.content.treatment} highlight />
-         <Section title="Prognóstico" content={data.content.prognosis} />
-         <Section title="Evidências Recentes" content={data.content.recentEvidence} />
+         <Section title="Epidemiologia & Risco" content={contentData.content.epidemiology} />
+         <Section title="Fisiopatologia" content={contentData.content.pathophysiology} />
+         <Section title="Quadro Clínico" content={contentData.content.clinicalPicture} />
+         <Section title="Diagnóstico" content={contentData.content.diagnosis} />
+         <Section title="Conduta & Tratamento" content={contentData.content.treatment} highlight />
+         <Section title="Prognóstico" content={contentData.content.prognosis} />
+         <Section title="Evidências Recentes" content={contentData.content.recentEvidence} />
          
          <div className="flex justify-center pt-8 border-t border-gray-200 dark:border-gray-800">
             <button 
               onClick={() => {
-                if (window.confirm("Gerar um novo resumo apagará o atual. Continuar?")) {
+                if (window.confirm("Gerar um novo resumo apagará o atual para todos. Continuar?")) {
                   handleGenerateContent();
                 }
               }}
@@ -202,7 +234,7 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
   };
 
   const renderQuizTab = () => {
-    if (!data.residencyQuiz) {
+    if (!contentData.residencyQuiz) {
        // EMPTY STATE - QUIZ GENERATION
        return (
          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 mt-10 min-h-[50vh]">
@@ -228,7 +260,7 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
 
     return (
        <div className="space-y-8 pb-20 max-w-3xl mx-auto">
-          {data.residencyQuiz.map((item, idx) => (
+          {contentData.residencyQuiz.map((item, idx) => (
              <QuizCard key={idx} index={idx} item={item} />
           ))}
           <div className="pt-8 flex justify-center">
@@ -265,7 +297,6 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
                  ) : (
                    <span className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium"><Users className="w-3 h-3" /> Compartilhado</span>
                  )}
-                 <span className="text-[10px] text-gray-300 dark:text-gray-700 font-mono ml-2 border border-gray-200 dark:border-gray-800 px-1 rounded">v1.5.0-debug</span>
                </div>
              </div>
           </div>
@@ -287,11 +318,11 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
             </div>
             
             <button 
-              onClick={markComplete}
-              className={`p-2 rounded-full transition-all ${data.progress.isCompleted ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20' : 'text-gray-300 hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-              title="Marcar como concluído"
+              onClick={toggleComplete}
+              className={`p-2 rounded-full transition-all ${isCompleted ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20' : 'text-gray-300 hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+              title={isCompleted ? "Concluído" : "Marcar como concluído"}
             >
-              <CheckCircle2 className="w-6 h-6" fill={data.progress.isCompleted ? "currentColor" : "none"} />
+              <CheckCircle2 className="w-6 h-6" fill={isCompleted ? "currentColor" : "none"} />
             </button>
           </div>
         </div>
@@ -317,7 +348,7 @@ export const StudyLessonModal: React.FC<Props> = ({ lessonTitle, isOpen, onClose
         {/* --- MAIN AREA --- */}
         <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 p-6 md:p-8">
           
-          {loading && !data.content && !data.residencyQuiz ? (
+          {loading && !contentData.content && !contentData.residencyQuiz ? (
              <div className="h-full flex flex-col items-center justify-center animate-pulse space-y-6">
                 <div className="w-16 h-16 rounded-2xl bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
                   <Brain className="w-8 h-8 text-gray-400" />

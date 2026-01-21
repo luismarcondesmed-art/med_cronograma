@@ -1,41 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { STUDY_AREAS } from '../constants';
 import { StudyLessonModal } from './StudyLessonModal';
-import { Search, ChevronDown, ChevronRight, CheckCircle2, Circle, BookOpen } from 'lucide-react';
+import { Search, ChevronDown, CheckCircle2, Circle, BookOpen } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../services/firebase';
+import { User } from 'firebase/auth';
 
-export const StudyView: React.FC = () => {
+interface StudyViewProps {
+  user: User | null;
+}
+
+export const StudyView: React.FC<StudyViewProps> = ({ user }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
   const [expandedArea, setExpandedArea] = useState<string | null>(null);
+  
+  // Estado para armazenar o progresso do usuário vindo do Firebase
+  // Formato: { "id-da-aula": true, ... }
+  const [userProgress, setUserProgress] = useState<Record<string, boolean>>({});
 
-  // Helper: Progress logic
-  const getLessonStatus = (lesson: string) => {
-    const key = `study-session-${lesson.replace(/\s+/g, '-').toLowerCase()}`;
-    const saved = localStorage.getItem(key);
-    if (!saved) return false;
-    const parsed = JSON.parse(saved);
-    return parsed.progress?.isCompleted || false;
-  };
+  // Efeito para ouvir o progresso do usuário em Tempo Real
+  useEffect(() => {
+    if (!user) return;
+
+    const userRef = doc(db, "users", user.uid);
+    
+    // Otimização: Escuta apenas o documento do usuário, não toda a coleção de aulas
+    const unsubscribe = onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        // Assume que o progresso está salvo num campo 'studyProgress'
+        setUserProgress(data.studyProgress || {});
+      }
+    }, (error) => {
+      console.error("[StudyView] Erro ao sincronizar progresso:", error);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Helper para gerar ID consistente
+  const getLessonId = (title: string) => title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+
+  // Otimização: useMemo para evitar re-cálculos pesados a cada renderização
+  const filteredAreas = useMemo(() => {
+    return STUDY_AREAS.map(area => {
+      const matches = area.lessons.filter(lesson => 
+        lesson.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        area.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      return { ...area, lessons: matches };
+    }).filter(area => area.lessons.length > 0);
+  }, [searchTerm]);
 
   const calculateAreaProgress = (lessons: string[]) => {
-    const completed = lessons.filter(getLessonStatus).length;
-    return Math.round((completed / lessons.length) * 100);
+    if (lessons.length === 0) return 0;
+    const completedCount = lessons.filter(lesson => userProgress[getLessonId(lesson)]).length;
+    return Math.round((completedCount / lessons.length) * 100);
   };
-
-  const filteredAreas = STUDY_AREAS.map(area => {
-    const matches = area.lessons.filter(lesson => 
-      lesson.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      area.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    return { ...area, lessons: matches };
-  }).filter(area => area.lessons.length > 0);
 
   const toggleArea = (id: string) => {
     setExpandedArea(expandedArea === id ? null : id);
   };
 
   return (
-    // Fixed height container for Desktop to enable internal scrolling (View Height - TopBar - Padding)
+    // Fixed height container for Desktop to enable internal scrolling
     <div className="flex flex-col animate-fade-in md:h-[calc(100vh-7rem)]">
       
       {/* --- HEADER --- */}
@@ -97,7 +126,8 @@ export const StudyView: React.FC = () => {
                   <div className="border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-black/20 p-2">
                     <div className="flex flex-col gap-1">
                       {area.lessons.map((lesson, lIdx) => {
-                         const isDone = getLessonStatus(lesson);
+                         const lessonId = getLessonId(lesson);
+                         const isDone = !!userProgress[lessonId];
                          const isSelected = selectedLesson === lesson;
                          return (
                           <button
@@ -137,7 +167,8 @@ export const StudyView: React.FC = () => {
           {selectedLesson ? (
             <div className="h-full rounded-[2rem] overflow-hidden shadow-soft border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
               <StudyLessonModal 
-                key={selectedLesson} // <--- CHAVE IMPORTANTE: Reseta o modal ao trocar de aula
+                key={selectedLesson} 
+                user={user}
                 lessonTitle={selectedLesson} 
                 isOpen={true} 
                 onClose={() => setSelectedLesson(null)}
@@ -162,6 +193,7 @@ export const StudyView: React.FC = () => {
         {selectedLesson && (
           <StudyLessonModal 
             key={selectedLesson}
+            user={user}
             lessonTitle={selectedLesson} 
             isOpen={!!selectedLesson} 
             onClose={() => setSelectedLesson(null)}

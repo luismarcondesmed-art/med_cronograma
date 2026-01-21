@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { StudyView } from './components/StudyView';
-import { signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+import { signInAnonymously, onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from './services/firebase';
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState('dashboard');
   const [isDark, setIsDark] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     // Autenticação Anônima para satisfazer regras do Firebase (request.auth != null)
@@ -48,7 +48,7 @@ export const App: React.FC = () => {
       case 'dashboard':
         return <Dashboard onChangeView={setCurrentView} />;
       case 'study':
-        return <StudyView />;
+        return <StudyView user={user} />;
       default:
         return <Dashboard onChangeView={setCurrentView} />;
     }
